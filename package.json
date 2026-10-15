@@ -1,17 +1,28 @@
 {
   "name": "@workrcs/universal-player",
   "version": "0.1.0",
-  "description": "A framework-neutral, accessible video player built on Video.js.",
+  "description": "A framework-neutral, accessible video player built on Video.js with a custom UI.",
   "type": "module",
   "license": "MIT",
-  "sideEffects": ["**/*.css"],
-  "engines": { "node": ">=20.19.0" },
-  "files": ["dist", "README.md", "LICENSE"],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "main": "./dist/universal-player.js",
   "module": "./dist/universal-player.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": { "types": "./dist/index.d.ts", "import": "./dist/universal-player.js" },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/universal-player.js"
+    },
     "./style.css": "./dist/universal-player.css"
   },
   "scripts": {
@@ -27,14 +38,24 @@
     "@videojs/dash-video": "10.1.0",
     "@videojs/hlsjs-video": "10.1.0",
     "@videojs/html": "10.1.0",
+    "@videojs/playerjs-video": "10.1.0",
+    "@videojs/tiktok-video": "10.1.0",
+    "@videojs/twitch-video": "10.1.0",
+    "@videojs/vimeo-video": "10.1.0",
+    "@videojs/wistia-video": "10.1.0",
     "@videojs/youtube-video": "10.1.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^22.19.0",
+    "lucide": "^1.57.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "~5.9.3",
     "vite": "^7.1.12",
     "vitest": "^3.2.4"
   },
-  "publishConfig": { "access": "public" }
+  "publishConfig": {
+    "access": "public"
+  }
 }

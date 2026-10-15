@@ -2,11 +2,12 @@ import '@videojs/html/video/player';
 import '@videojs/html/ui/container';
 import './style.css';
 
+import { createElement, Play, Pause, Rewind, FastForward, Volume2, VolumeX, Settings2, Maximize, Minimize, PictureInPicture2, Captions, Copy, Info, Repeat, Gauge, Keyboard, Link as LinkIcon, CircleHelp, X } from 'lucide';
 import { detectProvider, formatTime, normalizeSource } from './source.js';
 import type { PlayerSource, SourceProvider } from './source.js';
 
 export type { PlayerSource, SourceProvider } from './source.js';
-export { detectProvider, formatTime, normalizeSource } from './source.js';
+export { detectProvider, formatTime, normalizePastedVideoUrl, normalizeSource } from './source.js';
 
 export interface UniversalPlayerOptions {
   source?: string | PlayerSource;
@@ -20,6 +21,7 @@ export interface UniversalPlayerOptions {
   aspectRatio?: string;
   objectFit?: 'contain' | 'cover' | 'fill';
   playbackRates?: number[];
+  autohide?: boolean;
 }
 
 interface MediaElementLike extends HTMLElement {
@@ -28,6 +30,12 @@ interface MediaElementLike extends HTMLElement {
   duration: number;
   paused: boolean;
   ended?: boolean;
+  loop: boolean;
+  currentSrc?: string;
+  readyState?: number;
+  networkState?: number;
+  videoWidth?: number;
+  videoHeight?: number;
   volume: number;
   muted: boolean;
   playbackRate: number;
@@ -55,24 +63,42 @@ const ADAPTERS: Record<Exclude<SourceProvider, 'html5'>, () => Promise<unknown>>
   hls: () => import('@videojs/html/media/hlsjs-video'),
   dash: () => import('@videojs/html/media/dash-video'),
   youtube: () => import('@videojs/html/media/youtube-video'),
+  vimeo: () => import('@videojs/html/media/vimeo-video'),
+  tiktok: () => import('@videojs/html/media/tiktok-video'),
+  twitch: () => import('@videojs/html/media/twitch-video'),
+  wistia: () => import('@videojs/html/media/wistia-video'),
+  playerjs: () => import('@videojs/html/media/playerjs-video'),
 };
 
-const ICONS: Record<string, string> = {
-  play: '<path d="M8 5.5v13l10-6.5-10-6.5Z" fill="currentColor" stroke="none"/>',
-  pause: '<path d="M7 5h4v14H7zM15 5h4v14h-4z" fill="currentColor" stroke="none"/>',
-  back: '<path d="M4 7v5h5M4.5 12a7.5 7.5 0 1 1 1.8 5.8M12 8v4l3 2" />',
-  forward: '<path d="M20 7v5h-5M19.5 12a7.5 7.5 0 1 0-1.8 5.8M12 8v4l3 2" />',
-  volume: '<path d="M4 10v4h4l5 4V6l-5 4H4Z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>',
-  muted: '<path d="M4 10v4h4l5 4V6l-5 4H4Z"/><path d="m17 9 5 6m0-6-5 6"/>',
-  settings: '<path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="m19.4 13.5 1.1.9-1.5 2.6-1.4-.5a7.7 7.7 0 0 1-1.5.9l-.2 1.5h-3l-.3-1.5a7.7 7.7 0 0 1-1.5-.9l-1.4.5-1.5-2.6 1.1-.9a7.8 7.8 0 0 1 0-1.8l-1.1-.9 1.5-2.6 1.4.5a7.7 7.7 0 0 1 1.5-.9l.3-1.5h3l.2 1.5a7.7 7.7 0 0 1 1.5.9l1.4-.5 1.5 2.6-1.1.9a7.8 7.8 0 0 1 0 1.8Z" transform="translate(-1 -1)"/>',
-  fullscreen: '<path d="M8 4H4v4M16 4h4v4M20 16v4h-4M4 16v4h4"/>',
-  exitFullscreen: '<path d="M4 8h4V4M16 4v4h4M20 16h-4v4M8 20v-4H4"/>',
-  pip: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><rect x="12.5" y="11" width="6" height="5" rx="1" fill="currentColor" stroke="none"/>',
-  captions: '<path d="M4 6.5h16v11H4z"/><path d="M7 10h3m-3 3h2m4-3h3m-3 3h2"/>',
+const ICONS = {
+  play: Play,
+  pause: Pause,
+  back: Rewind,
+  forward: FastForward,
+  volume: Volume2,
+  muted: VolumeX,
+  settings: Settings2,
+  fullscreen: Maximize,
+  exitFullscreen: Minimize,
+  pip: PictureInPicture2,
+  captions: Captions,
+  copy: Copy,
+  info: Info,
+  loop: Repeat,
+  speed: Gauge,
+  keyboard: Keyboard,
+  link: LinkIcon,
+  help: CircleHelp,
+  close: X,
 };
 
-function makeIcon(name: string): string {
-  return '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || ICONS.settings) + '</svg>';
+function makeIcon(name: string): SVGSVGElement {
+  const icon = ICONS[name as keyof typeof ICONS] || Settings2;
+  return createElement(icon, {
+    class: 'up-icon-svg',
+    'aria-hidden': 'true',
+    strokeWidth: 1.8,
+  }) as SVGSVGElement;
 }
 
 function makeButton(label: string, icon: string, className = 'up-icon-button'): HTMLButtonElement {
@@ -81,7 +107,7 @@ function makeButton(label: string, icon: string, className = 'up-icon-button'): 
   button.className = className;
   button.setAttribute('aria-label', label);
   button.title = label;
-  button.innerHTML = makeIcon(icon);
+  button.replaceChildren(makeIcon(icon));
   return button;
 }
 
@@ -118,6 +144,13 @@ export class UniversalPlayer {
   private trackButton!: HTMLButtonElement;
   private titleLabel!: HTMLSpanElement;
   private spinner!: HTMLDivElement;
+  private contextMenu!: HTMLDivElement;
+  private statsPanel!: HTMLDivElement;
+  private helpPanel!: HTMLDivElement;
+  private loopMenuItem!: HTMLButtonElement;
+  private seekTooltip!: HTMLDivElement;
+  private seekTooltipLabel!: HTMLSpanElement;
+  private idleTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(target: HTMLElement, private readonly options: UniversalPlayerOptions = {}) {
     if (!(target instanceof HTMLElement)) {
@@ -144,6 +177,7 @@ export class UniversalPlayer {
     this.stage.setAttribute('aria-label', options.title || 'Universal Player video');
     this.stage.style.aspectRatio = options.aspectRatio || '16 / 9';
     this.stage.style.setProperty('--up-media-object-fit', options.objectFit || 'contain');
+    this.stage.dataset.provider = 'html5';
     this.stage.tabIndex = 0;
 
     this.mediaElement = this.createMediaElement('html5');
@@ -215,6 +249,9 @@ export class UniversalPlayer {
 
     this.titleLabel.textContent = source.title || this.options.title || source.src.split('/').pop() || 'Universal Player';
     this.stage.setAttribute('aria-label', (source.title || this.options.title || 'Universal Player') + ' video');
+    this.stage.dataset.provider = provider;
+    this.stage.classList.toggle('up-portrait', provider === 'tiktok');
+    this.stage.style.aspectRatio = provider === 'tiktok' ? '9 / 16' : (this.options.aspectRatio || '16 / 9');
     this.emit('sourcechange', { source: { ...source }, provider });
     this.syncUI();
   }
@@ -307,6 +344,11 @@ export class UniversalPlayer {
       hls: 'hlsjs-video',
       dash: 'dash-video',
       youtube: 'youtube-video',
+      vimeo: 'vimeo-video',
+      tiktok: 'tiktok-video',
+      twitch: 'twitch-video',
+      wistia: 'wistia-video',
+      playerjs: 'playerjs-video',
     };
 
     const media = document.createElement(tags[provider]) as MediaElementLike;
@@ -477,16 +519,223 @@ export class UniversalPlayer {
       this.togglePlayback();
     });
 
-    this.stage.append(top, this.spinner, clickSurface, this.centerPlay, this.controlsRoot);
+    this.seekTooltip = document.createElement('div');
+    this.seekTooltip.className = 'up-seek-tooltip';
+    this.seekTooltip.hidden = true;
+    this.seekTooltipLabel = document.createElement('span');
+    this.seekTooltip.append(this.seekTooltipLabel);
+
+    this.contextMenu = document.createElement('div');
+    this.contextMenu.className = 'up-context-menu';
+    this.contextMenu.setAttribute('role', 'menu');
+    this.contextMenu.setAttribute('aria-label', 'Universal Player menu');
+    this.contextMenu.hidden = true;
+    this.contextMenu.append(
+      this.createContextItem('Play / pause', 'play', () => this.togglePlayback()),
+      this.createContextItem('Back 10 seconds', 'back', () => this.seek(Math.max(0, this.currentTime - 10))),
+      this.createContextItem('Forward 10 seconds', 'forward', () => this.seek(this.currentTime + 10)),
+    );
+    const menuDivider = document.createElement('div');
+    menuDivider.className = 'up-context-divider';
+    this.contextMenu.append(menuDivider);
+    this.loopMenuItem = this.createContextItem('Loop: Off', 'loop', () => {
+      this.mediaElement.loop = !this.mediaElement.loop;
+      this.loopMenuItem.querySelector('.up-context-label')!.textContent = 'Loop: ' + (this.mediaElement.loop ? 'On' : 'Off');
+      this.emit('loopchange', { loop: this.mediaElement.loop });
+    });
+    this.contextMenu.append(
+      this.loopMenuItem,
+      this.createContextItem('Copy video link', 'copy', () => { void this.copySourceLink(); }),
+      this.createContextItem('Playback stats', 'info', () => {
+        this.refreshStats();
+        this.statsPanel.hidden = !this.statsPanel.hidden;
+        this.contextMenu.hidden = true;
+      }),
+      this.createContextItem('Keyboard shortcuts', 'keyboard', () => {
+        this.helpPanel.hidden = !this.helpPanel.hidden;
+        this.contextMenu.hidden = true;
+      }),
+    );
+
+    this.statsPanel = document.createElement('div');
+    this.statsPanel.className = 'up-stats-panel';
+    this.statsPanel.hidden = true;
+    this.statsPanel.setAttribute('role', 'status');
+    this.statsPanel.setAttribute('aria-label', 'Playback statistics');
+
+    this.helpPanel = document.createElement('div');
+    this.helpPanel.className = 'up-stats-panel up-help-panel';
+    this.helpPanel.hidden = true;
+    this.helpPanel.innerHTML = '<div class="up-stats-heading">Keyboard shortcuts</div><div class="up-stats-line"><span>Play / pause</span><kbd>Space</kbd> <kbd>K</kbd></div><div class="up-stats-line"><span>Seek backward / forward</span><kbd>←</kbd> <kbd>→</kbd></div><div class="up-stats-line"><span>Skip 10 seconds</span><kbd>J</kbd> <kbd>L</kbd></div><div class="up-stats-line"><span>Mute / unmute</span><kbd>M</kbd></div><div class="up-stats-line"><span>Fullscreen</span><kbd>F</kbd></div><div class="up-stats-line"><span>Close menu</span><kbd>Esc</kbd></div>';
+
+    this.stage.append(top, this.spinner, clickSurface, this.centerPlay, this.controlsRoot, this.seekTooltip, this.contextMenu, this.statsPanel, this.helpPanel);
     this.listen(document, 'fullscreenchange', () => this.syncUI());
 
-    this.listen(this.stage, 'pointermove', () => this.stage.classList.add('up-interacting'));
-    this.listen(this.stage, 'pointerleave', () => this.stage.classList.remove('up-interacting'));
+    this.listen(this.stage, 'pointermove', (event) => {
+      this.stage.classList.add('up-interacting');
+      this.queueHideControls();
+      const pointer = event as PointerEvent;
+      if (pointer.pointerType === 'mouse' && pointer.target === this.seekInput) this.updateSeekTooltip(pointer.clientX);
+    });
+    this.listen(this.stage, 'pointerenter', () => {
+      this.stage.classList.add('up-interacting');
+      if (this.idleTimer) clearTimeout(this.idleTimer);
+    });
+    this.listen(this.stage, 'pointerleave', () => {
+      this.seekTooltip.hidden = true;
+      this.queueHideControls(true);
+    });
+    this.listen(this.stage, 'contextmenu', (event) => {
+      event.preventDefault();
+      const pointer = event as MouseEvent;
+      const rect = this.stage.getBoundingClientRect();
+      const menuWidth = 224;
+      const menuHeight = 280;
+      const left = Math.max(8, Math.min(pointer.clientX - rect.left, rect.width - menuWidth - 8));
+      const top = Math.max(8, Math.min(pointer.clientY - rect.top, rect.height - menuHeight - 8));
+      this.contextMenu.style.left = left + 'px';
+      this.contextMenu.style.top = top + 'px';
+      this.contextMenu.hidden = false;
+      this.statsPanel.hidden = true;
+      this.helpPanel.hidden = true;
+    });
+    this.listen(document, 'pointerdown', (event) => {
+      const target = event.target as Node | null;
+      if (!target || (!this.contextMenu.contains(target) && !this.statsPanel.contains(target) && !this.helpPanel.contains(target))) {
+        this.contextMenu.hidden = true;
+        if (target && !this.statsPanel.contains(target)) this.statsPanel.hidden = true;
+        if (target && !this.helpPanel.contains(target)) this.helpPanel.hidden = true;
+      }
+    });
+    this.listen(document, 'keydown', (event) => {
+      if ((event as KeyboardEvent).key === 'Escape') {
+        this.contextMenu.hidden = true;
+        this.statsPanel.hidden = true;
+        this.helpPanel.hidden = true;
+        this.speedMenu.hidden = true;
+      }
+    });
+    this.listen(this.seekInput, 'pointermove', (event) => this.updateSeekTooltip((event as PointerEvent).clientX));
+    this.listen(this.seekInput, 'pointerleave', () => { this.seekTooltip.hidden = true; });
     this.listen(this.trackButton, 'keydown', (event) => {
       if ((event as KeyboardEvent).key === 'Escape') this.speedMenu.hidden = true;
     });
 
     this.updateOptionalControls();
+  }
+
+  private createContextItem(label: string, icon: string, action: () => void): HTMLButtonElement {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'up-context-item';
+    item.setAttribute('role', 'menuitem');
+    const iconSlot = document.createElement('span');
+    iconSlot.className = 'up-context-icon';
+    iconSlot.append(makeIcon(icon));
+    const text = document.createElement('span');
+    text.className = 'up-context-label';
+    text.textContent = label;
+    item.append(iconSlot, text);
+    this.listen(item, 'click', () => {
+      action();
+      if (!this.statsPanel || this.statsPanel.hidden) this.contextMenu.hidden = true;
+    });
+    return item;
+  }
+
+  private async copySourceLink(): Promise<void> {
+    const text = this.currentSource?.src || this.mediaElement.currentSrc || this.mediaElement.getAttribute('src') || '';
+    if (!text) return;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        throw new Error('Clipboard API unavailable');
+      }
+      this.emit('copied', { text });
+    } catch {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.append(textarea);
+      textarea.select();
+      const succeeded = document.execCommand('copy');
+      textarea.remove();
+      this.emit(succeeded ? 'copied' : 'featureerror', succeeded ? { text } : { feature: 'clipboard', error: new Error('Clipboard permission was not granted.') });
+    }
+  }
+
+  private refreshStats(): void {
+    const media = this.mediaElement;
+    const current = formatTime(this.currentTime);
+    const duration = formatTime(this.duration);
+    const width = Number(media.videoWidth) || 0;
+    const height = Number(media.videoHeight) || 0;
+    let bufferedText = 'n/a';
+    try {
+      const ranges = media.buffered;
+      if (ranges && ranges.length) bufferedText = formatTime(ranges.end(ranges.length - 1));
+    } catch {
+      bufferedText = 'n/a';
+    }
+    this.statsPanel.innerHTML = '';
+    const title = document.createElement('div');
+    title.className = 'up-stats-heading';
+    title.textContent = 'Playback stats';
+    this.statsPanel.append(title);
+    const rows: Array<[string, string]> = [
+      ['Source type', this.provider.toUpperCase()],
+      ['Resolution', width && height ? width + ' × ' + height : 'Provided by embed / not reported'],
+      ['Current time', current + ' / ' + (Number.isFinite(this.duration) ? duration : 'LIVE')],
+      ['Playback rate', (this.mediaElement.playbackRate || 1) + '×'],
+      ['Buffered to', bufferedText],
+      ['Ready state', String(media.readyState ?? 'n/a')],
+      ['Link', (this.currentSource?.src || '').slice(0, 120) || 'No source'],
+    ];
+    for (const [label, value] of rows) {
+      const row = document.createElement('div');
+      row.className = 'up-stats-line';
+      const key = document.createElement('span');
+      key.textContent = label;
+      const val = document.createElement('strong');
+      val.textContent = value;
+      row.append(key, val);
+      this.statsPanel.append(row);
+    }
+  }
+
+  private updateSeekTooltip(clientX: number): void {
+    const duration = this.duration;
+    if (!Number.isFinite(duration) || duration <= 0) {
+      this.seekTooltip.hidden = true;
+      return;
+    }
+    const rect = this.seekInput.getBoundingClientRect();
+    if (!rect.width) return;
+    const fraction = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    this.seekTooltipLabel.textContent = formatTime(fraction * duration);
+    this.seekTooltip.style.left = (fraction * 100) + '%';
+    this.seekTooltip.hidden = false;
+  }
+
+  private queueHideControls(force = false): void {
+    if (this.idleTimer) clearTimeout(this.idleTimer);
+    if (force) {
+      this.idleTimer = setTimeout(() => {
+        if (!this.mediaElement.paused && !this.contextMenu?.contains(document.activeElement)) {
+          this.stage.classList.remove('up-interacting');
+          this.seekTooltip && (this.seekTooltip.hidden = true);
+        }
+      }, 450);
+      return;
+    }
+    if (this.options.autohide === false) return;
+    this.idleTimer = setTimeout(() => {
+      if (!this.mediaElement.paused && !this.contextMenu?.contains(document.activeElement)) {
+        this.stage.classList.remove('up-interacting');
+      }
+    }, 2200);
   }
 
   private bindKeyboard(): void {
@@ -508,6 +757,14 @@ export class UniversalPlayer {
         case 'arrowright':
           keyboard.preventDefault();
           this.seek(this.currentTime + 5);
+          break;
+        case 'j':
+          keyboard.preventDefault();
+          this.seek(Math.max(0, this.currentTime - 10));
+          break;
+        case 'l':
+          keyboard.preventDefault();
+          this.seek(this.currentTime + 10);
           break;
         case 'm':
           keyboard.preventDefault();
@@ -577,13 +834,13 @@ export class UniversalPlayer {
     this.seekInput.style.setProperty('--up-buffered', buffered + '%');
     this.currentLabel.textContent = formatTime(current);
     this.durationLabel.textContent = validDuration ? formatTime(duration) : 'LIVE';
-    this.playButton.innerHTML = makeIcon(this.mediaElement.paused ? 'play' : 'pause');
+    this.playButton.replaceChildren(makeIcon(this.mediaElement.paused ? 'play' : 'pause'));
     this.playButton.setAttribute('aria-label', this.mediaElement.paused ? 'Play video' : 'Pause video');
     this.playButton.title = this.mediaElement.paused ? 'Play' : 'Pause';
-    this.centerPlay.innerHTML = makeIcon(this.mediaElement.paused ? 'play' : 'pause');
+    this.centerPlay.replaceChildren(makeIcon(this.mediaElement.paused ? 'play' : 'pause'));
     this.centerPlay.setAttribute('aria-label', this.mediaElement.paused ? 'Play video' : 'Pause video');
     this.centerPlay.hidden = !this.mediaElement.paused;
-    this.muteButton.innerHTML = makeIcon(this.mediaElement.muted || this.mediaElement.volume === 0 ? 'muted' : 'volume');
+    this.muteButton.replaceChildren(makeIcon(this.mediaElement.muted || this.mediaElement.volume === 0 ? 'muted' : 'volume'));
     this.muteButton.setAttribute('aria-label', this.mediaElement.muted ? 'Unmute' : 'Mute');
     this.volumeInput.value = this.mediaElement.muted ? '0' : String(this.mediaElement.volume);
     this.volumeInput.style.setProperty('--up-volume', (this.mediaElement.muted ? 0 : this.mediaElement.volume * 100) + '%');
@@ -593,10 +850,11 @@ export class UniversalPlayer {
       button.classList.toggle('is-selected', selected);
     });
     const fullscreen = document.fullscreenElement === this.stage;
-    this.fullscreenButton.innerHTML = makeIcon(fullscreen ? 'exitFullscreen' : 'fullscreen');
+    this.fullscreenButton.replaceChildren(makeIcon(fullscreen ? 'exitFullscreen' : 'fullscreen'));
     this.fullscreenButton.setAttribute('aria-label', fullscreen ? 'Exit fullscreen' : 'Enter fullscreen');
     this.fullscreenButton.title = fullscreen ? 'Exit fullscreen' : 'Fullscreen';
     this.trackButton.classList.toggle('is-active', this.hasShowingCaptions());
+    this.loopMenuItem?.querySelector('.up-context-label') && (this.loopMenuItem.querySelector('.up-context-label')!.textContent = 'Loop: ' + (this.mediaElement.loop ? 'On' : 'Off'));
     this.spinner.hidden = !this.stage.classList.contains('is-buffering');
     this.updateOptionalControls();
   }
@@ -615,7 +873,9 @@ export class UniversalPlayer {
       const listener: EventListener = (originalEvent) => {
         if (media === this.mediaElement) {
           if (type === 'waiting' || type === 'stalled') this.stage.classList.add('is-buffering');
-          if (type === 'playing' || type === 'canplay' || type === 'canplaythrough' || type === 'error' || type === 'ended') this.stage.classList.remove('is-buffering');
+          if (type === 'playing') { this.stage.classList.remove('is-buffering'); this.stage.classList.add('is-playing'); this.queueHideControls(); }
+          if (type === 'pause' || type === 'ended' || type === 'error') { this.stage.classList.remove('is-buffering', 'is-playing'); this.stage.classList.add('up-interacting'); }
+          if (type === 'canplay' || type === 'canplaythrough') this.stage.classList.remove('is-buffering');
           this.syncUI();
         }
         this.emit(type, {

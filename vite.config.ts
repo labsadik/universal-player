@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 
 const entry = fileURLToPath(new URL('./src/index.ts', import.meta.url));
 
 export default defineConfig({
+  plugins: [tailwindcss()],
   build: {
     lib: {
       entry,

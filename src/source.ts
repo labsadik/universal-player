@@ -1,4 +1,13 @@
-export type SourceProvider = 'html5' | 'hls' | 'dash' | 'youtube';
+export type SourceProvider =
+  | 'html5'
+  | 'hls'
+  | 'dash'
+  | 'youtube'
+  | 'vimeo'
+  | 'tiktok'
+  | 'twitch'
+  | 'wistia'
+  | 'playerjs';
 
 export interface PlayerSource {
   src: string;
@@ -8,7 +17,8 @@ export interface PlayerSource {
   poster?: string;
 }
 
-const YOUTUBE_HOST = /(^|\.)((youtube\.com)|(youtube-nocookie\.com)|(youtu\.be))$/i;
+const hostIs = (host: string, domain: string): boolean =>
+  host === domain || host.endsWith('.' + domain);
 
 export function normalizeSource(input: string | PlayerSource): PlayerSource {
   const source = typeof input === 'string' ? { src: input } : { ...input };
@@ -21,6 +31,39 @@ export function normalizeSource(input: string | PlayerSource): PlayerSource {
   return { ...source, src };
 }
 
+/**
+ * Normalise a URL pasted by a user. Only web URLs are accepted; javascript:, data:
+ * and other schemes are deliberately rejected.
+ */
+export function normalizePastedVideoUrl(input: string): string {
+  let value = input.trim();
+  if (!value) throw new TypeError('Paste a video URL first.');
+
+  // Common copy/paste omissions: example.com/movie.mp4 or www.youtube.com/watch?v=...
+  const hasScheme = /^[a-z][a-z\d+.-]*:/i.test(value);
+  if (hasScheme && !/^https?:\/\//i.test(value)) {
+    throw new TypeError('Only http:// and https:// video links are accepted.');
+  }
+  if (!hasScheme && !value.startsWith('//')) value = 'https://' + value;
+  if (value.startsWith('//')) value = 'https:' + value;
+
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new TypeError('That does not look like a valid video URL.');
+  }
+
+  if (!['http:', 'https:'].includes(url.protocol)) {
+    throw new TypeError('Only http:// and https:// video links are accepted.');
+  }
+  if (!url.hostname || !url.hostname.includes('.')) {
+    throw new TypeError('Please paste a complete video URL, including its domain.');
+  }
+
+  return url.href;
+}
+
 export function detectProvider(input: string | PlayerSource): SourceProvider {
   const source = normalizeSource(input);
   if (source.provider && source.provider !== 'auto') return source.provider;
@@ -30,10 +73,31 @@ export function detectProvider(input: string | PlayerSource): SourceProvider {
   try {
     url = new URL(raw, typeof window !== 'undefined' ? window.location.href : 'https://universal-player.invalid/');
   } catch {
-    // Relative and blob URLs are valid HTML5 sources even without extensions.
+    // A relative or blob-like URL can still be a regular HTML5 source.
   }
 
-  if (url && YOUTUBE_HOST.test(url.hostname.toLowerCase())) return 'youtube';
+  const host = url?.hostname.toLowerCase() || '';
+  if (host && (
+    hostIs(host, 'youtube.com') ||
+    hostIs(host, 'youtube-nocookie.com') ||
+    hostIs(host, 'youtu.be')
+  )) return 'youtube';
+
+  if (host && (hostIs(host, 'vimeo.com'))) return 'vimeo';
+  if (host && hostIs(host, 'tiktok.com')) return 'tiktok';
+  if (host && hostIs(host, 'twitch.tv')) return 'twitch';
+  if (host && (hostIs(host, 'wistia.com') || hostIs(host, 'wi.st') || host === 'fast.wistia.net')) return 'wistia';
+
+  // Known Player.js-compatible embed URLs. Player.js only works on embeds whose
+  // player explicitly implements that protocol; it is not a generic iframe shim.
+  if (
+    host === 'player.mux.com' ||
+    host === 'play.gumlet.io' ||
+    host === 'iframe.mediadelivery.net' ||
+    host === 'player.mediadelivery.net' ||
+    host === 'video.bunnycdn.com' ||
+    (host === 'streamable.com' && /^\/e\//.test(url?.pathname || ''))
+  ) return 'playerjs';
 
   const type = (source.type || '').toLowerCase().split(';')[0].trim();
   const pathname = (url?.pathname || raw).toLowerCase().split(/[?#]/)[0];

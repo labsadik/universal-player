@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { detectProvider, formatTime, normalizeSource } from '../src/source.js';
+import { detectProvider, formatTime, normalizePastedVideoUrl, normalizeSource } from '../src/source.js';
 
 describe('normalizeSource', () => {
   it('accepts a URL string and trims whitespace', () => {
@@ -45,5 +45,38 @@ describe('formatTime', () => {
   it('returns a safe default for invalid values', () => {
     expect(formatTime(Number.NaN)).toBe('0:00');
     expect(formatTime(-1)).toBe('0:00');
+  });
+});
+
+
+describe('normalizePastedVideoUrl', () => {
+  it('adds HTTPS to a copied URL without a scheme', () => {
+    expect(normalizePastedVideoUrl('example.com/video.mp4')).toBe('https://example.com/video.mp4');
+  });
+
+  it('trims whitespace and preserves signed query parameters', () => {
+    expect(normalizePastedVideoUrl(' https://cdn.example.test/movie.mp4?token=a%2Fb ')).toBe(
+      'https://cdn.example.test/movie.mp4?token=a%2Fb',
+    );
+  });
+
+  it('rejects empty and unsafe URL schemes', () => {
+    expect(() => normalizePastedVideoUrl(' ')).toThrow(/Paste a video URL/);
+    expect(() => normalizePastedVideoUrl('javascript:alert(1)')).toThrow(/http:\/\/ and https:\/\//);
+    expect(() => normalizePastedVideoUrl('data:text/html,hello')).toThrow(/http:\/\/ and https:\/\//);
+  });
+});
+
+describe('popular video hosts', () => {
+  it('detects Vimeo, TikTok, Twitch and Wistia links', () => {
+    expect(detectProvider('https://vimeo.com/76979871')).toBe('vimeo');
+    expect(detectProvider('https://www.tiktok.com/@demo/video/7527476667770522893')).toBe('tiktok');
+    expect(detectProvider('https://www.twitch.tv/videos/106400740')).toBe('twitch');
+    expect(detectProvider('https://example.wistia.com/medias/abcde12345')).toBe('wistia');
+  });
+
+  it('detects supported Player.js embed sources', () => {
+    expect(detectProvider('https://play.gumlet.io/embed/64bfb0913ed6e5096d66dc1e')).toBe('playerjs');
+    expect(detectProvider('https://iframe.mediadelivery.net/embed/759/abcd')).toBe('playerjs');
   });
 });

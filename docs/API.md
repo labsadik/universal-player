@@ -1,96 +1,91 @@
 # Universal Player API
 
-## Install
+## Install / local development
+
+This package is under development and is not yet published to npm. To use the demo:
 
 ~~~bash
-npm install @workrcs/universal-player
+git clone https://github.com/WorkRCS/easy-video-player.git
+cd easy-video-player
+npm install
+npm run dev
 ~~~
 
-The package is not published to npm yet. During development, clone this repository and use the local demo, or install from a local package tarball after building.
-
-## Vanilla JavaScript
+## Create a player
 
 ~~~ts
 import { createPlayer } from '@workrcs/universal-player';
 import '@workrcs/universal-player/style.css';
 
-const player = createPlayer('#video-slot', {
-  source: { src: '/media/demo.mp4', type: 'video/mp4' },
-  title: 'Product demo',
+const player = createPlayer('#player-slot', {
+  source: { src: '/videos/sample.mp4', type: 'video/mp4' },
+  title: 'Sample clip',
   preload: 'metadata',
   aspectRatio: '16 / 9',
+  objectFit: 'contain',
+  playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
+  autohide: true,
 });
 
 await player.ready;
 await player.play();
-
-player.seek(10);
-player.setVolume(0.75);
+player.seek(8);
+player.setVolume(0.8);
 player.setPlaybackRate(1.25);
 
-// Call during page cleanup.
+// Unsubscribe and destroy when your view unmounts.
 player.destroy();
 ~~~
 
-## React
+## Framework-neutral integration
 
-Mount the player inside a client lifecycle hook so browser custom elements are not created during server rendering.
+The core is DOM-based and has no React runtime dependency. In React, create the player inside useEffect; in Vue, Svelte or Angular, create it from the browser mount lifecycle and call destroy() during teardown. Avoid creating the DOM player during server-side rendering.
 
-~~~tsx
-import { useEffect, useRef } from 'react';
-import { createPlayer } from '@workrcs/universal-player';
-import '@workrcs/universal-player/style.css';
-
-export function UniversalPlayerView({ src }: { src: string }) {
-  const mountRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!mountRef.current) return;
-    const player = createPlayer(mountRef.current, { source: src, title: 'Video' });
-    return () => player.destroy();
-  }, [src]);
-
-  return <div ref={mountRef} />;
-}
-~~~
-
-## Vue / Svelte / Angular
-
-Call createPlayer() from the framework's browser mount lifecycle and call destroy() during teardown. The core API is DOM-based; it does not require React.
-
-## Sources
-
-- MP4 / WebM: HTML5 media element.
-- HLS (.m3u8): Video.js HLS.js media adapter.
-- DASH (.mpd): Video.js DASH media adapter. This adapter is still marked unstable upstream; its exact version is pinned.
-- YouTube: Video.js YouTube IFrame adapter.
-
-Pass provider explicitly when a URL does not reveal its media type:
+## Loading pasted URLs
 
 ~~~ts
-await player.setSource({
-  src: 'https://cdn.example.test/live',
-  type: 'application/dash+xml',
-  provider: 'dash',
-});
+import { createPlayer, normalizePastedVideoUrl, detectProvider } from '@workrcs/universal-player';
+
+const url = normalizePastedVideoUrl(userPastedText);
+const provider = detectProvider(url);
+const player = createPlayer('#player', { source: { src: url, provider, title: 'Pasted video' } });
 ~~~
 
-Playback still depends on browser codec support, the remote server's CORS/range headers, embed policies, network access, and any DRM licence rules. YouTube's IFrame API also has provider-specific limitations.
+normalizePastedVideoUrl() trims the value, adds https:// if a scheme was omitted, preserves the query string and accepts only http:// and https://. It does not download, inspect or proxy the URL: it only normalizes the address.
 
-## API
+## Playback providers
 
-- createPlayer(target, options) — mount in an HTMLElement or selector.
-- player.ready — initial source/adapter setup promise.
-- player.setSource(source) — load a URL or typed source object.
-- player.play() / player.pause() — playback.
-- player.seek(seconds) — seek to a non-negative second value.
-- player.setVolume(0..1) / player.setMuted(boolean).
-- player.setPlaybackRate(rate) — positive playback rate.
-- player.on(event, listener) — listen for media events; returns an unsubscribe function.
-- player.off(event, listener) — remove a listener.
-- player.requestFullscreen() / player.requestPictureInPicture().
-- player.destroy() — release listeners, media and DOM.
+| URL or media type | Adapter |
+| --- | --- |
+| MP4 / WebM / browser-supported files | HTML video |
+| .m3u8 / HLS MIME types | HLS.js Video.js adapter |
+| .mpd / application/dash+xml | DASH Video.js adapter |
+| youtube.com, youtu.be | YouTube iframe adapter |
+| vimeo.com | Vimeo adapter |
+| tiktok.com | TikTok adapter |
+| twitch.tv | Twitch adapter |
+| Wistia URLs | Wistia adapter |
+| Known Player.js embeds (Mux/Gumlet/Bunny/Streamable and compatible hosts) | Player.js adapter |
 
-### Events
+When a URL's extension does not reveal its source type, supply a type or explicit provider. Provider auto-detection is heuristic; it does not make arbitrary web-page URLs playable.
 
-Events are exposed on the wrapper through player.on(). Native media events include loadedmetadata, canplay, play, playing, pause, timeupdate, waiting, ended, volumechange, ratechange, and error. The event's detail includes originalEvent, media, and the current source for native events. The sourcechange event includes source and provider.
+## Controls
+
+- play(), pause() — start or pause playback.
+- seek(seconds) — seek to a non-negative time.
+- setVolume(0..1), setMuted(boolean) — volume controls.
+- setPlaybackRate(rate) — positive playback speed.
+- requestFullscreen() — fullscreen if the browser permits it.
+- requestPictureInPicture() — native media PiP when exposed by the current media provider.
+- on(event, listener) / off(event, listener) — subscribe to events.
+- destroy() — unbind listeners, stop media and remove the player DOM.
+
+The custom right-click menu includes loop, copy-link, stats and keyboard help. Keyboard shortcuts include Space/K for play-pause, Left/Right for 5-second seek, J/L for 10-second seek, M for mute, and F for fullscreen.
+
+## Provider limits
+
+A browser can play only supported codecs and media types. Direct media URLs can fail because of CORS, missing byte-range support, inaccessible segments, expiring signatures or server policy. Embedded platforms may constrain playback rate, quality, captions, PiP and fullscreen. Twitch embeds can require the consuming site's domain as a parent parameter/allowlist. DRM-protected media needs the relevant CDM and licence flow. The Player.js adapter works only for embeds implementing the Player.js protocol.
+
+## Events
+
+Native media events are surfaced via player.on(), including loadstart, loadedmetadata, canplay, play, playing, pause, timeupdate, waiting, ended, volumechange, ratechange and error. The event's detail includes the original event, active media element, current source and media error (when available). sourcechange contains source and provider.

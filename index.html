@@ -3,84 +3,178 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#090d16" />
-    <meta name="description" content="Universal Player — a modern, framework-neutral Video.js player." />
-    <title>Universal Player · Video.js</title>
+    <meta name="theme-color" content="#0a1118" />
+    <meta name="description" content="Universal Player — one beautiful video player for direct video links and popular video hosts." />
+    <title>Universal Player — watch anything, your way</title>
   </head>
-  <body>
-    <div class="demo-shell">
-      <header class="demo-header">
-        <a class="brand" href="#" aria-label="Universal Player home">
-          <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.75v12.5L18 12 8 5.75Z" fill="currentColor"/><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/></svg>
-          </span>
-          <span class="brand-copy"><strong>Universal Player</strong><small>POWERED BY VIDEO.JS</small></span>
-        </a>
-        <span class="version-chip"><span class="status-dot"></span> Developer preview</span>
+  <body class="min-h-screen bg-[#0a1118] text-slate-100 antialiased selection:bg-emerald-300/30">
+    <div class="min-h-screen">
+      <header class="sticky top-0 z-40 border-b border-white/10 bg-[#0a1118]/90 backdrop-blur-xl">
+        <div class="mx-auto flex h-[72px] max-w-[1700px] items-center gap-4 px-4 md:px-6">
+          <button id="sidebar-toggle" class="icon-surface hidden h-10 w-10 shrink-0 items-center justify-center rounded-full sm:flex" aria-label="Toggle navigation">
+            <i data-lucide="menu"></i>
+          </button>
+          <a href="#" class="flex shrink-0 items-center gap-3 text-white no-underline" aria-label="Universal Player home">
+            <span class="brand-mark"><i data-lucide="play"></i></span>
+            <span class="hidden leading-tight sm:block">
+              <strong class="block text-[17px] font-extrabold tracking-[-.045em]">Universal Player</strong>
+              <small class="mt-1 block text-[9px] font-extrabold uppercase tracking-[.2em] text-slate-500">Open video, freely</small>
+            </span>
+          </a>
+
+          <form id="video-loader-form" class="url-loader mx-auto flex min-w-0 max-w-[760px] flex-1 items-center gap-2 rounded-full border border-white/10 bg-white/[.055] p-1.5 pl-4 focus-within:border-emerald-300/60 focus-within:ring-4 focus-within:ring-emerald-300/10" autocomplete="off">
+            <i data-lucide="link-2" class="hidden h-4 w-4 shrink-0 text-slate-500 sm:block"></i>
+            <input id="video-url" name="video-url" type="url" inputmode="url" spellcheck="false" class="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:ring-0" placeholder="Paste a video link — MP4, HLS, DASH, YouTube, Vimeo…" aria-label="Video URL" />
+            <button id="paste-clipboard" class="icon-surface hidden h-9 w-9 shrink-0 items-center justify-center rounded-full sm:flex" type="button" aria-label="Paste from clipboard" title="Paste from clipboard"><i data-lucide="clipboard-paste"></i></button>
+            <button id="load-video" class="load-button flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-xs font-extrabold text-slate-950 sm:px-5" type="submit">
+              <i data-lucide="play" class="h-4 w-4"></i><span class="hidden sm:inline">Load video</span><span class="sm:hidden">Load</span>
+            </button>
+          </form>
+
+          <a href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer" class="icon-surface flex h-10 w-10 shrink-0 items-center justify-center rounded-full" aria-label="Open GitHub repository" title="GitHub">
+            <i data-lucide="code-2"></i>
+          </a>
+        </div>
       </header>
 
-      <main>
-        <section class="hero">
-          <p class="eyebrow">ONE PLAYER. EVERY WEB STACK.</p>
-          <h1>Video, without<br /><span>the framework lock-in.</span></h1>
-          <p class="hero-copy">A clean, accessible player API built on Video.js — made for the open web.</p>
-        </section>
-
-        <section class="player-card" aria-label="Universal Player demo">
-          <div class="player-card-head">
-            <div>
-              <p class="eyebrow">NOW PLAYING</p>
-              <h2 id="source-title">Flower · MP4 sample</h2>
+      <div class="mx-auto grid max-w-[1700px] grid-cols-1 gap-5 px-3 py-5 md:px-5 xl:grid-cols-[220px_minmax(0,1fr)]">
+        <aside id="sidebar" class="hidden xl:block">
+          <nav class="sticky top-[92px] space-y-1" aria-label="Main navigation">
+            <a href="#player-section" class="sidebar-link sidebar-link-active"><i data-lucide="house"></i><span>Watch</span></a>
+            <a href="#source-panel" class="sidebar-link"><i data-lucide="link-2"></i><span>Open a link</span></a>
+            <a href="#supported-formats" class="sidebar-link"><i data-lucide="layers"></i><span>Formats & sources</span></a>
+            <div class="my-5 border-t border-white/10"></div>
+            <p class="px-3 pb-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-600">Your workspace</p>
+            <a href="#player-section" class="sidebar-link"><i data-lucide="history"></i><span>Recently opened</span></a>
+            <a href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer" class="sidebar-link"><i data-lucide="code-2"></i><span>Open source</span><i data-lucide="arrow-up-right" class="ml-auto h-3.5 w-3.5 text-slate-600"></i></a>
+            <div class="mt-8 rounded-2xl border border-emerald-300/15 bg-gradient-to-br from-emerald-300/[.09] to-blue-400/[.07] p-4">
+              <span class="mb-3 grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-emerald-300 to-blue-400 text-slate-950"><i data-lucide="sparkles"></i></span>
+              <p class="text-sm font-bold text-white">One player. Many sources.</p>
+              <p class="mt-1.5 text-xs leading-5 text-slate-400">Paste a supported link and Universal Player selects its playback adapter.</p>
             </div>
-            <span id="media-badge" class="media-badge">MP4</span>
-          </div>
-          <div id="player-mount" class="player-mount"></div>
-          <div class="player-status" aria-live="polite">
-            <span id="status-indicator" class="status-indicator"></span>
-            <span id="player-status">Loading MP4 sample…</span>
-          </div>
-        </section>
+          </nav>
+        </aside>
 
-        <section class="source-panel" aria-labelledby="source-panel-title">
-          <div class="source-panel-copy">
-            <span class="panel-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v4A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
+        <main class="min-w-0">
+          <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h3 id="source-panel-title">Try your own video</h3>
-              <p>Choose an MP4 from your computer. It stays local in your browser.</p>
+              <div class="mb-2 flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.22em] text-emerald-300">
+                <span class="live-dot"></span> Your universal watch space
+              </div>
+              <h1 class="text-2xl font-extrabold tracking-[-.045em] text-white sm:text-[30px]">Watch it your way<span class="accent-period">.</span></h1>
+              <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Drop in a direct video URL or a supported embed link. One clean player, with its own controls and a green-to-blue accent.</p>
             </div>
+            <span class="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[.035] px-3 py-2 text-[10px] font-bold text-slate-400 md:inline-flex"><span class="h-1.5 w-1.5 rounded-full bg-emerald-300"></span> Video.js engine · Custom UI</span>
           </div>
-          <label class="file-picker">
-            <input id="local-video" type="file" accept="video/mp4,video/webm,video/ogg,video/*" />
-            <span>Choose video</span>
-          </label>
-          <button id="sample-button" class="secondary-button" type="button">Reload sample</button>
-        </section>
 
-        <section class="feature-grid" aria-label="Player highlights">
-          <article class="feature-card">
-            <span class="feature-icon" aria-hidden="true">⌘</span>
-            <h3>Framework neutral</h3>
-            <p>Use the core from vanilla JS, React, Vue, Svelte, Angular or another browser framework.</p>
-          </article>
-          <article class="feature-card">
-            <span class="feature-icon" aria-hidden="true">◉</span>
-            <h3>Built for the web</h3>
-            <p>Video.js custom elements, accessible controls and a responsive player surface.</p>
-          </article>
-          <article class="feature-card">
-            <span class="feature-icon" aria-hidden="true">↗</span>
-            <h3>Pluggable playback</h3>
-            <p>MP4 first, with optional HLS, DASH and YouTube media adapters.</p>
-          </article>
-        </section>
+          <div class="grid min-w-0 grid-cols-1 gap-6 2xl:grid-cols-[minmax(0,1fr)_355px]">
+            <section id="player-section" class="min-w-0">
+              <div class="overflow-hidden rounded-[22px] border border-white/10 bg-[#111923] shadow-[0_28px_80px_rgba(0,0,0,.3)]">
+                <div class="flex items-center justify-between gap-3 border-b border-white/[.07] px-4 py-3 sm:px-5">
+                  <div class="flex min-w-0 items-center gap-3">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-emerald-300/15 to-blue-400/15 text-emerald-200"><i data-lucide="clapperboard"></i></span>
+                    <div class="min-w-0">
+                      <p class="text-[9px] font-extrabold uppercase tracking-[.18em] text-slate-500">Now playing</p>
+                      <h2 id="source-title" class="mt-0.5 truncate text-sm font-bold text-white">Flower · MP4 sample</h2>
+                    </div>
+                  </div>
+                  <span id="media-badge" class="media-badge">MP4</span>
+                </div>
+                <div id="player-mount" class="player-mount"></div>
+                <div class="flex min-h-[44px] items-center gap-2 border-t border-white/[.06] px-4 text-[11px] text-slate-400 sm:px-5" aria-live="polite">
+                  <span id="status-indicator" class="status-indicator"></span>
+                  <span id="player-status">Preparing MP4 sample…</span>
+                  <span id="status-extra" class="ml-auto hidden text-[10px] text-slate-600 sm:block">Right-click for more options</span>
+                </div>
+              </div>
 
-        <footer class="demo-footer">
-          <span>Universal Player · Open source</span>
-          <a href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer">View on GitHub <span aria-hidden="true">↗</span></a>
-        </footer>
-      </main>
+              <div class="px-1 pt-5">
+                <div class="flex flex-wrap items-start justify-between gap-4">
+                  <div class="min-w-0 flex-1">
+                    <div class="mb-2 flex flex-wrap items-center gap-2">
+                      <span id="provider-pill" class="provider-pill">HTML5 VIDEO</span>
+                      <span class="text-[11px] text-slate-500">Custom playback surface</span>
+                    </div>
+                    <h2 id="video-heading" class="text-xl font-extrabold leading-snug tracking-[-.035em] text-white sm:text-2xl">Flower — a sample video</h2>
+                    <p id="video-subtitle" class="mt-2 text-xs leading-5 text-slate-400">A quick sample to check playback, seeking, volume and fullscreen.</p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button id="like-button" class="action-chip" type="button" aria-pressed="false"><i data-lucide="thumbs-up"></i><span id="like-count">Like</span></button>
+                    <button id="share-button" class="action-chip" type="button"><i data-lucide="share-2"></i><span>Share</span></button>
+                    <button id="copy-link-button" class="action-chip hidden sm:inline-flex" type="button"><i data-lucide="copy"></i><span>Copy link</span></button>
+                  </div>
+                </div>
+
+                <div class="mt-5 rounded-2xl border border-white/[.08] bg-white/[.025] p-4 sm:p-5">
+                  <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                      <span class="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-emerald-300 to-blue-400 text-slate-950"><i data-lucide="waves"></i></span>
+                      <div><p class="text-sm font-bold text-white">Universal Player</p><p class="mt-1 text-[11px] text-slate-500">Open-source media playground</p></div>
+                    </div>
+                    <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[.07] px-3 py-2 text-[10px] font-extrabold text-emerald-200">GREEN × BLUE RGB</span>
+                  </div>
+                  <p class="text-xs leading-6 text-slate-400">The playback engine comes from Video.js. The visible controls, theme, context menu and page layout are built for Universal Player. Some remote services still impose their own embed, codec, CORS or feature restrictions.</p>
+                </div>
+              </div>
+            </section>
+
+            <aside class="min-w-0 space-y-5">
+              <section id="source-panel" class="paste-card rounded-[20px] border border-white/10 bg-[#111923] p-4 sm:p-5">
+                <div class="mb-4 flex items-start gap-3">
+                  <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-emerald-300/15 to-blue-400/15 text-emerald-200"><i data-lucide="link-2"></i></span>
+                  <div><h3 class="text-sm font-extrabold text-white">Load a video link</h3><p class="mt-1 text-xs leading-5 text-slate-400">Paste any supported URL and press Enter.</p></div>
+                </div>
+                <label for="source-url-side" class="mb-2 block text-[10px] font-extrabold uppercase tracking-[.16em] text-slate-500">Video address</label>
+                <div class="flex gap-2">
+                  <input id="source-url-side" type="url" class="side-url-input min-w-0 flex-1 rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-xs text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/50" placeholder="https://…" />
+                  <button id="load-side-url" class="load-icon-button" type="button" aria-label="Load pasted video URL" title="Load URL"><i data-lucide="arrow-right"></i></button>
+                </div>
+                <div class="mt-3 flex flex-wrap gap-1.5">
+                  <span class="format-chip">MP4</span><span class="format-chip">HLS</span><span class="format-chip">DASH</span><span class="format-chip">YouTube</span><span class="format-chip">Vimeo</span>
+                </div>
+                <p id="url-feedback" class="mt-3 min-h-4 text-[11px] leading-5 text-slate-500" aria-live="polite">Direct files and supported hosts only. Protected or private videos may not embed.</p>
+              </section>
+
+              <section class="rounded-[20px] border border-white/10 bg-[#111923] p-4 sm:p-5">
+                <div class="mb-4 flex items-center justify-between gap-2">
+                  <div><p class="text-[9px] font-extrabold uppercase tracking-[.18em] text-blue-300">UP NEXT</p><h3 class="mt-1 text-sm font-extrabold text-white">Try a sample</h3></div>
+                  <span class="text-[10px] text-slate-600">DEMO</span>
+                </div>
+                <div class="space-y-3">
+                  <button class="recommendation-card" type="button" data-sample="flower">
+                    <span class="recommendation-thumb thumb-flower"><i data-lucide="flower-2"></i><span>MP4</span></span>
+                    <span class="min-w-0 flex-1 text-left"><strong>Flower · MP4 sample</strong><small>Direct video · HTML5</small><em>Test the custom controls</em></span>
+                    <i data-lucide="chevron-right" class="rec-chevron"></i>
+                  </button>
+                  <button class="recommendation-card" type="button" data-sample="big-buck">
+                    <span class="recommendation-thumb thumb-cinema"><i data-lucide="film"></i><span>MP4</span></span>
+                    <span class="min-w-0 flex-1 text-left"><strong>Big Buck Bunny clip</strong><small>Direct video · HTML5</small><em>Try another sample source</em></span>
+                    <i data-lucide="chevron-right" class="rec-chevron"></i>
+                  </button>
+                </div>
+                <button id="restore-sample" class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[.035] px-3 py-3 text-xs font-bold text-slate-300 transition hover:border-emerald-300/30 hover:bg-emerald-300/[.06]"><i data-lucide="rotate-ccw"></i> Restore default sample</button>
+              </section>
+
+              <section id="supported-formats" class="rounded-[20px] border border-white/10 bg-[#111923] p-4 sm:p-5">
+                <div class="mb-3 flex items-center gap-2"><i data-lucide="layers-3" class="h-4 w-4 text-emerald-300"></i><h3 class="text-xs font-extrabold text-white">Supported source types</h3></div>
+                <div class="space-y-2 text-[11px] text-slate-400">
+                  <div class="format-row"><span>Direct files</span><span>MP4 · WebM · OGG</span></div>
+                  <div class="format-row"><span>Adaptive streaming</span><span>HLS · DASH</span></div>
+                  <div class="format-row"><span>Video platforms</span><span>YouTube · Vimeo · TikTok</span></div>
+                  <div class="format-row"><span>Other embeds</span><span>Twitch · Wistia · Player.js</span></div>
+                </div>
+                <p class="mt-3 border-t border-white/[.07] pt-3 text-[10px] leading-5 text-slate-600">A web page URL is not always a playable media URL. The host must permit embedding, and DRM/private links may require authentication or a licensed playback path.</p>
+              </section>
+            </aside>
+          </div>
+
+          <footer class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.07] px-1 py-5 text-[10px] text-slate-600">
+            <span>Universal Player · Open-source development preview</span>
+            <a class="inline-flex items-center gap-1.5 transition hover:text-emerald-200" href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer">View source on GitHub <i data-lucide="external-link"></i></a>
+          </footer>
+        </main>
+      </div>
+      <div id="toast" class="toast-message" role="status" aria-live="polite" hidden></div>
     </div>
     <script type="module" src="/src/demo.ts"></script>
   </body>

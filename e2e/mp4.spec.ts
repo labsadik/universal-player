@@ -40,3 +40,29 @@ test('loads a real MP4, reads metadata, and starts playback from the custom UI',
   await expect(page.locator('#player-mount .up-center-play')).toBeHidden();
   await expect(page.locator('#player-mount .up-controls button[aria-label="Pause video"]')).toBeVisible();
 });
+
+test('loads a pasted direct MP4 URL from the top URL bar', async ({ page }) => {
+  await page.goto('/');
+  const urlBox = page.locator('#video-url');
+  await urlBox.fill('https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4');
+  await urlBox.press('Enter');
+  await expect(page.locator('#provider-pill')).toHaveText('HTML5 VIDEO');
+  await expect.poll(() => page.locator('#player-mount video').first().evaluate((node) => {
+    const media = node as HTMLVideoElement;
+    return media.readyState >= HTMLMediaElement.HAVE_METADATA && media.duration > 0;
+  }), { timeout: 60000 }).toBe(true);
+});
+
+test('opens Universal Player context menu on right click', async ({ page }) => {
+  await page.goto('/');
+  const stage = page.locator('#player-mount media-container.up-stage');
+  await expect(stage).toBeAttached();
+  await stage.click({ button: 'right', position: { x: 160, y: 100 } });
+  const contextMenu = page.locator('#player-mount .up-context-menu');
+  await expect(contextMenu).toBeVisible();
+  await expect(contextMenu).toContainText('Copy video link');
+  await expect(contextMenu).toContainText('Playback stats');
+  await contextMenu.getByRole('menuitem', { name: 'Playback stats' }).click();
+  await expect(page.locator('#player-mount .up-stats-panel')).toBeVisible();
+  await expect(page.locator('#player-mount .up-stats-panel')).toContainText('Source type');
+});
