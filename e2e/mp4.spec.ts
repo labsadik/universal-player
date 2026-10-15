@@ -67,3 +67,22 @@ test('opens Universal Player context menu on right click', async ({ page }) => {
   await expect(stats).toBeVisible();
   await expect(stats).toContainText('Source type');
 });
+
+
+test('toggles the in-page mini player and theater mode', async ({ page }) => {
+  await page.goto('/');
+  const root = page.locator('#player-mount .up-root');
+  const miniButton = page.locator('#player-mount .up-mini-player-button');
+  const theaterButton = page.locator('#player-mount .up-theater-button');
+
+  await expect(root).not.toHaveClass(/up-mini-player/);
+  await miniButton.click();
+  await expect(root).toHaveClass(/up-mini-player/);
+  await page.keyboard.press('Escape');
+  await expect(root).not.toHaveClass(/up-mini-player/);
+
+  await theaterButton.click();
+  await expect(root).toHaveClass(/up-theater/);
+  await page.keyboard.press('Escape');
+  await expect(root).not.toHaveClass(/up-theater/);
+});

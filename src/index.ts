@@ -566,7 +566,7 @@ export class UniversalPlayer {
     this.helpPanel = document.createElement('div');
     this.helpPanel.className = 'up-stats-panel up-help-panel';
     this.helpPanel.hidden = true;
-    this.helpPanel.innerHTML = '<div class="up-stats-heading">Keyboard shortcuts</div><div class="up-stats-line"><span>Play / pause</span><kbd>Space</kbd> <kbd>K</kbd></div><div class="up-stats-line"><span>Seek backward / forward</span><kbd>←</kbd> <kbd>→</kbd></div><div class="up-stats-line"><span>Skip 10 seconds</span><kbd>J</kbd> <kbd>L</kbd></div><div class="up-stats-line"><span>Mute / unmute</span><kbd>M</kbd></div><div class="up-stats-line"><span>Fullscreen</span><kbd>F</kbd></div><div class="up-stats-line"><span>Close menu</span><kbd>Esc</kbd></div>';
+    this.helpPanel.innerHTML = '<div class="up-stats-heading">Keyboard shortcuts</div><div class="up-stats-line"><span>Play / pause</span><kbd>Space</kbd> <kbd>K</kbd></div><div class="up-stats-line"><span>Seek backward / forward</span><kbd>←</kbd> <kbd>→</kbd></div><div class="up-stats-line"><span>Skip 10 seconds</span><kbd>J</kbd> <kbd>L</kbd></div><div class="up-stats-line"><span>Mute / unmute</span><kbd>M</kbd></div><div class="up-stats-line"><span>Fullscreen</span><kbd>F</kbd></div><div class="up-stats-line"><span>Theater mode</span><kbd>T</kbd></div><div class="up-stats-line"><span>Mini player</span><kbd>I</kbd></div><div class="up-stats-line"><span>Close menu / mode</span><kbd>Esc</kbd></div>';
 
     this.stage.append(top, this.spinner, clickSurface, this.centerPlay, this.controlsRoot, this.seekTooltip, this.contextMenu, this.statsPanel, this.helpPanel);
     this.listen(document, 'fullscreenchange', () => this.syncUI());
@@ -590,7 +590,7 @@ export class UniversalPlayer {
       const pointer = event as MouseEvent;
       const rect = this.stage.getBoundingClientRect();
       const menuWidth = 224;
-      const menuHeight = 280;
+      const menuHeight = 360;
       const left = Math.max(8, Math.min(pointer.clientX - rect.left, rect.width - menuWidth - 8));
       const top = Math.max(8, Math.min(pointer.clientY - rect.top, rect.height - menuHeight - 8));
       this.contextMenu.style.left = left + 'px';
