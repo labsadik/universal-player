@@ -26,7 +26,7 @@
     "pack:check": "npm pack --dry-run"
   },
   "dependencies": {
-    "@videojs/dash-video": "10.0.0-rc.2",
+    "@videojs/dash-video": "10.1.0",
     "@videojs/hlsjs-video": "10.1.0",
     "@videojs/html": "10.1.0",
     "@videojs/youtube-video": "10.1.0"
