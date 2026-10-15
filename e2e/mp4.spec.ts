@@ -38,5 +38,5 @@ test('loads a real MP4, reads metadata, and starts playback from the custom UI',
   ).toBe(true);
 
   await expect(page.locator('#player-mount .up-center-play')).toBeHidden();
-  await expect(page.locator('#player-mount button[aria-label="Pause video"]').first()).toBeVisible();
+  await expect(page.locator('#player-mount .up-controls button[aria-label="Pause video"]')).toBeVisible();
 });
