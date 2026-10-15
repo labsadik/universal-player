@@ -515,8 +515,26 @@
   .up-root.up-mini-player { right: 10px !important; bottom: 10px !important; }
   .up-root.up-theater { inset: 74px 6px 6px !important; border-radius: 11px; }
   .up-root.up-theater .up-controls { padding-bottom: 8px; }
-  .up-theater-button, .up-mini-player-button { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .up-root.up-mini-player, .up-root.up-theater { animation: none; }
+}
+
+.up-quality-menu-group {
+  margin-top: 5px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255,255,255,.09);
+}
+.up-quality-menu-group[hidden] { display: none; }
+.up-quality-option { font-variant-numeric: tabular-nums; }
+.up-quality-option.is-selected { color: #9ef5d5; background: linear-gradient(100deg, rgba(46,230,166,.12), rgba(63,140,255,.13)); }
+.up-quality-option.is-selected::after {
+  content: "✓";
+  margin-left: auto;
+  color: #65eac0;
+  font-size: 12px;
+  font-weight: 900;
+}
+@media (max-width: 400px) {
+  .up-theater-button, .up-mini-player-button { display: none; }
 }

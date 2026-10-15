@@ -89,3 +89,12 @@ A browser can play only supported codecs and media types. Direct media URLs can 
 ## Events
 
 Native media events are surfaced via player.on(), including loadstart, loadedmetadata, canplay, play, playing, pause, timeupdate, waiting, ended, volumechange, ratechange and error. The event's detail includes the original event, active media element, current source and media error (when available). sourcechange contains source and provider.
+
+
+## Additional UI features
+
+The custom UI includes a timestamp preview while seeking, auto-hiding controls, loop toggle, copy-source-link, playback statistics, keyboard help, an in-page mini player (I) and theater mode (T). Escape closes menus and exits the display modes. Native Picture-in-Picture uses requestPictureInPicture() where the media provider exposes it.
+
+The playback settings menu shows a quality section only when the current HLS/DASH player store exposes two or more renditions through the Video.js quality feature. “Auto” returns quality choice to adaptive bitrate selection. MP4/WebM direct files are fixed-quality sources, so this setting is hidden for them.
+
+The context menu and other UI remain project-owned. Icon glyphs come from the locally bundled Lucide package; no runtime icon font is downloaded.

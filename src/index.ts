@@ -3,6 +3,7 @@ import '@videojs/html/ui/container';
 import './style.css';
 
 import { createElement, Play, Pause, Rewind, FastForward, Volume2, VolumeX, Settings2, Maximize, Minimize, PictureInPicture2, MonitorPlay, Captions, Copy, Info, Repeat, Gauge, Keyboard, Link as LinkIcon, CircleHelp, X } from 'lucide';
+import { selectQuality } from '@videojs/html';
 import { detectProvider, formatTime, normalizeSource } from './source.js';
 import type { PlayerSource, SourceProvider } from './source.js';
 
@@ -140,6 +141,11 @@ export class UniversalPlayer {
   private muteButton!: HTMLButtonElement;
   private speedButton!: HTMLButtonElement;
   private speedMenu!: HTMLDivElement;
+  private qualityMenuGroup!: HTMLDivElement;
+  private qualityMenuTitle!: HTMLDivElement;
+  private qualitySignature = '';
+  private selectedQualityId = 'auto';
+  private qualityStoreCleanup: (() => void) | undefined;
   private settingsButton!: HTMLButtonElement;
   private pipButton!: HTMLButtonElement;
   private miniPlayerButton!: HTMLButtonElement;
@@ -194,6 +200,7 @@ export class UniversalPlayer {
 
     this.bindMediaEvents(this.mediaElement);
     this.bindKeyboard();
+    this.connectQualityStore();
     this.syncUI();
 
     this.ready = options.source ? this.setSource(options.source) : Promise.resolve();
@@ -244,12 +251,15 @@ export class UniversalPlayer {
     }
 
     this.source = source;
+    this.selectedQualityId = 'auto';
+    this.qualitySignature = '';
     const poster = source.poster || this.options.poster;
     if (poster) this.mediaElement.setAttribute('poster', poster);
     else this.mediaElement.removeAttribute('poster');
     this.mediaElement.setAttribute('src', source.src);
 
     if (provider === 'html5') this.mediaElement.load?.();
+    this.refreshQualityMenu();
 
     this.titleLabel.textContent = source.title || this.options.title || source.src.split('/').pop() || 'Universal Player';
     this.stage.setAttribute('aria-label', (source.title || this.options.title || 'Universal Player') + ' video');
@@ -370,6 +380,8 @@ export class UniversalPlayer {
     if (this.destroyed) return;
     this.unbindMediaEvents();
     for (const cleanup of this.uiCleanup.splice(0)) cleanup();
+    this.qualityStoreCleanup?.();
+    this.qualityStoreCleanup = undefined;
     if (this.idleTimer) clearTimeout(this.idleTimer);
     this.container.classList.remove('up-mini-player', 'up-theater');
     this.teardownMedia(this.mediaElement);
@@ -526,6 +538,15 @@ export class UniversalPlayer {
       this.speedMenu.hidden = !this.speedMenu.hidden;
       this.settingsButton.setAttribute('aria-expanded', this.speedMenu.hidden ? 'false' : 'true');
     });
+    this.qualityMenuGroup = document.createElement('div');
+    this.qualityMenuGroup.className = 'up-quality-menu-group';
+    this.qualityMenuGroup.hidden = true;
+    this.qualityMenuTitle = document.createElement('div');
+    this.qualityMenuTitle.className = 'up-menu-title';
+    this.qualityMenuTitle.textContent = 'Video quality';
+    this.qualityMenuGroup.append(this.qualityMenuTitle);
+    this.speedMenu.append(this.qualityMenuGroup);
+
     settingsWrap.append(this.settingsButton, this.speedMenu);
 
     this.trackButton = makeButton('Toggle captions', 'captions');
@@ -673,6 +694,93 @@ export class UniversalPlayer {
     });
 
     this.updateOptionalControls();
+  }
+
+  private connectQualityStore(): void {
+    const host = this.element as HTMLElement & {
+      store?: {
+        state: unknown;
+        subscribe?: (listener: () => void) => (() => void) | void;
+      };
+    };
+    const store = host.store;
+    if (store && typeof store.subscribe === 'function') {
+      const unsubscribe = store.subscribe(() => this.refreshQualityMenu());
+      if (typeof unsubscribe === 'function') this.qualityStoreCleanup = unsubscribe;
+    }
+    this.refreshQualityMenu();
+  }
+
+  private refreshQualityMenu(): void {
+    if (!this.qualityMenuGroup || !this.qualityMenuTitle) return;
+    if (this.provider !== 'hls' && this.provider !== 'dash') {
+      this.qualityMenuGroup.hidden = true;
+      return;
+    }
+
+    const host = this.element as HTMLElement & { store?: { state: unknown } };
+    const store = host.store;
+    if (!store) {
+      this.qualityMenuGroup.hidden = true;
+      return;
+    }
+
+    let quality: ReturnType<typeof selectQuality>;
+    try {
+      quality = selectQuality(store.state as Parameters<typeof selectQuality>[0]);
+    } catch {
+      quality = undefined;
+    }
+
+    const renditions = quality?.videoRenditionList || [];
+    if (renditions.length < 2) {
+      this.qualityMenuGroup.hidden = true;
+      return;
+    }
+
+    this.qualityMenuGroup.hidden = false;
+    const signature = renditions
+      .map((item) => [item.id, item.width || '', item.height || '', item.bitrate || ''].join(':'))
+      .join('|');
+
+    if (signature !== this.qualitySignature) {
+      this.qualitySignature = signature;
+      this.qualityMenuGroup.replaceChildren(this.qualityMenuTitle);
+
+      const addQualityOption = (id: string, label: string) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'up-speed-option up-quality-option';
+        button.dataset.qualityId = id;
+        button.textContent = label;
+        button.setAttribute('role', 'menuitemradio');
+        this.listen(button, 'click', () => {
+          const currentHost = this.element as HTMLElement & { store?: { state: unknown } };
+          if (!currentHost.store) return;
+          const currentQuality = selectQuality(currentHost.store.state as Parameters<typeof selectQuality>[0]);
+          currentQuality?.selectVideoRendition(id);
+          this.selectedQualityId = id;
+          this.refreshQualityMenu();
+        });
+        this.qualityMenuGroup.append(button);
+      };
+
+      addQualityOption('auto', 'Auto · Recommended');
+      [...renditions]
+        .sort((a, b) => (b.height || 0) - (a.height || 0))
+        .forEach((rendition) => {
+          const label = rendition.height
+            ? rendition.height + 'p'
+            : (rendition.width ? rendition.width + 'w' : 'Rendition');
+          addQualityOption(rendition.id, label);
+        });
+    }
+
+    this.qualityMenuGroup.querySelectorAll<HTMLButtonElement>('[data-quality-id]').forEach((button) => {
+      const selected = button.dataset.qualityId === this.selectedQualityId;
+      button.setAttribute('aria-checked', selected ? 'true' : 'false');
+      button.classList.toggle('is-selected', selected);
+    });
   }
 
   private createContextItem(label: string, icon: string, action: () => void): HTMLButtonElement {
@@ -913,6 +1021,7 @@ export class UniversalPlayer {
     this.fullscreenButton.setAttribute('aria-label', fullscreen ? 'Exit fullscreen' : 'Enter fullscreen');
     this.fullscreenButton.title = fullscreen ? 'Exit fullscreen' : 'Fullscreen';
     this.syncLayoutButtons();
+    this.refreshQualityMenu();
     this.trackButton.classList.toggle('is-active', this.hasShowingCaptions());
     this.loopMenuItem?.querySelector('.up-context-label') && (this.loopMenuItem.querySelector('.up-context-label')!.textContent = 'Loop: ' + (this.mediaElement.loop ? 'On' : 'Off'));
     this.spinner.hidden = !this.stage.classList.contains('is-buffering');

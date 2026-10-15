@@ -81,3 +81,16 @@ The Player.js adapter works only with embeds implementing the Player.js protocol
 ## License
 
 Universal Player is MIT licensed. Video.js and optional playback adapters retain their own upstream licences/notices.
+
+
+## YouTube-inspired player interactions
+
+- Controls fade out during idle playback and return on hover or keyboard focus.
+- Seek bar shows playback/buffer progress and previews the timestamp while scrubbing.
+- Right-click opens Universal Player's own menu with loop, copy-link, playback stats, keyboard help, mini player, and theater mode.
+- Keyboard shortcuts: Space/K play-pause, Left/Right seek 5 seconds, J/L seek 10 seconds, M mute, F fullscreen, T theater mode, I mini player, and Escape close the menu/exit a display mode.
+- Mini player floats inside the page, while theater mode expands the player into an immersive fixed layout. Native browser Picture-in-Picture remains a separate feature.
+- Adaptive HLS/DASH streams can show a quality selector when the Video.js quality feature exposes multiple renditions. Direct MP4 files have a fixed quality and intentionally do not show a quality menu.
+- The UI is styled with Tailwind CSS v4 and CSS, and icons use the locally bundled Lucide package.
+
+The goal is a familiar video-player experience, not an exact copy of YouTube branding. Provider-specific embeds may limit quality, captions, playback rate, picture-in-picture or fullscreen.

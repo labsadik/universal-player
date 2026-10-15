@@ -86,3 +86,9 @@ test('toggles the in-page mini player and theater mode', async ({ page }) => {
   await page.keyboard.press('Escape');
   await expect(root).not.toHaveClass(/up-theater/);
 });
+
+
+test('keeps quality selection hidden for a fixed-quality MP4', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#player-mount .up-quality-menu-group')).toBeHidden();
+});
