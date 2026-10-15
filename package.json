@@ -1,0 +1,43 @@
+{
+  "name": "@workrcs/universal-player",
+  "version": "0.1.0",
+  "description": "A framework-neutral, accessible video player built on Video.js.",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": ["**/*.css"],
+  "engines": { "node": ">=20.19.0" },
+  "files": ["dist", "README.md", "LICENSE"],
+  "main": "./dist/universal-player.js",
+  "module": "./dist/universal-player.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/universal-player.js"
+    },
+    "./style.css": "./dist/universal-player.css"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "pack:check": "npm pack --dry-run"
+  },
+  "dependencies": {
+    "@videojs/dash-video": "10.0.0-rc.2",
+    "@videojs/hlsjs-video": "10.1.0",
+    "@videojs/html": "10.1.0",
+    "@videojs/youtube-video": "10.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.12",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

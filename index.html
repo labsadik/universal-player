@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090d16" />
+    <meta name="description" content="Universal Player — a modern, framework-neutral Video.js player." />
+    <title>Universal Player · Video.js</title>
+  </head>
+  <body>
+    <div class="demo-shell">
+      <header class="demo-header">
+        <a class="brand" href="#" aria-label="Universal Player home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.75v12.5L18 12 8 5.75Z" fill="currentColor"/><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/></svg>
+          </span>
+          <span class="brand-copy"><strong>Universal Player</strong><small>POWERED BY VIDEO.JS</small></span>
+        </a>
+        <span class="version-chip"><span class="status-dot"></span> Developer preview</span>
+      </header>
+
+      <main>
+        <section class="hero">
+          <p class="eyebrow">ONE PLAYER. EVERY WEB STACK.</p>
+          <h1>Video, without<br /><span>the framework lock-in.</span></h1>
+          <p class="hero-copy">A clean, accessible player API built on Video.js — made for the open web.</p>
+        </section>
+
+        <section class="player-card" aria-label="Universal Player demo">
+          <div class="player-card-head">
+            <div>
+              <p class="eyebrow">NOW PLAYING</p>
+              <h2 id="source-title">Flower · MP4 sample</h2>
+            </div>
+            <span id="media-badge" class="media-badge">MP4</span>
+          </div>
+          <div id="player-mount" class="player-mount"></div>
+          <div class="player-status" aria-live="polite">
+            <span id="status-indicator" class="status-indicator"></span>
+            <span id="player-status">Loading MP4 sample…</span>
+          </div>
+        </section>
+
+        <section class="source-panel" aria-labelledby="source-panel-title">
+          <div class="source-panel-copy">
+            <span class="panel-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v4A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <div>
+              <h3 id="source-panel-title">Try your own video</h3>
+              <p>Choose an MP4 from your computer. It stays local in your browser.</p>
+            </div>
+          </div>
+          <label class="file-picker">
+            <input id="local-video" type="file" accept="video/mp4,video/webm,video/ogg,video/*" />
+            <span>Choose video</span>
+          </label>
+          <button id="sample-button" class="secondary-button" type="button">Reload sample</button>
+        </section>
+
+        <section class="feature-grid" aria-label="Player highlights">
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">⌘</span>
+            <h3>Framework neutral</h3>
+            <p>Use the core from vanilla JS, React, Vue, Svelte, Angular or another browser framework.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">◉</span>
+            <h3>Built for the web</h3>
+            <p>Video.js custom elements, accessible controls and a responsive player surface.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">↗</span>
+            <h3>Pluggable playback</h3>
+            <p>MP4 first, with optional HLS, DASH and YouTube media adapters.</p>
+          </article>
+        </section>
+
+        <footer class="demo-footer">
+          <span>Universal Player · Open source</span>
+          <a href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer">View on GitHub <span aria-hidden="true">↗</span></a>
+        </footer>
+      </main>
+    </div>
+    <script type="module" src="/src/demo.ts"></script>
+  </body>
+</html>

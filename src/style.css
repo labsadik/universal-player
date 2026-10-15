@@ -1,0 +1,27 @@
+.up-root {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(182, 192, 219, .16);
+  border-radius: 14px;
+  background: #05070d;
+  isolation: isolate;
+}
+.up-root .up-video-player,
+.up-root .up-video-skin,
+.up-root .up-media {
+  display: block;
+  width: 100%;
+}
+.up-root .up-video-skin {
+  aspect-ratio: 16 / 9;
+  background: #05070d;
+  --media-video-border-radius: 0px;
+  --media-object-fit: contain;
+}
+.up-root .up-media { max-width: 100%; }
+.up-root .up-video-player:focus-visible,
+.up-root:focus-visible {
+  outline: 2px solid #a69bff;
+  outline-offset: 3px;
+}
