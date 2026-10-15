@@ -118,7 +118,6 @@ export class UniversalPlayer {
   private trackButton!: HTMLButtonElement;
   private titleLabel!: HTMLSpanElement;
   private spinner!: HTMLDivElement;
-  private mediaSlot!: HTMLDivElement;
 
   constructor(target: HTMLElement, private readonly options: UniversalPlayerOptions = {}) {
     if (!(target instanceof HTMLElement)) {
@@ -147,11 +146,8 @@ export class UniversalPlayer {
     this.stage.style.setProperty('--up-media-object-fit', options.objectFit || 'contain');
     this.stage.tabIndex = 0;
 
-    this.mediaSlot = document.createElement('div');
-    this.mediaSlot.className = 'up-media-slot';
     this.mediaElement = this.createMediaElement('html5');
-    this.mediaSlot.append(this.mediaElement);
-    this.stage.append(this.mediaSlot);
+    this.stage.append(this.mediaElement);
     this.buildControls();
 
     this.element.append(this.stage);
@@ -200,10 +196,11 @@ export class UniversalPlayer {
     }
 
     if (provider !== this.provider) {
+      const previousMedia = this.mediaElement;
       this.unbindMediaEvents();
-      this.teardownMedia(this.mediaElement);
+      this.teardownMedia(previousMedia);
       this.mediaElement = this.createMediaElement(provider);
-      this.mediaSlot.replaceChildren(this.mediaElement);
+      this.stage.replaceChild(this.mediaElement, previousMedia);
       this.provider = provider;
       this.bindMediaEvents(this.mediaElement);
     }
@@ -450,6 +447,7 @@ export class UniversalPlayer {
     settingsWrap.append(this.settingsButton, this.speedMenu);
 
     this.trackButton = makeButton('Toggle captions', 'captions');
+    this.trackButton.classList.add('up-track-button');
     this.listen(this.trackButton, 'click', () => this.toggleCaptions());
     this.pipButton = makeButton('Picture in Picture', 'pip');
     this.listen(this.pipButton, 'click', () => {
@@ -588,6 +586,7 @@ export class UniversalPlayer {
     this.muteButton.innerHTML = makeIcon(this.mediaElement.muted || this.mediaElement.volume === 0 ? 'muted' : 'volume');
     this.muteButton.setAttribute('aria-label', this.mediaElement.muted ? 'Unmute' : 'Mute');
     this.volumeInput.value = this.mediaElement.muted ? '0' : String(this.mediaElement.volume);
+    this.volumeInput.style.setProperty('--up-volume', (this.mediaElement.muted ? 0 : this.mediaElement.volume * 100) + '%');
     this.speedMenu.querySelectorAll<HTMLButtonElement>('[data-rate]').forEach((button) => {
       const selected = Number(button.dataset.rate) === this.mediaElement.playbackRate;
       button.setAttribute('aria-checked', selected ? 'true' : 'false');
