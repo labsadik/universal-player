@@ -95,7 +95,7 @@ const ICONS = {
 function makeIcon(name: string): SVGSVGElement {
   const icon = ICONS[name as keyof typeof ICONS] || Settings2;
   return createElement(icon, {
-    class: 'up-icon-svg',
+    class: 'up-lucide',
     'aria-hidden': 'true',
     strokeWidth: 1.8,
   }) as SVGSVGElement;
