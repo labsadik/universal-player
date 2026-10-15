@@ -63,6 +63,7 @@ test('opens Universal Player context menu on right click', async ({ page }) => {
   await expect(contextMenu).toContainText('Copy video link');
   await expect(contextMenu).toContainText('Playback stats');
   await contextMenu.getByRole('menuitem', { name: 'Playback stats' }).click();
-  await expect(page.locator('#player-mount .up-stats-panel')).toBeVisible();
-  await expect(page.locator('#player-mount .up-stats-panel')).toContainText('Source type');
+  const stats = page.locator('#player-mount [aria-label="Playback statistics"]');
+  await expect(stats).toBeVisible();
+  await expect(stats).toContainText('Source type');
 });
