@@ -12,12 +12,14 @@ export default defineConfig({
       fileName: 'universal-player',
       cssFileName: 'universal-player',
     },
-    sourcemap: true,
+    sourcemap: false,
     minify: 'esbuild',
     rollupOptions: {
       output: {
         chunkFileNames: 'chunks/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]',
+        assetFileNames: (assetInfo) => assetInfo.name?.endsWith('.css')
+          ? 'universal-player.css'
+          : 'assets/[name]-[hash][extname]',
       },
     },
   },

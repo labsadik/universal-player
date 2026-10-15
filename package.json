@@ -11,10 +11,7 @@
   "module": "./dist/universal-player.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/universal-player.js"
-    },
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/universal-player.js" },
     "./style.css": "./dist/universal-player.css"
   },
   "scripts": {
@@ -23,6 +20,7 @@
     "build": "vite build && tsc -p tsconfig.build.json",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "pack:check": "npm pack --dry-run"
   },
   "dependencies": {
@@ -32,12 +30,11 @@
     "@videojs/youtube-video": "10.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.0",
     "@types/node": "^22.19.0",
     "typescript": "~5.9.3",
     "vite": "^7.1.12",
     "vitest": "^3.2.4"
   },
-  "publishConfig": {
-    "access": "public"
-  }
+  "publishConfig": { "access": "public" }
 }

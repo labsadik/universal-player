@@ -22,7 +22,13 @@ jobs:
         run: npm run typecheck
       - name: Unit tests
         run: npm test
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: MP4 browser smoke test
+        run: npm run test:e2e
       - name: Build package
         run: npm run build
+      - name: Verify exported stylesheet
+        run: test -f dist/universal-player.css
       - name: Verify package contents
         run: npm run pack:check
