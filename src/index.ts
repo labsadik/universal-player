@@ -2,7 +2,7 @@ import '@videojs/html/video/player';
 import '@videojs/html/ui/container';
 import './style.css';
 
-import { createElement, Play, Pause, Rewind, FastForward, Volume2, VolumeX, Settings2, Maximize, Minimize, PictureInPicture2, Captions, Copy, Info, Repeat, Gauge, Keyboard, Link as LinkIcon, CircleHelp, X } from 'lucide';
+import { createElement, Play, Pause, Rewind, FastForward, Volume2, VolumeX, Settings2, Maximize, Minimize, PictureInPicture2, MonitorPlay, Captions, Copy, Info, Repeat, Gauge, Keyboard, Link as LinkIcon, CircleHelp, X } from 'lucide';
 import { detectProvider, formatTime, normalizeSource } from './source.js';
 import type { PlayerSource, SourceProvider } from './source.js';
 
@@ -81,6 +81,8 @@ const ICONS = {
   fullscreen: Maximize,
   exitFullscreen: Minimize,
   pip: PictureInPicture2,
+  mini: PictureInPicture2,
+  theater: MonitorPlay,
   captions: Captions,
   copy: Copy,
   info: Info,
@@ -140,6 +142,8 @@ export class UniversalPlayer {
   private speedMenu!: HTMLDivElement;
   private settingsButton!: HTMLButtonElement;
   private pipButton!: HTMLButtonElement;
+  private miniPlayerButton!: HTMLButtonElement;
+  private theaterButton!: HTMLButtonElement;
   private fullscreenButton!: HTMLButtonElement;
   private trackButton!: HTMLButtonElement;
   private titleLabel!: HTMLSpanElement;
@@ -310,6 +314,40 @@ export class UniversalPlayer {
     this.events.removeEventListener(type, listener);
   }
 
+  toggleMiniPlayer(): boolean {
+    this.assertAlive();
+    const next = !this.container.classList.contains('up-mini-player');
+    this.container.classList.toggle('up-mini-player', next);
+    if (next) this.container.classList.remove('up-theater');
+    this.syncLayoutButtons();
+    this.emit('miniplayerchange', { active: next });
+    return next;
+  }
+
+  toggleTheaterMode(): boolean {
+    this.assertAlive();
+    const next = !this.container.classList.contains('up-theater');
+    this.container.classList.toggle('up-theater', next);
+    if (next) this.container.classList.remove('up-mini-player');
+    this.syncLayoutButtons();
+    this.emit('theaterchange', { active: next });
+    return next;
+  }
+
+  private syncLayoutButtons(): void {
+    if (!this.miniPlayerButton || !this.theaterButton) return;
+    const mini = this.container.classList.contains('up-mini-player');
+    const theater = this.container.classList.contains('up-theater');
+    this.miniPlayerButton.replaceChildren(makeIcon('mini'));
+    this.miniPlayerButton.setAttribute('aria-label', mini ? 'Exit mini player' : 'Enter mini player');
+    this.miniPlayerButton.title = mini ? 'Exit mini player (I)' : 'Mini player (I)';
+    this.miniPlayerButton.classList.toggle('is-active', mini);
+    this.theaterButton.replaceChildren(makeIcon('theater'));
+    this.theaterButton.setAttribute('aria-label', theater ? 'Exit theater mode' : 'Enter theater mode');
+    this.theaterButton.title = theater ? 'Exit theater mode (T)' : 'Theater mode (T)';
+    this.theaterButton.classList.toggle('is-active', theater);
+  }
+
   async requestFullscreen(): Promise<void> {
     this.assertAlive();
     if (this.stage.requestFullscreen) {
@@ -332,6 +370,8 @@ export class UniversalPlayer {
     if (this.destroyed) return;
     this.unbindMediaEvents();
     for (const cleanup of this.uiCleanup.splice(0)) cleanup();
+    if (this.idleTimer) clearTimeout(this.idleTimer);
+    this.container.classList.remove('up-mini-player', 'up-theater');
     this.teardownMedia(this.mediaElement);
     this.destroyed = true;
     this.container.remove();
@@ -495,6 +535,13 @@ export class UniversalPlayer {
     this.listen(this.pipButton, 'click', () => {
       this.requestPictureInPicture().catch((error: unknown) => this.emit('featureerror', { feature: 'picture-in-picture', error }));
     });
+    this.miniPlayerButton = makeButton('Enter mini player', 'mini');
+    this.miniPlayerButton.classList.add('up-mini-player-button');
+    this.listen(this.miniPlayerButton, 'click', () => this.toggleMiniPlayer());
+    this.theaterButton = makeButton('Enter theater mode', 'theater');
+    this.theaterButton.classList.add('up-theater-button');
+    this.listen(this.theaterButton, 'click', () => this.toggleTheaterMode());
+
     this.fullscreenButton = makeButton('Enter fullscreen', 'fullscreen');
     this.listen(this.fullscreenButton, 'click', () => {
       if (document.fullscreenElement) {
@@ -505,7 +552,7 @@ export class UniversalPlayer {
     });
 
     left.append(this.playButton, backButton, forwardButton, time);
-    right.append(volumeGroup, this.trackButton, settingsWrap, this.pipButton, this.fullscreenButton);
+    right.append(volumeGroup, this.trackButton, settingsWrap, this.pipButton, this.miniPlayerButton, this.theaterButton, this.fullscreenButton);
     controlRow.append(left, right);
     this.controlsRoot.append(timeline, controlRow);
 
@@ -546,6 +593,8 @@ export class UniversalPlayer {
     this.contextMenu.append(
       this.loopMenuItem,
       this.createContextItem('Copy video link', 'copy', () => { void this.copySourceLink(); }),
+      this.createContextItem('Mini player', 'mini', () => this.toggleMiniPlayer()),
+      this.createContextItem('Theater mode', 'theater', () => this.toggleTheaterMode()),
       this.createContextItem('Playback stats', 'info', () => {
         this.refreshStats();
         this.statsPanel.hidden = !this.statsPanel.hidden;
@@ -613,6 +662,8 @@ export class UniversalPlayer {
         this.statsPanel.hidden = true;
         this.helpPanel.hidden = true;
         this.speedMenu.hidden = true;
+        this.container.classList.remove('up-mini-player', 'up-theater');
+        this.syncLayoutButtons();
       }
     });
     this.listen(this.seekInput, 'pointermove', (event) => this.updateSeekTooltip((event as PointerEvent).clientX));
@@ -775,6 +826,14 @@ export class UniversalPlayer {
           if (document.fullscreenElement) document.exitFullscreen().catch(() => undefined);
           else this.requestFullscreen().catch(() => undefined);
           break;
+        case 't':
+          keyboard.preventDefault();
+          this.toggleTheaterMode();
+          break;
+        case 'i':
+          keyboard.preventDefault();
+          this.toggleMiniPlayer();
+          break;
       }
     });
   }
@@ -853,6 +912,7 @@ export class UniversalPlayer {
     this.fullscreenButton.replaceChildren(makeIcon(fullscreen ? 'exitFullscreen' : 'fullscreen'));
     this.fullscreenButton.setAttribute('aria-label', fullscreen ? 'Exit fullscreen' : 'Enter fullscreen');
     this.fullscreenButton.title = fullscreen ? 'Exit fullscreen' : 'Fullscreen';
+    this.syncLayoutButtons();
     this.trackButton.classList.toggle('is-active', this.hasShowingCaptions());
     this.loopMenuItem?.querySelector('.up-context-label') && (this.loopMenuItem.querySelector('.up-context-label')!.textContent = 'Loop: ' + (this.mediaElement.loop ? 'On' : 'Off'));
     this.spinner.hidden = !this.stage.classList.contains('is-buffering');
