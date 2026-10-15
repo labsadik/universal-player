@@ -1,5 +1,5 @@
 import '@videojs/html/video/player';
-import '@videojs/html/video/ui';
+import '@videojs/html/ui/container';
 import './style.css';
 
 import { detectProvider, formatTime, normalizeSource } from './source.js';
