@@ -78,7 +78,7 @@
                 <div class="studio-small-heading"><i data-lucide="shield-check"></i><strong>Playback support</strong></div>
                 <div class="studio-support-row"><span>Current source</span><strong id="studio-current-source">Featured stream</strong></div>
                 <div class="studio-support-row"><span>Quality options</span><strong id="studio-quality-support">Depends on available renditions</strong></div>
-                <div class="studio-support-row"><span>Captions / PiP</span><strong>Depends on source & browser</strong></div>
+                <div class="studio-support-row"><span>Captions</span><strong>Depends on source & browser</strong></div>
                 <p class="studio-support-note">Some options depend on the media provider or browser. A switch can be enabled while the source itself does not expose that capability.</p>
               </article>
             </section>
@@ -98,16 +98,16 @@
                       <button type="button" data-studio-theme="system" aria-pressed="false"><i data-lucide="monitor"></i> System</button>
                     </div>
                   </div>
-                  <label class="studio-setting-block"><span class="studio-setting-label">Control density</span><select id="studio-controls-style"><option value="standard">Standard</option><option value="compact">Compact</option><option value="minimal">Minimal</option></select></label>
+                  <label class="studio-setting-block"><span class="studio-setting-label">Control density</span><select id="studio-controls-style"><option value="minimal" selected>Minimal</option><option value="standard">Standard</option><option value="compact">Compact</option></select></label>
                   <label class="studio-setting-block"><span class="studio-setting-label">Accent colour</span><select id="studio-accent"><option value="rgb(54, 214, 176)">Mint + blue</option><option value="#3b82f6">Blue</option><option value="#22c55e">Green</option><option value="#a78bfa">Violet</option><option value="#fb7185">Rose</option></select></label>
-                  <label class="studio-glass-setting"><span><strong>Glass controls</strong><small>Frosted / translucent surface</small></span><input id="studio-glass-toggle" type="checkbox" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-glass-setting"><span><strong>Glass controls</strong><small>Frosted / translucent surface</small></span><input id="studio-glass-toggle" type="checkbox" /><span class="studio-switch-track"></span></label>
                 </div>
               </article>
 
               <article class="studio-panel studio-feature-panel">
                 <div class="studio-panel-heading">
                   <div><p class="studio-panel-kicker">FEATURE INSPECTOR</p><h2>Player features</h2></div>
-                  <span id="studio-enabled-count" class="studio-enabled-count">16 / 16 active</span>
+                  <span id="studio-enabled-count" class="studio-enabled-count">14 / 14 active</span>
                 </div>
                 <p class="studio-feature-intro">Toggle any feature once. Its state badge and the player preview update immediately.</p>
                 <div class="studio-feature-grid" id="studio-feature-grid">
@@ -117,8 +117,6 @@
                   <label class="studio-feature-row" data-feature-row="playbackSpeed"><span class="studio-feature-icon"><i data-lucide="gauge"></i></span><span class="studio-feature-copy"><strong>Playback speed</strong><small>Choose slow motion or faster playback</small><em data-feature-status="playbackSpeed">Enabled</em></span><input type="checkbox" data-studio-feature="playbackSpeed" data-default="off" /><span class="studio-switch-track"></span></label>
                   <label class="studio-feature-row" data-feature-row="quality"><span class="studio-feature-icon"><i data-lucide="layers"></i></span><span class="studio-feature-copy"><strong>Quality menu</strong><small>Choose a stream rendition, when provided</small><em data-feature-status="quality">Enabled · stream-dependent</em></span><input type="checkbox" data-studio-feature="quality" checked /><span class="studio-switch-track"></span></label>
                   <label class="studio-feature-row" data-feature-row="captions"><span class="studio-feature-icon"><i data-lucide="captions"></i></span><span class="studio-feature-copy"><strong>Captions</strong><small>Display available caption tracks</small><em data-feature-status="captions">Enabled · track-dependent</em></span><input type="checkbox" data-studio-feature="captions" checked /><span class="studio-switch-track"></span></label>
-                  <label class="studio-feature-row" data-feature-row="pictureInPicture"><span class="studio-feature-icon"><i data-lucide="picture-in-picture-2"></i></span><span class="studio-feature-copy"><strong>Picture in Picture</strong><small>Float video in a separate browser window</small><em data-feature-status="pictureInPicture">Enabled · browser-dependent</em></span><input type="checkbox" data-studio-feature="pictureInPicture" checked /><span class="studio-switch-track"></span></label>
-                  <label class="studio-feature-row" data-feature-row="miniPlayer"><span class="studio-feature-icon"><i data-lucide="panel-top"></i></span><span class="studio-feature-copy"><strong>Mini player</strong><small>Keep a small floating player on the page</small><em data-feature-status="miniPlayer">Enabled</em></span><input type="checkbox" data-studio-feature="miniPlayer" data-default="off" /><span class="studio-switch-track"></span></label>
                   <label class="studio-feature-row" data-feature-row="theaterMode"><span class="studio-feature-icon"><i data-lucide="monitor-play"></i></span><span class="studio-feature-copy"><strong>Theater mode</strong><small>Expand the player for immersive viewing</small><em data-feature-status="theaterMode">Enabled</em></span><input type="checkbox" data-studio-feature="theaterMode" data-default="off" /><span class="studio-switch-track"></span></label>
                   <label class="studio-feature-row" data-feature-row="fullscreen"><span class="studio-feature-icon"><i data-lucide="maximize"></i></span><span class="studio-feature-copy"><strong>Fullscreen</strong><small>Use the full display area</small><em data-feature-status="fullscreen">Enabled · browser-dependent</em></span><input type="checkbox" data-studio-feature="fullscreen" checked /><span class="studio-switch-track"></span></label>
                   <label class="studio-feature-row" data-feature-row="contextMenu"><span class="studio-feature-icon"><i data-lucide="mouse-pointer-2"></i></span><span class="studio-feature-copy"><strong>Right-click menu</strong><small>Open contextual playback actions</small><em data-feature-status="contextMenu">Enabled</em></span><input type="checkbox" data-studio-feature="contextMenu" checked /><span class="studio-switch-track"></span></label>
