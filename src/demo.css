@@ -350,3 +350,40 @@ body.site-theme-light #npm-setup { border-color: #dfe7f1 !important; }
 body.site-theme-light #player-playground { border-color: #dfe7f1 !important; }
 body.site-theme-dark .package-name-pill { color: #6ee7b7; }
 body.site-theme-dark .install-command-row { background: #0f1724; }
+
+
+/* Compact desktop viewing: trim the overall canvas and scale the video card down
+   about 12–15% on desktop while preserving a full-width mobile player. */
+@media (min-width: 1024px) {
+  #player-section > div:first-child {
+    width: 88%;
+    max-width: 1040px;
+    margin-inline: auto;
+  }
+}
+@media (min-width: 1536px) {
+  #player-section > div:first-child { width: 86%; }
+}
+@media (max-width: 1023px) {
+  #player-section > div:first-child { width: 100%; }
+}
+/* Cleaner video-card framing and spacing around the player surface. */
+#player-section > div:first-child {
+  border-color: rgba(100,116,139,.22);
+  box-shadow: 0 20px 58px rgba(15,23,42,.10), 0 2px 8px rgba(15,23,42,.035);
+  transition: box-shadow .22s ease, border-color .22s ease;
+}
+#player-section > div:first-child:hover {
+  box-shadow: 0 24px 68px rgba(15,23,42,.14), 0 0 0 1px rgba(16,185,129,.06);
+}
+body.site-theme-dark #player-section > div:first-child {
+  border-color: rgba(148,163,184,.17);
+  box-shadow: 0 22px 68px rgba(0,0,0,.34), 0 0 0 1px rgba(59,130,246,.035);
+}
+#player-section .player-status {
+  min-height: 38px;
+  letter-spacing: .005em;
+}
+@media (prefers-reduced-motion: reduce) {
+  #player-section > div:first-child { transition: none; }
+}
