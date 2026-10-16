@@ -310,3 +310,50 @@ test('playground defaults to minimal transparent controls, adapts icon ink to th
     expect(button.right, JSON.stringify({button,bounds})).toBeLessThanOrEqual(bounds.right + 1);
   }
 });
+ 
+test('settings gear conditionally shows Speed and actual source Quality sections', async ({ page }) => {
+  await page.goto('/');
+  const speedToggle = page.locator('[data-demo-feature="playbackSpeed"]');
+  const qualityToggle = page.locator('[data-demo-feature="quality"]');
+  const gear = page.locator('#player-mount .up-settings-wrap > button[aria-label="Playback settings"]');
+  const menu = page.locator('#player-mount .up-speed-menu');
+  const speedSection = menu.locator('.up-speed-section');
+  const qualitySection = menu.locator('.up-quality-menu-group');
+
+  await expect(gear.locator('svg')).toHaveCount(1);
+  await expect(gear).toBeVisible();
+
+  await gear.click();
+  await expect(menu).toBeVisible();
+  await expect(speedSection).toBeHidden(); // Speed is off by default.
+  await expect(speedSection.locator('.up-menu-title')).toHaveText('Speed');
+  await expect(qualitySection.locator('.up-menu-title')).toHaveText('Quality');
+
+  await page.keyboard.press('Escape');
+  await speedToggle.check();
+  await gear.click();
+  await expect(speedSection).toBeVisible();
+  await expect(speedSection.locator('[data-rate]')).toHaveCount(8);
+
+  await page.keyboard.press('Escape');
+  await qualityToggle.uncheck();
+  await gear.click();
+  await expect(speedSection).toBeVisible();
+  await expect(qualitySection).toBeHidden();
+
+  await page.keyboard.press('Escape');
+  await speedToggle.uncheck();
+  await expect(gear).toBeHidden();
+});
+
+test('never invents quality labels for fixed-quality MP4 sources', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#video-url').fill('https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4');
+  await page.locator('#load-video').click();
+  await expect(page.locator('#provider-pill')).toHaveText('HTML5 VIDEO');
+
+  const qualitySection = page.locator('#player-mount .up-quality-menu-group');
+  await expect(qualitySection).toBeHidden();
+  await expect(qualitySection.locator('[data-quality-id]')).toHaveCount(0);
+  await expect(page.locator('#player-mount .up-quality-option')).toHaveCount(0);
+});
