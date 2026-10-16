@@ -4,7 +4,7 @@
 
 ## What is in this build?
 
-- **Custom, YouTube-inspired UI:** gradient seek bar, buffered progress, seek-time preview, autohide-on-idle controls, keyboard shortcuts, volume and mute, playback speed, captions where native tracks are available, fullscreen and Picture-in-Picture where supported.
+- **Custom, YouTube-inspired UI:** gradient seek bar, buffered progress, seek-time preview, minimal default controls, autohide-on-idle controls, keyboard shortcuts, captions where native tracks are available, fullscreen, and quality settings for adaptive streams.
 - **Custom right-click menu:** play/pause, jump back/forward, loop toggle, copy source link, playback stats and shortcut help.
 - **Paste-to-load URL:** use the top URL bar or the side-panel field. URLs without a scheme are treated as HTTPS; unsafe URL schemes are rejected.
 - **Green + blue RGB theme:** adjustable CSS variables and Tailwind CSS v4 for the demo.
@@ -61,9 +61,9 @@ const player = createPlayer('#player', {
   preload: 'metadata',
   aspectRatio: '16 / 9',
   theme: 'system', // 'dark' | 'light' | 'system'
-  glass: true,
+  glass: false,
   accentColor: 'rgb(54, 214, 176)',
-  controlsStyle: 'standard', // 'standard' | 'compact' | 'minimal'
+  controlsStyle: 'minimal', // 'minimal' | 'standard' | 'compact'
 });
 
 await player.ready;
@@ -75,7 +75,7 @@ player.setTheme('dark');
 player.setGlassEffect(true);
 player.setAccentColor('rgb(54, 214, 176)');
 player.setControlsStyle('compact');
-player.setFeatures({ stats: false, miniPlayer: false });
+player.setFeatures({ stats: false });
 
 player.on('playing', () => console.log('Playing'));
 
@@ -87,7 +87,7 @@ For React/Vue/Svelte examples and more details, see docs/API.md.
 
 ## Video-link limitations
 
-A general webpage URL is not always a playable video URL. Direct files need a supported browser codec and a server that permits media access. HLS/DASH links need accessible manifests/segments and suitable CORS configuration. Embedded platforms may require the provider's own embed URL, allowlisted parent domain, account permission or consent. Some providers don't expose every control (quality, captions, playback rate, Picture-in-Picture) to third-party UI. DRM/private/authenticated media requires its own supported licence/session setup.
+A general webpage URL is not always a playable video URL. Direct files need a supported browser codec and a server that permits media access. HLS/DASH links need accessible manifests/segments and suitable CORS configuration. Embedded platforms may require the provider's own embed URL, allowlisted parent domain, account permission or consent. Some providers don't expose every control (quality, captions, playback rate) to third-party UI. DRM/private/authenticated media requires its own supported licence/session setup.
 
 The Player.js adapter works only with embeds implementing the Player.js protocol; it is not a universal iframe decoder. No player can guarantee that every arbitrary URL can play.
 
@@ -100,13 +100,13 @@ Universal Player is MIT licensed. Video.js and optional playback adapters retain
 
 - Controls fade out during idle playback and return on hover or keyboard focus.
 - Seek bar shows playback/buffer progress and previews the timestamp while scrubbing.
-- Right-click opens Universal Player's own menu with loop, copy-link, playback stats, keyboard help, mini player, and theater mode.
-- Keyboard shortcuts: Space/K play-pause, Left/Right seek 5 seconds, J/L seek 10 seconds, M mute, F fullscreen, T theater mode, I mini player, and Escape close the menu/exit a display mode.
-- Mini player floats inside the page, while theater mode expands the player into an immersive fixed layout. Native browser Picture-in-Picture remains a separate feature.
+- Right-click opens Universal Player's own menu with loop, copy-link, playback stats, keyboard help, and optional theater mode.
+- Keyboard shortcuts: Space/K play-pause, Left/Right seek 5 seconds, J/L seek 10 seconds, M mute, F fullscreen, T theater mode, and Escape close the menu/exit theater mode.
+- The built-in UI intentionally has no Mini Player or Picture-in-Picture control; the normal player stays in its page layout.
 - Adaptive HLS/DASH streams can show a quality selector when the Video.js quality feature exposes multiple renditions. Direct MP4 files have a fixed quality and intentionally do not show a quality menu.
 - The UI is styled with Tailwind CSS v4 and CSS, and icons use the locally bundled Lucide package.
 
-The goal is a familiar video-player experience, not an exact copy of YouTube branding. Provider-specific embeds may limit quality, captions, playback rate, picture-in-picture or fullscreen.
+The goal is a familiar video-player experience, not an exact copy of YouTube branding. Provider-specific embeds may limit quality, captions, playback rate or fullscreen.
 
 
 ## npm install and plug-and-play usage
@@ -136,16 +136,16 @@ import '@labsadik/universal-player/style.css';
 const player = createPlayer('#player', {
   source: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
   theme: 'system',
-  glass: true,
+  glass: false,
   accentColor: 'rgb(54, 214, 176)',
-  controlsStyle: 'standard',
+  controlsStyle: 'minimal',
 });
 
 // Optional runtime customization
 player.setTheme('light');
 player.setGlassEffect(false);
 player.setControlsStyle('compact');
-player.setFeatures({ stats: false, miniPlayer: false });
+player.setFeatures({ stats: false });
 
 // On route/component unmount:
 player.destroy();
@@ -160,7 +160,7 @@ For a local checkout, clone `https://github.com/WorkRCS/easy-video-player.git`, 
 - `hideSourceUrl`: hide the media URL in the playback-stats panel while keeping explicit copy-link behaviour available
 - `accentColor`: any valid CSS color, including RGB/HSL/hex
 - `controlsStyle`: `standard`, `compact`, or `minimal`
-- `features`: opt in/out of `seek`, `skip`, `volume`, `playbackSpeed`, `quality`, `captions`, `pictureInPicture`, `miniPlayer`, `theaterMode`, `fullscreen`, `contextMenu`, `loop`, `copyLink`, `stats`, `keyboardHelp`, and `liveIndicator`
+- `features`: opt in/out of `seek`, `skip`, `volume`, `playbackSpeed`, `quality`, `captions`, `theaterMode`, `fullscreen`, `contextMenu`, `loop`, `copyLink`, `stats`, `keyboardHelp`, and `liveIndicator`
 - Live sources may use `{ src, live: true }`. The Go Live button seeks to the last available seekable range when the provider exposes it.
 
 ## Framework integration
