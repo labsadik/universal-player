@@ -6,7 +6,7 @@ Universal Player is a browser-side JavaScript video player, not a Python or Java
 
 Requirements: Node.js 20.19+ and npm.
 
-Before a public npm registry release, install the current repository using npm's Git dependency syntax:
+After the repository has been migrated to Labsadik/universal-player, install it directly from GitHub using this command:
 
 ~~~bash
 npm install github:Labsadik/universal-player
@@ -216,7 +216,7 @@ player.setControlsStyle('compact');
 player.setFeatures({ theaterMode: true, playbackSpeed: true });
 ~~~
 
-The built-in UI defaults to minimal controls with the glass effect off. Core controls are play/pause, seek timeline, captions, settings/quality when the stream exposes multiple renditions, and fullscreen. Playback speed and theater mode are opt-in. The built-in UI does not provide Mini Player or Picture-in-Picture.
+The built-in UI defaults to Minimal controls with the glass effect off. The default controls include play/pause, backward/forward 10 seconds, timeline, captions, the settings gear and fullscreen. Speed and Quality appear in separate settings sections according to their feature switches. Quality options are taken only from real renditions exposed by the selected stream; other sources show an availability note. Playback speed and theater mode are opt-in. The built-in UI does not provide Mini Player or Picture-in-Picture.
 
 ## 8. Playback smoothness and compatibility
 
