@@ -242,7 +242,7 @@ test('uses core default controls without overflow at 320px', async ({ page }) =>
   await expect(root).toHaveAttribute('data-theme','system');
   await page.emulateMedia({ colorScheme: 'light' });
   await expect(page.locator('body')).toHaveClass(/site-theme-light/);
-  await expect(page.locator('#player-mount .up-controls button[aria-label="Play video"]')).toHaveCSS('color', 'rgb(23, 32, 51)');
+  await expect(page.locator('#player-mount .up-controls button[aria-label="Play video"]')).toHaveCSS('color', 'rgb(17, 24, 39)');
   await page.locator('#demo-glass').check();
   await expect(root).toHaveClass(/up-glassy/);
   await expect.poll(() => page.locator('#player-mount .up-controls').evaluate((node) => getComputedStyle(node).backdropFilter)).toContain('blur');
@@ -269,7 +269,7 @@ test('playground defaults to minimal transparent controls, adapts icon ink to th
   await expect(page.locator('[data-studio-feature="miniPlayer"]')).toHaveCount(0);
   await expect(controls.locator('button[aria-label="Picture in Picture"]')).toHaveCount(0);
   await expect(controls.locator('.up-mini-player-button')).toHaveCount(0);
-  await expect(play).toHaveCSS('color', 'rgb(23, 32, 51)');
+  await expect(play).toHaveCSS('color', 'rgb(17, 24, 39)');
 
   const transparentStyle = await controls.evaluate((node) => {
     const css = getComputedStyle(node);
@@ -287,7 +287,7 @@ test('playground defaults to minimal transparent controls, adapts icon ink to th
   await page.emulateMedia({ colorScheme: 'dark' });
   await expect(play).toHaveCSS('color', 'rgb(248, 250, 252)');
   await page.emulateMedia({ colorScheme: 'light' });
-  await expect(play).toHaveCSS('color', 'rgb(23, 32, 51)');
+  await expect(play).toHaveCSS('color', 'rgb(17, 24, 39)');
 
   const bounds = await page.evaluate(() => {
     const box = document.querySelector<HTMLElement>('#studio-player-mount .up-stage')!.getBoundingClientRect();
