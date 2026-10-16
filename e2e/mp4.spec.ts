@@ -360,7 +360,7 @@ test('never invents quality labels for fixed-quality MP4 sources', async ({ page
 test('homepage generated setup code follows theme, density, glass and feature selections', async ({ page }) => {
   await page.goto('/');
   const code = page.locator('#demo-generated-code');
-  await expect(page.locator('.live-config-install')).toContainText('npm install github:Labsadik/universal-player');
+  await expect(page.locator('.live-config-install')).toContainText('npm install github:labsadik/universal-player');
   await expect(code).toContainText('theme: "system"');
   await expect(code).toContainText('controlsStyle: "minimal"');
   await expect(code).toContainText('glass: false');
@@ -378,7 +378,7 @@ test('homepage generated setup code follows theme, density, glass and feature se
 test('feature Playground shows install guidance and live generated code', async ({ page }) => {
   await page.goto('/playground.html');
   const code = page.locator('#studio-generated-code');
-  await expect(page.locator('#studio-install-command')).toHaveText('npm install github:Labsadik/universal-player');
+  await expect(page.locator('#studio-install-command')).toHaveText('npm install github:labsadik/universal-player');
   await expect(code).toContainText('controlsStyle: "minimal"');
   await expect(code).toContainText('glass: false');
 
@@ -390,5 +390,5 @@ test('feature Playground shows install guidance and live generated code', async 
   await expect(code).toContainText('controlsStyle: "standard"');
   await expect(code).toContainText('glass: true');
   await expect(code).toContainText('playbackSpeed: true');
-  await expect(code).toContainText('npm install github:Labsadik/universal-player');
+  await expect(code).toContainText('npm install github:labsadik/universal-player');
 });
