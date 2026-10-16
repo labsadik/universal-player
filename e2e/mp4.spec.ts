@@ -103,7 +103,7 @@ test('keeps the preloaded DASH demo URL out of the visible UI', async ({ page })
   await page.goto('/');
   await expect(page.locator('#video-url')).toHaveValue('');
   await expect(page.locator('#source-url-side')).toHaveValue('');
-  await expect(page.locator('#source-title')).toHaveText('Featured demo');
+  await expect(page.locator('#source-title')).toHaveText('Featured video');
   await expect(page.locator('#player-mount .up-stage[data-provider="dash"]')).toBeAttached();
   await expect(page.locator('#player-section')).not.toContainText('stream.mpd');
   await expect(page.locator('#video-subtitle')).not.toContainText('vidstack.io');
