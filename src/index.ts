@@ -34,7 +34,7 @@ export interface UniversalPlayerFeatures {
 
 const DEFAULT_FEATURES: UniversalPlayerFeatures = {
   seek: true, volume: true, playbackSpeed: false, quality: true, captions: true,
-  pictureInPicture: true, miniPlayer: false, theaterMode: false, fullscreen: true,
+  pictureInPicture: false, miniPlayer: false, theaterMode: false, fullscreen: true,
   skip: true, contextMenu: true, loop: true, copyLink: true, stats: true,
   keyboardHelp: true, liveIndicator: true,
 };
@@ -219,7 +219,7 @@ export class UniversalPlayer {
       throw new TypeError('createPlayer target must be an HTMLElement.');
     }
 
-    this.featureOptions = { ...DEFAULT_FEATURES, ...(options.features || {}) };
+    this.featureOptions = { ...DEFAULT_FEATURES, ...(options.features || {}), pictureInPicture: false, miniPlayer: false };
     this.rates = [...new Set((options.playbackRates || [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]).filter((rate) => Number.isFinite(rate) && rate > 0))];
     if (!this.rates.includes(1)) this.rates.push(1);
     this.rates.sort((a, b) => a - b);
@@ -251,9 +251,9 @@ export class UniversalPlayer {
     this.container.append(this.element);
     target.append(this.container);
     this.setTheme(options.theme || 'system');
-    this.setGlassEffect(options.glass !== false);
+    this.setGlassEffect(options.glass === true);
     this.setAccentColor(options.accentColor || 'rgb(54, 214, 176)');
-    this.setControlsStyle(options.controlsStyle || 'standard');
+    this.setControlsStyle(options.controlsStyle || 'minimal');
     this.applyFeatureVisibility();
 
     this.bindMediaEvents(this.mediaElement);
@@ -320,7 +320,7 @@ export class UniversalPlayer {
 
   setFeatures(features: Partial<UniversalPlayerFeatures>): void {
     this.assertAlive();
-    this.featureOptions = { ...this.featureOptions, ...features };
+    this.featureOptions = { ...this.featureOptions, ...features, pictureInPicture: false, miniPlayer: false };
     this.applyFeatureVisibility();
     this.emit('featureschange', { features: this.features });
   }
@@ -760,7 +760,7 @@ export class UniversalPlayer {
     });
 
     left.append(this.playButton, backButton, forwardButton, time, this.liveButton);
-    right.append(volumeGroup, this.trackButton, settingsWrap, this.pipButton, this.miniPlayerButton, this.theaterButton, this.fullscreenButton);
+    right.append(volumeGroup, this.trackButton, settingsWrap, this.theaterButton, this.fullscreenButton);
     controlRow.append(left, right);
     this.controlsRoot.append(timeline, controlRow);
 
@@ -801,8 +801,6 @@ export class UniversalPlayer {
     this.loopMenuItem.dataset.feature = 'loop';
     const copyLinkItem = this.createContextItem('Copy video link', 'copy', () => { void this.copySourceLink(); });
     copyLinkItem.dataset.feature = 'copyLink';
-    const miniMenuItem = this.createContextItem('Mini player', 'mini', () => this.toggleMiniPlayer());
-    miniMenuItem.dataset.feature = 'miniPlayer';
     const theaterMenuItem = this.createContextItem('Theater mode', 'theater', () => this.toggleTheaterMode());
     theaterMenuItem.dataset.feature = 'theaterMode';
     const statsMenuItem = this.createContextItem('Playback stats', 'info', () => {
@@ -816,7 +814,7 @@ export class UniversalPlayer {
       this.contextMenu.hidden = true;
     });
     keyboardMenuItem.dataset.feature = 'keyboardHelp';
-    this.contextMenu.append(this.loopMenuItem, copyLinkItem, miniMenuItem, theaterMenuItem, statsMenuItem, keyboardMenuItem);
+    this.contextMenu.append(this.loopMenuItem, copyLinkItem, theaterMenuItem, statsMenuItem, keyboardMenuItem);
 
     this.statsPanel = document.createElement('div');
     this.statsPanel.className = 'up-stats-panel';
@@ -827,7 +825,7 @@ export class UniversalPlayer {
     this.helpPanel = document.createElement('div');
     this.helpPanel.className = 'up-stats-panel up-help-panel';
     this.helpPanel.hidden = true;
-    this.helpPanel.innerHTML = '<div class="up-stats-heading">Keyboard shortcuts</div><div class="up-stats-line"><span>Play / pause</span><kbd>Space</kbd> <kbd>K</kbd></div><div class="up-stats-line"><span>Seek backward / forward</span><kbd>←</kbd> <kbd>→</kbd></div><div class="up-stats-line"><span>Skip 10 seconds</span><kbd>J</kbd> <kbd>L</kbd></div><div class="up-stats-line"><span>Mute / unmute</span><kbd>M</kbd></div><div class="up-stats-line"><span>Fullscreen</span><kbd>F</kbd></div><div class="up-stats-line"><span>Theater mode</span><kbd>T</kbd></div><div class="up-stats-line"><span>Mini player</span><kbd>I</kbd></div><div class="up-stats-line"><span>Close menu / mode</span><kbd>Esc</kbd></div>';
+    this.helpPanel.innerHTML = '<div class="up-stats-heading">Keyboard shortcuts</div><div class="up-stats-line"><span>Play / pause</span><kbd>Space</kbd> <kbd>K</kbd></div><div class="up-stats-line"><span>Seek backward / forward</span><kbd>←</kbd> <kbd>→</kbd></div><div class="up-stats-line"><span>Skip 10 seconds</span><kbd>J</kbd> <kbd>L</kbd></div><div class="up-stats-line"><span>Mute / unmute</span><kbd>M</kbd></div><div class="up-stats-line"><span>Fullscreen</span><kbd>F</kbd></div><div class="up-stats-line"><span>Theater mode</span><kbd>T</kbd></div><div class="up-stats-line"><span>Close menu / mode</span><kbd>Esc</kbd></div>';
 
     this.stage.append(top, this.spinner, clickSurface, this.centerPlay, this.controlsRoot, this.seekTooltip, this.contextMenu, this.statsPanel, this.helpPanel);
     this.listen(document, 'fullscreenchange', () => this.syncUI());
@@ -1181,7 +1179,6 @@ export class UniversalPlayer {
 
   private updateOptionalControls(): void {
     this.trackButton.disabled = !this.mediaElement.textTracks || this.mediaElement.textTracks.length === 0;
-    this.pipButton.disabled = typeof this.mediaElement.requestPictureInPicture !== 'function';
   }
 
   private syncUI(): void {
