@@ -62,8 +62,8 @@ let toastTimer: number | undefined;
 let isLiked = false;
 
 const player = createPlayer('#player-mount', {
-  title: 'Featured demo',
-  source: { src: DEFAULT_DASH_URL, type: 'application/dash+xml', title: 'Featured demo' },
+  title: 'Featured video',
+  source: { src: DEFAULT_DASH_URL, type: 'application/dash+xml', title: 'Featured video' },
   preload: 'metadata',
   aspectRatio: '16 / 9',
   objectFit: 'contain',
@@ -407,7 +407,7 @@ async function restoreDefaultSample(): Promise<void> {
   }
   urlInput!.value = '';
   sideUrlInput!.value = '';
-  await loadVideo(DEFAULT_DASH_URL, 'Featured demo');
+  await loadVideo(DEFAULT_DASH_URL, 'Featured video');
 }
 restoreButton.addEventListener('click', () => { void restoreDefaultSample(); });
 
@@ -433,8 +433,8 @@ player.ready.then(() => {
   applyCustomization();
   const current = player.currentSource;
   if (current?.src === DEFAULT_DASH_URL || !current) {
-    setSourceInfo('Featured demo', DEFAULT_DASH_URL);
-    setStatus('Demo source attached · waiting for media metadata', 'loading');
+    setSourceInfo('Featured video', DEFAULT_DASH_URL);
+    setStatus('Source attached · waiting for media metadata', 'loading');
   } else {
     const currentTitle = current.title || displayName(current.src);
     setSourceInfo(currentTitle, current.src);
