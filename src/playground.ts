@@ -353,9 +353,15 @@ try {
 setTheme(savedTheme, false);
 applyAppearance();
 player.ready.then(() => {
-  setPlayerStatus('Demo source attached · press play to start', 'ready');
+  const current = player.currentSource;
+  if (current?.src === DEFAULT_DASH_URL || !current) {
+    setPlayerStatus('Demo source attached · press play to start', 'ready');
+    addLog('Player initialized with the built-in demo stream.', 'success');
+  } else {
+    setPlayerStatus('Custom source attached · ready to play', 'ready');
+    addLog('Player initialized with the selected custom source.', 'success');
+  }
   updateFeatureStatuses();
-  addLog('Player initialized with the built-in demo stream.', 'success');
 }).catch((error: unknown) => {
   const message = error instanceof Error ? error.message : 'Player initialization failed.';
   setPlayerStatus(message, 'error');
