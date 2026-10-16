@@ -235,3 +235,9 @@ body.studio-theme-dark .studio-secondary-button:hover,body.studio-theme-dark .st
     transform: translateX(-8px);
   }
 }
+
+
+@media (max-width: 900px) {
+  /* Keep the header toggle above the mobile slide-out panel so it can close it. */
+  .studio-header { z-index: 50; }
+}
