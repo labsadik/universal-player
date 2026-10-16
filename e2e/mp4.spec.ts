@@ -366,6 +366,7 @@ test('homepage generated setup code follows theme, density, glass and feature se
   await expect(code).toContainText('glass: false');
 
   await page.locator('#demo-theme').selectOption('light');
+  await expect(page.locator('#player-mount .up-controls button[aria-label="Play video"]')).toHaveCSS('color', 'rgb(17, 24, 39)');
   await page.locator('#demo-controls').selectOption('compact');
   await page.locator('#demo-glass').check();
   await page.locator('[data-demo-feature="playbackSpeed"]').check();
@@ -383,6 +384,7 @@ test('feature Playground shows install guidance and live generated code', async 
   await expect(code).toContainText('glass: false');
 
   await page.locator('[data-studio-theme="light"]').click();
+  await expect(page.locator('#studio-player-mount .up-controls button[aria-label="Play video"]')).toHaveCSS('color', 'rgb(17, 24, 39)');
   await page.locator('#studio-controls-style').selectOption('standard');
   await page.locator('#studio-glass-toggle').check();
   await page.locator('[data-studio-feature="playbackSpeed"]').check();
