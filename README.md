@@ -151,6 +151,7 @@ For the current unreleased code, install from the GitHub repository with your pa
 
 - `theme`: `dark`, `light`, or `system`
 - `glass`: frosted glass treatment for control surfaces
+- `hideSourceUrl`: hide the media URL in the playback-stats panel while keeping explicit copy-link behaviour available
 - `accentColor`: any valid CSS color, including RGB/HSL/hex
 - `controlsStyle`: `standard`, `compact`, or `minimal`
 - `features`: opt in/out of `seek`, `skip`, `volume`, `playbackSpeed`, `quality`, `captions`, `pictureInPicture`, `miniPlayer`, `theaterMode`, `fullscreen`, `contextMenu`, `loop`, `copyLink`, `stats`, `keyboardHelp`, and `liveIndicator`
