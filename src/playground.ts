@@ -115,7 +115,7 @@ function updateGeneratedCode(): void {
     '',
     '// Call when the component or page view is removed.',
     'player.destroy();',
-  ].join('\\n');
+  ].join('\n');
 }
 
 async function copyText(text: string, successMessage: string): Promise<void> {
