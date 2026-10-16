@@ -2,6 +2,22 @@
 
 **Universal Player** is a framework-neutral browser video player built on Video.js, with a project-owned, responsive control UI.
 
+## Demo screenshots
+
+These screenshots show the Universal Player Feature Playground and its live customization controls.
+
+<p align="center">
+  <a href="https://ik.imagekit.io/xvqovhmcyr/video%20plyer/Feature%20Playground%20_%20Universal%20Player%20-%20Google%20Chrome%2010_16_2026%202_19_04%20PM.png">
+    <img src="https://ik.imagekit.io/xvqovhmcyr/video%20plyer/Feature%20Playground%20_%20Universal%20Player%20-%20Google%20Chrome%2010_16_2026%202_19_04%20PM.png" alt="Universal Player Feature Playground — screenshot 1" width="100%">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://ik.imagekit.io/xvqovhmcyr/video%20plyer/Feature%20Playground%20_%20Universal%20Player%20-%20Google%20Chrome%2010_16_2026%202_18_39%20PM.png">
+    <img src="https://ik.imagekit.io/xvqovhmcyr/video%20plyer/Feature%20Playground%20_%20Universal%20Player%20-%20Google%20Chrome%2010_16_2026%202_18_39%20PM.png" alt="Universal Player Feature Playground — screenshot 2" width="100%">
+  </a>
+</p>
+
 ## Install
 
 After the repository has been migrated to **[labsadik/universal-player](https://github.com/labsadik/universal-player)**, install the package directly from GitHub:
