@@ -291,3 +291,28 @@ body.studio-theme-dark .studio-secondary-button:hover,body.studio-theme-dark .st
    in grid column two instead of allowing auto-placement into the zero-width rail. */
 .studio-sidebar { grid-column: 1; }
 .studio-body { grid-column: 2; min-width: 0; width: 100%; }
+
+
+/* Keep preview and code editor within the viewport on narrow screens. */
+.studio-frame,.studio-body,.studio-main,.studio-workspace,.studio-preview-column,.studio-controls-column { min-width:0; max-width:100%; }
+.studio-player-mount { min-width:0; overflow:hidden; }
+.studio-player-mount .up-root { width:100%; max-width:100%; }
+.monaco-workbench,.monaco-editor-shell,.monaco-code-area { min-width:0; max-width:100%; }
+@media (max-width:900px) {
+  .studio-workspace { grid-template-columns:minmax(0,1fr); }
+  .studio-preview-column,.studio-controls-column { width:100%; }
+  .studio-quick-source { flex-wrap:wrap; }
+  .studio-source-copy { min-width:0; }
+  .studio-source-form { flex-basis:100%; max-width:none; }
+}
+@media (max-width:390px) {
+  .studio-main { padding-inline:10px; }
+  .studio-header { gap:7px; padding-inline:10px; }
+  .studio-header-left { gap:7px; }
+  .studio-header-actions { gap:5px; }
+  .studio-breadcrumb { gap:5px; font-size:9px; }
+  .studio-icon-button,.studio-github-link { width:32px; height:32px; }
+  .studio-panel-heading { padding:13px 12px 10px; }
+  .studio-player-mount { padding-inline:6px; }
+  .studio-event-log { padding-inline:10px; }
+}

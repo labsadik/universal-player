@@ -1,5 +1,5 @@
 import './demo.css';
-import { createIcons, Menu, Play, Link2, ClipboardPaste, ArrowUpRight, ArrowRight, House, History, Layers, Code2, SlidersHorizontal, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film, ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon, Layers3, Package, Info } from 'lucide';
+import { createIcons, Menu, Play, Link2, ClipboardPaste, ArrowUpRight, ArrowRight, House, History, Layers, Code2, SlidersHorizontal, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film, ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon, Monitor, Layers3, Package, Info } from 'lucide';
 import { createPlayer, type UniversalPlayerFeatures } from './index.js';
 import { detectProvider, normalizePastedVideoUrl } from './source.js';
 
@@ -10,7 +10,7 @@ const BIG_BUCK_MP4 = 'https://storage.googleapis.com/gtv-videos-bucket/sample/Fo
 const iconSet = {
   Menu, Play, Link2, ClipboardPaste, ArrowUpRight, House, History, Layers, Code2,
   ArrowRight, SlidersHorizontal, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film,
-  ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon, Layers3, Package, Info,
+  ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon, Monitor, Layers3, Package, Info,
 };
 createIcons({
   icons: iconSet,
@@ -70,7 +70,7 @@ const player = createPlayer('#player-mount', {
   playbackRates: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
   autohide: true,
   hideSourceUrl: true,
-  theme: 'light',
+  theme: 'system',
   glass: true,
   accentColor: 'rgb(54, 214, 176)',
 });
@@ -92,14 +92,24 @@ function applyCustomization(): void {
 }
 themeSelect.addEventListener('change', applyCustomization);
 
-function setWebsiteTheme(theme: 'light' | 'dark', persist = true): void {
-  document.body.classList.toggle('site-theme-light', theme === 'light');
-  document.body.classList.toggle('site-theme-dark', theme === 'dark');
-  document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f8fafc' : '#080d16');
-  const nextTheme = theme === 'light' ? 'dark' : 'light';
-  themeToggle!.setAttribute('aria-label', 'Switch to ' + nextTheme + ' theme');
-  themeToggle!.setAttribute('title', 'Switch to ' + nextTheme + ' theme');
-  themeToggle!.innerHTML = '<i data-lucide="' + (theme === 'light' ? 'moon' : 'sun') + '"></i>';
+let websiteThemePreference: 'light' | 'dark' | 'system' = 'system';
+
+function effectiveWebsiteTheme(theme: 'light' | 'dark' | 'system'): 'light' | 'dark' {
+  if (theme !== 'system') return theme;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function setWebsiteTheme(theme: 'light' | 'dark' | 'system', persist = true): void {
+  websiteThemePreference = theme;
+  const resolved = effectiveWebsiteTheme(theme);
+  document.body.classList.toggle('site-theme-light', resolved === 'light');
+  document.body.classList.toggle('site-theme-dark', resolved === 'dark');
+  document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute('content', resolved === 'light' ? '#f8fafc' : '#080d16');
+  const next = theme === 'system' ? 'light' : theme === 'light' ? 'dark' : 'system';
+  const icon = theme === 'system' ? 'monitor' : theme === 'light' ? 'moon' : 'sun';
+  themeToggle!.setAttribute('aria-label', 'Change theme to ' + next);
+  themeToggle!.setAttribute('title', 'Theme: ' + theme + ' · change to ' + next);
+  themeToggle!.innerHTML = '<i data-lucide="' + icon + '"></i>';
   createIcons({ icons: iconSet, attrs: { class: 'app-icon', 'stroke-width': 1.8 } });
   themeSelect!.value = theme;
   if (persist) {
@@ -108,13 +118,18 @@ function setWebsiteTheme(theme: 'light' | 'dark', persist = true): void {
   applyCustomization();
 }
 
-let initialSiteTheme: 'light' | 'dark' = 'light';
+let initialSiteTheme: 'light' | 'dark' | 'system' = 'system';
 try {
-  if (window.localStorage.getItem('universal-player-site-theme') === 'dark') initialSiteTheme = 'dark';
-} catch { /* use the light default when storage is unavailable */ }
+  const saved = window.localStorage.getItem('universal-player-site-theme');
+  if (saved === 'light' || saved === 'dark' || saved === 'system') initialSiteTheme = saved;
+} catch { /* follow the operating-system preference */ }
 setWebsiteTheme(initialSiteTheme, false);
 themeToggle.addEventListener('click', () => {
-  setWebsiteTheme(document.body.classList.contains('site-theme-light') ? 'dark' : 'light');
+  const next = websiteThemePreference === 'system' ? 'light' : websiteThemePreference === 'light' ? 'dark' : 'system';
+  setWebsiteTheme(next);
+});
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (websiteThemePreference === 'system') setWebsiteTheme('system', false);
 });
 
 const exampleTabs = [...document.querySelectorAll<HTMLButtonElement>('[data-code-tab]')];
@@ -127,6 +142,9 @@ const exampleMeta: Record<string, { file: string; language: string }> = {
   vanilla: { file: 'main.ts', language: 'TypeScript' },
   react: { file: 'VideoPlayer.tsx', language: 'TypeScript React' },
   vue: { file: 'VideoPlayer.vue', language: 'Vue / TypeScript' },
+  svelte: { file: 'VideoPlayer.svelte', language: 'Svelte / TypeScript' },
+  python: { file: 'watch.html', language: 'Python + HTML' },
+  java: { file: 'player.html', language: 'Java / Thymeleaf' },
 };
 
 function selectCodeExample(name: string): void {
@@ -178,12 +196,12 @@ document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((inpu
   input.addEventListener('change', applyCustomization);
 });
 resetSettings.addEventListener('click', () => {
-  setWebsiteTheme('light');
-  themeSelect!.value = 'light';
+  setWebsiteTheme('system');
+  themeSelect!.value = 'system';
   controlsSelect!.value = 'standard';
   accentSelect!.value = 'rgb(54, 214, 176)';
   glassToggle!.checked = true;
-  document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((input) => { input.checked = true; });
+  document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((input) => { input.checked = input.dataset.default !== 'off'; });
   applyCustomization();
 });
 

@@ -46,7 +46,7 @@ if (!frame || !sidebarToggle || !themeToggle || !controlsSelect || !accentSelect
   throw new Error('Feature playground markup is incomplete.');
 }
 
-let themeValue: UniversalPlayerTheme = 'light';
+let themeValue: UniversalPlayerTheme = 'system';
 let toastTimer: number | undefined;
 let latestLoadRequest = 0;
 
@@ -79,7 +79,7 @@ const player = createPlayer('#studio-player-mount', {
   playbackRates: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
   autohide: true,
   hideSourceUrl: true,
-  theme: 'light',
+  theme: 'system',
   glass: true,
   accentColor: 'rgb(54, 214, 176)',
 });
@@ -139,9 +139,11 @@ function setTheme(theme: UniversalPlayerTheme, persist = true): void {
   document.body.classList.toggle('studio-theme-dark', pageTheme === 'dark');
   document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute('content',
     pageTheme === 'light' ? '#f8fafc' : '#080d16');
-  themeToggle!.setAttribute('aria-label', 'Switch to ' + (pageTheme === 'light' ? 'dark' : 'light') + ' theme');
-  themeToggle!.setAttribute('title', 'Switch to ' + (pageTheme === 'light' ? 'dark' : 'light') + ' theme');
-  themeToggle!.innerHTML = '<i data-lucide="' + (pageTheme === 'light' ? 'moon' : 'sun') + '"></i>';
+  const next: UniversalPlayerTheme = theme === 'system' ? 'light' : theme === 'light' ? 'dark' : 'system';
+  const icon = theme === 'system' ? 'monitor' : theme === 'light' ? 'moon' : 'sun';
+  themeToggle!.setAttribute('aria-label', 'Change theme to ' + next);
+  themeToggle!.setAttribute('title', 'Theme: ' + theme + ' · change to ' + next);
+  themeToggle!.innerHTML = '<i data-lucide="' + icon + '"></i>';
   createIcons({ icons: iconSet, attrs: { class: 'studio-icon', 'stroke-width': 1.8 } });
   themeButtons.forEach((button) => {
     const active = button.dataset.studioTheme === theme;
@@ -150,7 +152,7 @@ function setTheme(theme: UniversalPlayerTheme, persist = true): void {
   });
   player.setTheme(theme);
   if (persist) {
-    try { window.localStorage.setItem('universal-player-site-theme', pageTheme); } catch { /* optional preference */ }
+    try { window.localStorage.setItem('universal-player-site-theme', theme); } catch { /* optional preference */ }
   }
 }
 
@@ -259,8 +261,11 @@ themeButtons.forEach((button) => {
   button.addEventListener('click', () => setTheme(button.dataset.studioTheme as UniversalPlayerTheme));
 });
 themeToggle.addEventListener('click', () => {
-  const pageTheme = effectiveTheme(themeValue);
-  setTheme(pageTheme === 'light' ? 'dark' : 'light');
+  const next: UniversalPlayerTheme = themeValue === 'system' ? 'light' : themeValue === 'light' ? 'dark' : 'system';
+  setTheme(next);
+});
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (themeValue === 'system') setTheme('system', false);
 });
 controlsSelect.addEventListener('change', () => {
   applyAppearance();
@@ -300,13 +305,13 @@ window.addEventListener('resize', syncSidebarButton);
 syncSidebarButton();
 
 resetButton.addEventListener('click', async () => {
-  setTheme('light');
+  setTheme('system');
   controlsSelect!.value = 'standard';
   accentSelect!.value = 'rgb(54, 214, 176)';
   glassToggle!.checked = true;
-  featureInputs.forEach((input) => { input.checked = true; });
+  featureInputs.forEach((input) => { input.checked = input.dataset.default !== 'off'; });
   applyAppearance();
-  player.setFeatures(Object.fromEntries(featureInputs.map((input) => [input.dataset.studioFeature, true])) as Partial<UniversalPlayerFeatures>);
+  player.setFeatures(Object.fromEntries(featureInputs.map((input) => [input.dataset.studioFeature, input.checked])) as Partial<UniversalPlayerFeatures>);
   sourceInput!.value = '';
   currentSourceLabel!.textContent = 'Featured stream';
   providerLabel!.textContent = 'DASH STREAM';
@@ -357,10 +362,11 @@ player.on('featureerror', (event) => {
   showToast(message, true);
 });
 
-let savedTheme: 'light' | 'dark' = 'light';
+let savedTheme: UniversalPlayerTheme = 'system';
 try {
-  if (window.localStorage.getItem('universal-player-site-theme') === 'dark') savedTheme = 'dark';
-} catch { /* the default is light */ }
+  const saved = window.localStorage.getItem('universal-player-site-theme');
+  if (saved === 'light' || saved === 'dark' || saved === 'system') savedTheme = saved;
+} catch { /* follow the operating-system preference */ }
 setTheme(savedTheme, false);
 applyAppearance();
 player.ready.then(() => {

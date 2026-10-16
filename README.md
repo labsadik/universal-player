@@ -14,14 +14,14 @@
 - **Video providers:** YouTube, Vimeo, TikTok, Twitch, Wistia and known Player.js-compatible embeds through provider adapters.
 - **Framework-neutral core:** mount createPlayer() from vanilla JS or a browser lifecycle hook in React, Vue, Svelte, Angular or another browser framework.
 
-**Publishing status:** this repository is the source of the package. Until a release is published, install from GitHub or clone the repository; the npm install command below will work after the first public release.
+**Publishing status:** the npm registry release is a separate step and is not claimed to be published. Before then, install directly from GitHub with `npm install github:WorkRCS/easy-video-player`; the package's `prepare` script builds its distributable files during installation. After a public registry release, switch to `npm install @labsadik/universal-player`.
 
 ## Run locally in VS Code
 
 Requires Node.js 20.19+ and npm.
 
 ~~~bash
-git clone https://github.com/Labsadik/easy-video-player.git
+git clone https://github.com/WorkRCS/easy-video-player.git
 cd easy-video-player
 npm install
 npm run dev
@@ -111,7 +111,13 @@ The goal is a familiar video-player experience, not an exact copy of YouTube bra
 
 ## npm install and plug-and-play usage
 
-After a public release is available:
+**Install the current package now, before the npm registry release:**
+
+~~~bash
+npm install github:WorkRCS/easy-video-player
+~~~
+
+The package's `prepare` script builds JavaScript, CSS, declarations and provider chunks during GitHub installation. After a public npm registry release, use:
 
 ~~~bash
 npm install @labsadik/universal-player
@@ -145,7 +151,7 @@ player.setFeatures({ stats: false, miniPlayer: false });
 player.destroy();
 ~~~
 
-For the current unreleased code, install from the GitHub repository with your package manager's Git URL support or clone it and run `npm install`.
+For a local checkout, clone `https://github.com/WorkRCS/easy-video-player.git`, then run `npm install`. For framework-specific instructions, including Python/Java servers serving the browser bundle, see [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md).
 
 ## Themes and features
 

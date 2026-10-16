@@ -32,7 +32,7 @@
           </form>
 
           <button id="theme-toggle" class="icon-surface theme-toggle flex h-10 w-10 shrink-0 items-center justify-center rounded-full" type="button" aria-label="Switch to dark theme" title="Switch to dark theme"><i data-lucide="moon"></i></button>
-          <a href="https://github.com/Labsadik/easy-video-player" target="_blank" rel="noreferrer" class="icon-surface flex h-10 w-10 shrink-0 items-center justify-center rounded-full" aria-label="Open GitHub repository" title="GitHub">
+          <a href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer" class="icon-surface flex h-10 w-10 shrink-0 items-center justify-center rounded-full" aria-label="Open GitHub repository" title="GitHub">
             <i data-lucide="code-2"></i>
           </a>
         </div>
@@ -48,7 +48,7 @@
             <div class="my-5 border-t border-white/10"></div>
             <p class="px-3 pb-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-600">Your workspace</p>
             <a href="#player-section" class="sidebar-link"><i data-lucide="history"></i><span>Recently opened</span></a>
-            <a href="https://github.com/Labsadik/easy-video-player" target="_blank" rel="noreferrer" class="sidebar-link"><i data-lucide="code-2"></i><span>Open source</span><i data-lucide="arrow-up-right" class="ml-auto h-3.5 w-3.5 text-slate-600"></i></a>
+            <a href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer" class="sidebar-link"><i data-lucide="code-2"></i><span>Open source</span><i data-lucide="arrow-up-right" class="ml-auto h-3.5 w-3.5 text-slate-600"></i></a>
             <div class="mt-8 rounded-2xl border border-emerald-300/15 bg-gradient-to-br from-emerald-300/[.09] to-blue-400/[.07] p-4">
               <span class="mb-3 grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-emerald-300 to-blue-400 text-slate-950"><i data-lucide="sparkles"></i></span>
               <p class="text-sm font-bold text-white">One player. Many sources.</p>
@@ -173,7 +173,7 @@
 
           <section id="player-playground" class="mt-8 rounded-[22px] border border-white/10 bg-[#111923] p-4 sm:p-6">
             <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
-              <div><p class="mb-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-emerald-300">Customize & test</p><h2 class="text-xl font-extrabold text-white">Make the player yours</h2><p class="mt-1 max-w-2xl text-xs leading-5 text-slate-400">Change the theme, glass effect, accent and control density live. These settings are the same public API your app can call.</p></div>
+              <div><p class="mb-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-emerald-300">Customize & test</p><h2 class="text-xl font-extrabold text-white">Make the player yours</h2><p class="mt-1 max-w-2xl text-xs leading-5 text-slate-400">Change the system/light/dark theme, accent, control density and optional features live. These settings use the same public API as your app.</p></div>
               <button id="reset-player-settings" type="button" class="action-chip"><i data-lucide="rotate-ccw"></i><span>Reset</span></button>
             </div>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -188,12 +188,12 @@
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="seek" checked><span>Seek timeline</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="skip" checked><span>Skip ±10s</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="volume" checked><span>Volume</span></label>
-                <label class="feature-switch"><input type="checkbox" data-demo-feature="playbackSpeed" checked><span>Playback speed</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="playbackSpeed" data-default="off"><span>Playback speed</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="quality" checked><span>Quality menu</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="captions" checked><span>Captions</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="pictureInPicture" checked><span>Picture in Picture</span></label>
-                <label class="feature-switch"><input type="checkbox" data-demo-feature="miniPlayer" checked><span>Mini player</span></label>
-                <label class="feature-switch"><input type="checkbox" data-demo-feature="theaterMode" checked><span>Theater mode</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="miniPlayer" data-default="off"><span>Mini player</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="theaterMode" data-default="off"><span>Theater mode</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="fullscreen" checked><span>Fullscreen</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="contextMenu" checked><span>Right-click menu</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="loop" checked><span>Loop video</span></label>
@@ -216,11 +216,16 @@
             </div>
 
             <div class="install-command-row">
-              <div><span class="install-step">01 / INSTALL</span><strong>Install the package</strong><p>Once the package is published to npm under the Labsadik scope.</p></div>
-              <code class="install-command">npm install @labsadik/universal-player</code>
+              <div><span class="install-step">01 / INSTALL</span><strong>Install the current package</strong><p>Before npm publication, GitHub install works now. Node.js 20.19+ and npm are required.</p></div>
+              <code class="install-command">npm install github:WorkRCS/easy-video-player</code>
             </div>
 
-            <div class="monaco-workbench" aria-label="Monaco-style code example editor">
+            <div class="setup-step-grid" aria-label="Step-by-step setup">
+              <article><span>STEP 01</span><strong>Install Node.js</strong><p>Use Node.js 20.19 or newer, then check versions.</p><code>node -v && npm -v</code></article>
+              <article><span>STEP 02</span><strong>Install the player</strong><p>GitHub install works before the registry release. The package builds itself on install.</p><code>npm install github:WorkRCS/easy-video-player</code></article>
+              <article><span>STEP 03</span><strong>Mount the player</strong><p>Import the stylesheet, createPlayer() after the element exists, and clean up with destroy().</p><code>createPlayer('#video-player', { source: '/media/video.mp4' })</code></article>
+            </div>
+            <div class="monaco-workbench" aria-label="VS Code-style setup and code editor">
               <div class="monaco-titlebar">
                 <div class="monaco-window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
                 <div class="monaco-title">universal-player <span>/</span> examples</div>
@@ -230,6 +235,9 @@
                 <button class="monaco-tab is-active" id="code-tab-vanilla" type="button" role="tab" aria-selected="true" data-code-tab="vanilla"><span class="monaco-tab-dot"></span> Vanilla TS</button>
                 <button class="monaco-tab" id="code-tab-react" type="button" role="tab" aria-selected="false" data-code-tab="react"><span class="monaco-tab-dot react-dot"></span> React</button>
                 <button class="monaco-tab" id="code-tab-vue" type="button" role="tab" aria-selected="false" data-code-tab="vue"><span class="monaco-tab-dot vue-dot"></span> Vue 3</button>
+                <button class="monaco-tab" id="code-tab-svelte" type="button" role="tab" aria-selected="false" data-code-tab="svelte">Svelte</button>
+                <button class="monaco-tab" id="code-tab-python" type="button" role="tab" aria-selected="false" data-code-tab="python">Python API</button>
+                <button class="monaco-tab" id="code-tab-java" type="button" role="tab" aria-selected="false" data-code-tab="java">Java</button>
                 <div class="monaco-tab-actions"><span id="code-language-label">TypeScript</span><button id="copy-example-code" type="button" class="monaco-copy-button"><i data-lucide="copy"></i><span>Copy code</span></button></div>
               </div>
               <div class="monaco-editor-shell">
@@ -240,6 +248,9 @@
                   <p class="monaco-tree-file is-selected" data-tree-file="vanilla">TS&nbsp;&nbsp; main.ts</p>
                   <p class="monaco-tree-file" data-tree-file="react">TSX&nbsp; VideoPlayer.tsx</p>
                   <p class="monaco-tree-file" data-tree-file="vue">VUE&nbsp; VideoPlayer.vue</p>
+                  <p class="monaco-tree-file" data-tree-file="svelte">SVELTE&nbsp; VideoPlayer.svelte</p>
+                  <p class="monaco-tree-file" data-tree-file="python">PY&nbsp; watch.html</p>
+                  <p class="monaco-tree-file" data-tree-file="java">JAVA&nbsp; player.html</p>
                   <div class="monaco-tree-note"><span class="monaco-tree-note-dot"></span> Syntax-highlighted starter examples</div>
                 </aside>
                 <div class="monaco-code-area">
@@ -325,14 +336,51 @@
 <span class="monaco-line">  &lt;<span class="token-type">div</span> ref="mount"&gt;&lt;/<span class="token-type">div</span>&gt;</span>
 <span class="monaco-line">&lt;/<span class="token-type">template</span>&gt;</span>
             </template>
+            <template id="code-template-svelte">
+<span class="monaco-line"><span class="token-tag">&lt;script</span> <span class="token-attribute">lang</span>=<span class="token-string">"ts"</span><span class="token-tag">&gt;</span></span>
+<span class="monaco-line"><span class="token-keyword">import</span> { onMount } <span class="token-keyword">from</span> <span class="token-string">'svelte'</span>;</span>
+<span class="monaco-line"><span class="token-keyword">import</span> { createPlayer } <span class="token-keyword">from</span> <span class="token-string">'@labsadik/universal-player'</span>;</span>
+<span class="monaco-line"><span class="token-keyword">import</span> <span class="token-string">'@labsadik/universal-player/style.css'</span>;</span>
+<span class="monaco-line"><span class="token-keyword">let</span> mount: HTMLDivElement;</span>
+<span class="monaco-line"><span class="token-function">onMount</span>(() =&gt; {</span>
+<span class="monaco-line">  <span class="token-keyword">const</span> player = <span class="token-function">createPlayer</span>(mount, { source: <span class="token-string">'/media/video.mp4'</span>, theme: <span class="token-string">'system'</span> });</span>
+<span class="monaco-line">  <span class="token-keyword">return</span> () =&gt; player.<span class="token-function">destroy</span>();</span>
+<span class="monaco-line">});</span>
+<span class="monaco-line"><span class="token-tag">&lt;/script&gt;</span></span>
+<span class="monaco-line"><span class="token-tag">&lt;div</span> <span class="token-attribute">bind:this</span>={mount}<span class="token-tag">&gt;&lt;/div&gt;</span></span>
+            </template>
+            <template id="code-template-python">
+<span class="monaco-line"><span class="token-comment"># Python backend: keep JS, CSS and the whole chunks/ directory together.</span></span>
+<span class="monaco-line"><span class="token-keyword">from</span> fastapi <span class="token-keyword">import</span> FastAPI</span>
+<span class="monaco-line"><span class="token-keyword">from</span> fastapi.staticfiles <span class="token-keyword">import</span> StaticFiles</span>
+<span class="monaco-line">app = FastAPI()</span>
+<span class="monaco-line">app.mount(<span class="token-string">"/player"</span>, StaticFiles(directory=<span class="token-string">"static/player"</span>), name=<span class="token-string">"player"</span>)</span>
+<span class="monaco-line"></span>
+<span class="monaco-line">&lt;<span class="token-type">div</span> id=<span class="token-string">"video-player"</span>&gt;&lt;/<span class="token-type">div</span>&gt;</span>
+<span class="monaco-line">&lt;<span class="token-type">link</span> rel=<span class="token-string">"stylesheet"</span> href=<span class="token-string">"/player/universal-player.css"</span> /&gt;</span>
+<span class="monaco-line">&lt;<span class="token-type">script</span> type=<span class="token-string">"module"</span>&gt;</span>
+<span class="monaco-line">  <span class="token-keyword">import</span> { createPlayer } <span class="token-keyword">from</span> <span class="token-string">"/player/universal-player.js"</span>;</span>
+<span class="monaco-line">  createPlayer(<span class="token-string">"#video-player"</span>, { source: <span class="token-string">"/media/sample.mp4"</span>, theme: <span class="token-string">"system"</span> });</span>
+<span class="monaco-line">&lt;/<span class="token-type">script</span>&gt;</span>
+            </template>
+            <template id="code-template-java">
+<span class="monaco-line"><span class="token-comment">&lt;!-- Spring Boot / Thymeleaf: src/main/resources/templates/player.html --&gt;</span></span>
+<span class="monaco-line">&lt;<span class="token-type">div</span> id=<span class="token-string">"video-player"</span>&gt;&lt;/<span class="token-type">div</span>&gt;</span>
+<span class="monaco-line">&lt;<span class="token-type">link</span> rel=<span class="token-string">"stylesheet"</span> href=<span class="token-string">"/player/universal-player.css"</span> /&gt;</span>
+<span class="monaco-line">&lt;<span class="token-type">script</span> type=<span class="token-string">"module"</span>&gt;</span>
+<span class="monaco-line">  <span class="token-keyword">import</span> { createPlayer } <span class="token-keyword">from</span> <span class="token-string">"/player/universal-player.js"</span>;</span>
+<span class="monaco-line">  createPlayer(<span class="token-string">"#video-player"</span>, { source: <span class="token-string">"/media/sample.mp4"</span>, theme: <span class="token-string">"system"</span> });</span>
+<span class="monaco-line">&lt;/<span class="token-type">script</span>&gt;</span>
+<span class="monaco-line"><span class="token-comment">&lt;!-- Copy bundle, CSS and chunks/ into resources/static/player/. --&gt;</span></span>
+            </template>
             <div class="mt-4 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-500">
               <p><i data-lucide="info" class="inline-block align-middle"></i> Lifecycle rule: call <code>player.destroy()</code> when the component unmounts.</p>
-              <p class="npm-publish-note">The npm install command works after the first public release under <code>@labsadik</code>.</p>
+              <p class="npm-publish-note">After registry release: <code>npm install @labsadik/universal-player</code>. Full recipes for React/Next, Vue/Nuxt, Angular, Astro, Python, Java, PHP, Ruby, Go and .NET: <a href="https://github.com/WorkRCS/easy-video-player/blob/main/docs/INTEGRATIONS.md" target="_blank" rel="noreferrer" class="underline">step-by-step setup guide</a>.</p>
             </div>
           </section>
           <footer class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.07] px-1 py-5 text-[10px] text-slate-600">
             <span>Universal Player · Open-source development preview</span>
-            <a class="inline-flex items-center gap-1.5 transition hover:text-emerald-200" href="https://github.com/Labsadik/easy-video-player" target="_blank" rel="noreferrer">View source on GitHub <i data-lucide="external-link"></i></a>
+            <a class="inline-flex items-center gap-1.5 transition hover:text-emerald-200" href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer">View source on GitHub <i data-lucide="external-link"></i></a>
           </footer>
         </main>
       </div>

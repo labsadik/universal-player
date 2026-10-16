@@ -2,14 +2,22 @@
 
 ## Install / local development
 
-This package is under development and is not yet published to npm. To use the demo:
+Before the npm registry release, install from GitHub (the `prepare` script builds the library automatically):
 
 ~~~bash
-git clone https://github.com/Labsadik/easy-video-player.git
+npm install github:WorkRCS/easy-video-player
+~~~
+
+To run the website and playground locally:
+
+~~~bash
+git clone https://github.com/WorkRCS/easy-video-player.git
 cd easy-video-player
 npm install
 npm run dev
 ~~~
+
+The library-only build is `npm run build:lib`; `npm run build` also builds the site. See [INTEGRATIONS.md](INTEGRATIONS.md) for step-by-step frontend and backend examples.
 
 ## Create a player
 

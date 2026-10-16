@@ -425,3 +425,17 @@ body.site-theme-dark .nav-new-indicator { color: #a7f3d0; border-color: rgba(16,
 @media (max-width: 640px) {
   .playground-cta { width: 100%; }
 }
+
+
+/* Step-by-step setup cards and horizontally scrollable editor tabs for small screens. */
+.setup-step-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:0 0 16px; }
+.setup-step-grid article { min-width:0; padding:13px; border:1px solid rgba(148,163,184,.16); border-radius:12px; background:rgba(255,255,255,.025); }
+.setup-step-grid article > span { display:block; margin-bottom:8px; color:#6ee7b7; font-size:8px; font-weight:900; letter-spacing:.14em; }
+.setup-step-grid article > strong { display:block; color:#e2e8f0; font-size:11px; font-weight:850; }
+.setup-step-grid article > p { margin:6px 0 8px; color:#94a3b8; font-size:9px; line-height:1.65; }
+.setup-step-grid article > code { display:block; overflow-wrap:anywhere; color:#93c5fd; font-size:8px; line-height:1.6; }
+.monaco-tabbar { overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:thin; }
+.monaco-tab { flex:0 0 auto; }
+body.site-theme-light .setup-step-grid article { background:#fff; border-color:#e2e8f0; }
+body.site-theme-light .setup-step-grid article > strong { color:#1e293b; }
+@media (max-width:760px) { .setup-step-grid { grid-template-columns:1fr; } .setup-step-grid article { padding:11px 12px; } }
