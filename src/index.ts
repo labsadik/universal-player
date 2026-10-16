@@ -2,7 +2,7 @@ import '@videojs/html/video/player';
 import '@videojs/html/ui/container';
 import './style.css';
 
-import { createElement, Play, Pause, Rewind, FastForward, Volume2, VolumeX, Settings2, Maximize, Minimize, PictureInPicture2, MonitorPlay, Captions, Copy, Info, Repeat, Gauge, Keyboard, Link as LinkIcon, CircleHelp, X } from 'lucide';
+import { createElement, Play, Pause, Rewind, FastForward, Volume2, VolumeX, Cog, Maximize, Minimize, PictureInPicture2, MonitorPlay, Captions, Copy, Info, Repeat, Gauge, Keyboard, Link as LinkIcon, CircleHelp, X } from 'lucide';
 import { selectQuality } from '@videojs/html';
 import { detectProvider, formatTime, normalizeSource } from './source.js';
 import type { PlayerSource, SourceProvider } from './source.js';
@@ -116,7 +116,7 @@ const ICONS = {
   forward: FastForward,
   volume: Volume2,
   muted: VolumeX,
-  settings: Settings2,
+  settings: Cog,
   fullscreen: Maximize,
   exitFullscreen: Minimize,
   pip: PictureInPicture2,
@@ -134,7 +134,7 @@ const ICONS = {
 };
 
 function makeIcon(name: string): SVGSVGElement {
-  const icon = ICONS[name as keyof typeof ICONS] || Settings2;
+  const icon = ICONS[name as keyof typeof ICONS] || Cog;
   return createElement(icon, {
     class: 'up-lucide',
     'aria-hidden': 'true',
@@ -693,12 +693,16 @@ export class UniversalPlayer {
     this.speedMenu = document.createElement('div');
     this.speedMenu.className = 'up-speed-menu';
     this.speedMenu.setAttribute('role', 'menu');
-    this.speedMenu.setAttribute('aria-label', 'Playback speed');
+    this.speedMenu.setAttribute('aria-label', 'Playback settings');
     this.speedMenu.hidden = true;
+    const speedSection = document.createElement('div');
+    speedSection.className = 'up-settings-section up-speed-section';
+    speedSection.dataset.feature = 'playbackSpeed';
     const speedTitle = document.createElement('div');
     speedTitle.className = 'up-menu-title';
-    speedTitle.textContent = 'Playback speed';
-    this.speedMenu.append(speedTitle);
+    speedTitle.dataset.feature = 'playbackSpeed';
+    speedTitle.textContent = 'Speed';
+    speedSection.append(speedTitle);
     for (const rate of this.rates) {
       const item = document.createElement('button');
       item.type = 'button';
@@ -713,19 +717,20 @@ export class UniversalPlayer {
         this.speedMenu.hidden = true;
         this.settingsButton.setAttribute('aria-expanded', 'false');
       });
-      this.speedMenu.append(item);
+      speedSection.append(item);
     }
+    this.speedMenu.append(speedSection);
     this.listen(this.settingsButton, 'click', () => {
       this.speedMenu.hidden = !this.speedMenu.hidden;
       this.settingsButton.setAttribute('aria-expanded', this.speedMenu.hidden ? 'false' : 'true');
     });
     this.qualityMenuGroup = document.createElement('div');
-    this.qualityMenuGroup.className = 'up-quality-menu-group';
+    this.qualityMenuGroup.className = 'up-settings-section up-quality-menu-group';
     this.qualityMenuGroup.dataset.feature = 'quality';
     this.qualityMenuGroup.hidden = true;
     this.qualityMenuTitle = document.createElement('div');
     this.qualityMenuTitle.className = 'up-menu-title';
-    this.qualityMenuTitle.textContent = 'Video quality';
+    this.qualityMenuTitle.textContent = 'Quality';
     this.qualityMenuGroup.append(this.qualityMenuTitle);
     this.speedMenu.append(this.qualityMenuGroup);
 
@@ -924,7 +929,16 @@ export class UniversalPlayer {
       quality = undefined;
     }
 
-    const renditions = quality?.videoRenditionList || [];
+    const renditions = (quality?.videoRenditionList || [])
+      .map((rendition) => {
+        const width = Number(rendition.width) || 0;
+        const height = Number(rendition.height) || 0;
+        const bitrate = Number(rendition.bitrate) || 0;
+        const label = height > 0 ? height + 'p' : width > 0 ? width + ' px wide' :
+          bitrate > 0 ? Math.round(bitrate / 1000) + ' kbps' : '';
+        return { id: String(rendition.id ?? ''), width, height, bitrate, label };
+      })
+      .filter((rendition) => rendition.id.length > 0 && rendition.label.length > 0);
     if (renditions.length < 2) {
       this.qualityMenuGroup.hidden = true;
       return;
@@ -957,14 +971,11 @@ export class UniversalPlayer {
         this.qualityMenuGroup.append(button);
       };
 
-      addQualityOption('auto', 'Auto · Recommended');
+      addQualityOption('auto', 'Auto');
       [...renditions]
-        .sort((a, b) => (b.height || 0) - (a.height || 0))
+        .sort((a, b) => (b.height || b.width || b.bitrate) - (a.height || a.width || a.bitrate))
         .forEach((rendition) => {
-          const label = rendition.height
-            ? rendition.height + 'p'
-            : (rendition.width ? rendition.width + 'w' : 'Rendition');
-          addQualityOption(rendition.id, label);
+          addQualityOption(rendition.id, rendition.label);
         });
     }
 
