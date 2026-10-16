@@ -2,6 +2,14 @@
   "name": "@labsadik/universal-player",
   "version": "0.1.0",
   "description": "A framework-neutral, accessible video player built on Video.js with a custom UI.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Labsadik/easy-video-player.git"
+  },
+  "homepage": "https://github.com/Labsadik/easy-video-player#readme",
+  "bugs": {
+    "url": "https://github.com/Labsadik/easy-video-player/issues"
+  },
   "type": "module",
   "license": "MIT",
   "sideEffects": [
