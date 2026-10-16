@@ -43,6 +43,7 @@ interface MediaElementLike extends HTMLElement {
   preload: string;
   poster: string;
   buffered?: TimeRanges;
+  seekable: TimeRanges;
   textTracks?: TextTrackList;
   play(): Promise<void>;
   pause(): void;
