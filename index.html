@@ -32,7 +32,7 @@
           </form>
 
           <button id="theme-toggle" class="icon-surface theme-toggle flex h-10 w-10 shrink-0 items-center justify-center rounded-full" type="button" aria-label="Switch to dark theme" title="Switch to dark theme"><i data-lucide="moon"></i></button>
-          <a href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer" class="icon-surface flex h-10 w-10 shrink-0 items-center justify-center rounded-full" aria-label="Open GitHub repository" title="GitHub">
+          <a href="https://github.com/Labsadik/universal-player" target="_blank" rel="noreferrer" class="icon-surface flex h-10 w-10 shrink-0 items-center justify-center rounded-full" aria-label="Open GitHub repository" title="GitHub">
             <i data-lucide="code-2"></i>
           </a>
         </div>
@@ -48,7 +48,7 @@
             <div class="my-5 border-t border-white/10"></div>
             <p class="px-3 pb-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-600">Your workspace</p>
             <a href="#player-section" class="sidebar-link"><i data-lucide="history"></i><span>Recently opened</span></a>
-            <a href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer" class="sidebar-link"><i data-lucide="code-2"></i><span>Open source</span><i data-lucide="arrow-up-right" class="ml-auto h-3.5 w-3.5 text-slate-600"></i></a>
+            <a href="https://github.com/Labsadik/universal-player" target="_blank" rel="noreferrer" class="sidebar-link"><i data-lucide="code-2"></i><span>Open source</span><i data-lucide="arrow-up-right" class="ml-auto h-3.5 w-3.5 text-slate-600"></i></a>
             <div class="mt-8 rounded-2xl border border-emerald-300/15 bg-gradient-to-br from-emerald-300/[.09] to-blue-400/[.07] p-4">
               <span class="mb-3 grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-emerald-300 to-blue-400 text-slate-950"><i data-lucide="sparkles"></i></span>
               <p class="text-sm font-bold text-white">One player. Many sources.</p>
@@ -202,6 +202,14 @@
               </div>
             </div>
             <p id="customization-status" class="mt-4 text-[11px] text-slate-500" aria-live="polite">Ready · Try changing the settings above.</p>
+            <div class="live-config-panel mt-5 rounded-xl border border-white/10">
+              <div class="live-config-heading flex flex-wrap items-center justify-between gap-3 p-4">
+                <div><p class="text-[10px] font-extrabold uppercase tracking-[.16em]">Live configuration</p><h3 class="mt-1 text-sm font-bold">Copy the code for your current selections</h3><p class="mt-1 text-[11px] leading-5 opacity-70">Theme, glass, accent, control density and feature switches update this code automatically.</p></div>
+                <button id="copy-demo-generated-code" type="button" class="action-chip"><i data-lucide="copy"></i><span>Copy code</span></button>
+              </div>
+              <div class="live-config-install mx-4 mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg px-3 py-2"><span class="text-[10px] font-bold uppercase tracking-[.1em]">Install command</span><code>npm install github:Labsadik/universal-player</code></div>
+              <pre id="demo-generated-code" class="live-config-code" aria-label="Code generated from the selected player settings"></pre>
+            </div>
           </section>
           <section id="npm-setup" class="monaco-setup-section mt-8 rounded-[22px] border border-white/10 bg-[#111923] p-4 sm:p-6">
             <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
@@ -214,13 +222,13 @@
             </div>
 
             <div class="install-command-row">
-              <div><span class="install-step">01 / INSTALL</span><strong>Install the current package</strong><p>Before npm publication, GitHub install works now. Node.js 20.19+ and npm are required.</p></div>
-              <code class="install-command">npm install github:WorkRCS/easy-video-player</code>
+              <div><span class="install-step">01 / INSTALL</span><strong>Install the current package</strong><p>Install directly from GitHub. Node.js 20.19+ and npm are required.</p></div>
+              <code class="install-command">npm install github:Labsadik/universal-player</code>
             </div>
 
             <div class="setup-step-grid" aria-label="Step-by-step setup">
               <article><span>STEP 01</span><strong>Install Node.js</strong><p>Use Node.js 20.19 or newer, then check versions.</p><code>node -v && npm -v</code></article>
-              <article><span>STEP 02</span><strong>Install the player</strong><p>GitHub install works before the registry release. The package builds itself on install.</p><code>npm install github:WorkRCS/easy-video-player</code></article>
+              <article><span>STEP 02</span><strong>Install the player</strong><p>The package builds itself during installation.</p><code>npm install github:Labsadik/universal-player</code></article>
               <article><span>STEP 03</span><strong>Mount the player</strong><p>Import the stylesheet, createPlayer() after the element exists, and clean up with destroy().</p><code>createPlayer('#video-player', { source: '/media/video.mp4' })</code></article>
             </div>
             <div class="monaco-workbench" aria-label="VS Code-style setup and code editor">
@@ -253,7 +261,7 @@
                 </aside>
                 <div class="monaco-code-area">
                   <div class="monaco-breadcrumb"><span>examples</span><span class="crumb-chevron">›</span><strong id="code-file-label">main.ts</strong></div>
-                  <pre class="monaco-code-content" id="monaco-code-content" role="tabpanel" aria-labelledby="code-tab-vanilla"><span class="monaco-line"><span class="token-comment">// 1. Install: npm install @labsadik/universal-player</span></span>
+                  <pre class="monaco-code-content" id="monaco-code-content" role="tabpanel" aria-labelledby="code-tab-vanilla"><span class="monaco-line"><span class="token-comment">// 1. Install: npm install github:Labsadik/universal-player</span></span>
 <span class="monaco-line"><span class="token-keyword">import</span> { createPlayer } <span class="token-keyword">from</span> <span class="token-string">'@labsadik/universal-player'</span>;</span>
 <span class="monaco-line"><span class="token-keyword">import</span> <span class="token-string">'@labsadik/universal-player/style.css'</span>;</span>
 <span class="monaco-line"></span>
@@ -279,7 +287,7 @@
             </div>
 
             <template id="code-template-vanilla">
-<span class="monaco-line"><span class="token-comment">// 1. Install: npm install @labsadik/universal-player</span></span>
+<span class="monaco-line"><span class="token-comment">// 1. Install: npm install github:Labsadik/universal-player</span></span>
 <span class="monaco-line"><span class="token-keyword">import</span> { createPlayer } <span class="token-keyword">from</span> <span class="token-string">'@labsadik/universal-player'</span>;</span>
 <span class="monaco-line"><span class="token-keyword">import</span> <span class="token-string">'@labsadik/universal-player/style.css'</span>;</span>
 <span class="monaco-line"></span>
@@ -382,12 +390,12 @@
             </template>
             <div class="mt-4 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-500">
               <p><i data-lucide="info" class="inline-block align-middle"></i> Lifecycle rule: call <code>player.destroy()</code> when the component unmounts.</p>
-              <p class="npm-publish-note">After registry release: <code>npm install @labsadik/universal-player</code>. Full recipes for React/Next, Vue/Nuxt, Angular, Astro, Python, Java, PHP, Ruby, Go and .NET: <a href="https://github.com/WorkRCS/easy-video-player/blob/main/docs/INTEGRATIONS.md" target="_blank" rel="noreferrer" class="underline">step-by-step setup guide</a>.</p>
+              <p class="npm-publish-note">Install command: <code>npm install github:Labsadik/universal-player</code>. Full recipes for React/Next, Vue/Nuxt, Angular, Astro, Python, Java, PHP, Ruby, Go and .NET: <a href="https://github.com/Labsadik/universal-player/blob/main/docs/INTEGRATIONS.md" target="_blank" rel="noreferrer" class="underline">step-by-step setup guide</a>.</p>
             </div>
           </section>
           <footer class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.07] px-1 py-5 text-[10px] text-slate-600">
             <span>Universal Player · Open-source development preview</span>
-            <a class="inline-flex items-center gap-1.5 transition hover:text-emerald-200" href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer">View source on GitHub <i data-lucide="external-link"></i></a>
+            <a class="inline-flex items-center gap-1.5 transition hover:text-emerald-200" href="https://github.com/Labsadik/universal-player" target="_blank" rel="noreferrer">View source on GitHub <i data-lucide="external-link"></i></a>
           </footer>
         </main>
       </div>
