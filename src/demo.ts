@@ -3,6 +3,7 @@ import { createIcons, Menu, Play, Link2, ClipboardPaste, ArrowUpRight, ArrowRigh
 import { createPlayer, type UniversalPlayerFeatures } from './index.js';
 import { detectProvider, normalizePastedVideoUrl } from './source.js';
 
+const DEFAULT_DASH_URL = 'https://files.vidstack.io/sprite-fight/dash/stream.mpd';
 const SAMPLE_MP4 = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
 const BIG_BUCK_MP4 = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4';
 
@@ -61,8 +62,8 @@ let toastTimer: number | undefined;
 let isLiked = false;
 
 const player = createPlayer('#player-mount', {
-  title: 'Flower · MP4 sample',
-  source: { src: SAMPLE_MP4, type: 'video/mp4', title: 'Flower · MP4 sample' },
+  title: 'Featured demo',
+  source: { src: DEFAULT_DASH_URL, type: 'application/dash+xml', title: 'Featured demo' },
   preload: 'metadata',
   aspectRatio: '16 / 9',
   objectFit: 'contain',
@@ -244,9 +245,9 @@ function setSourceInfo(title: string, src: string): void {
   badge!.textContent = provider.toUpperCase();
   providerPill!.textContent = providerLabel(provider);
   videoHeading!.textContent = title;
-  videoSubtitle!.textContent = src;
-  urlInput!.value = src;
-  sideUrlInput!.value = src;
+  // Never expose the built-in demo URL in the visible page. Show source category only.
+  videoSubtitle!.textContent = provider === 'dash' ? 'Adaptive streaming · MPEG-DASH' :
+    provider === 'hls' ? 'Adaptive streaming · HLS' : 'Source loaded · ' + providerLabel(provider);
 }
 
 async function loadVideo(rawUrl: string, explicitTitle?: string): Promise<void> {
@@ -313,9 +314,28 @@ player.on('featureerror', (event) => {
 
 urlForm.addEventListener('submit', (event) => {
   event.preventDefault();
+  sideUrlInput!.value = urlInput!.value.trim();
   void loadVideo(urlInput!.value);
 });
-sideLoadButton.addEventListener('click', () => void loadVideo(sideUrlInput!.value));
+sideLoadButton.addEventListener('click', () => {
+  urlInput!.value = sideUrlInput!.value.trim();
+  void loadVideo(sideUrlInput!.value);
+});
+
+// Pasting a URL is an explicit action: attach it to the player immediately, without
+// requiring a second click on Load video. Typing remains non-destructive until submit.
+function autoLoadPastedUrl(input: HTMLInputElement, peer: HTMLInputElement): void {
+  input.addEventListener('paste', () => {
+    window.setTimeout(() => {
+      const pasted = input.value.trim();
+      if (!pasted) return;
+      peer.value = pasted;
+      void loadVideo(pasted);
+    }, 0);
+  });
+}
+autoLoadPastedUrl(urlInput, sideUrlInput);
+autoLoadPastedUrl(sideUrlInput, urlInput);
 sideUrlInput.addEventListener('keydown', (event) => {
   if ((event as KeyboardEvent).key === 'Enter') {
     event.preventDefault();
@@ -331,8 +351,10 @@ pasteButton.addEventListener('click', async () => {
       return;
     }
     urlInput!.value = clip.trim();
+    sideUrlInput!.value = clip.trim();
     urlInput!.focus();
-    showToast('Link pasted. Press Load video to start.');
+    void loadVideo(clip.trim());
+    showToast('Pasted link attached to the player.');
   } catch {
     urlInput!.focus();
     showToast('Clipboard permission was blocked. Paste the URL into the field.', 'error');
@@ -406,8 +428,8 @@ window.addEventListener('beforeunload', () => {
 
 player.ready.then(() => {
   applyCustomization();
-  setSourceInfo('Flower · MP4 sample', SAMPLE_MP4);
-  setStatus('MP4 source attached · waiting for media metadata', 'loading');
+  setSourceInfo('Featured demo', DEFAULT_DASH_URL);
+  setStatus('Demo source attached · waiting for media metadata', 'loading');
 }).catch((error: unknown) => {
   setStatus(error instanceof Error ? error.message : 'Player initialization failed.', 'error');
 });
