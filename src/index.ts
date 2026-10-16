@@ -164,6 +164,7 @@ export class UniversalPlayer {
   private provider: SourceProvider = 'html5';
   private source: PlayerSource | undefined;
   private sourceRequestId = 0;
+  private sourceReadyPromise: Promise<void> = Promise.resolve();
   private mediaCleanup: Array<() => void> = [];
   private uiCleanup: Array<() => void> = [];
   private destroyed = false;
@@ -343,51 +344,68 @@ export class UniversalPlayer {
   async setSource(input: string | PlayerSource): Promise<void> {
     this.assertAlive();
     const requestId = ++this.sourceRequestId;
-    const source = normalizeSource(input);
-    const provider = detectProvider(source);
+    let settleSource!: () => void;
+    this.sourceReadyPromise = new Promise<void>((resolve) => { settleSource = resolve; });
+    try {
+      const source = normalizeSource(input);
+      const provider = detectProvider(source);
 
-    if (provider !== 'html5') {
-      await ADAPTERS[provider]();
-      this.assertAlive();
-      // If a newer URL was requested while a provider adapter loaded, never
-      // let this older asynchronous request replace the newest selected source.
+      if (provider !== 'html5') {
+        await ADAPTERS[provider]();
+        this.assertAlive();
+        // If a newer URL was requested while a provider adapter loaded, never
+        // let this older asynchronous request replace the newest selected source.
+        if (requestId !== this.sourceRequestId) return;
+      }
+
       if (requestId !== this.sourceRequestId) return;
+      if (provider !== this.provider) {
+        const previousMedia = this.mediaElement;
+        this.unbindMediaEvents();
+        this.teardownMedia(previousMedia);
+        this.mediaElement = this.createMediaElement(provider);
+        this.stage.replaceChild(this.mediaElement, previousMedia);
+        this.provider = provider;
+        this.bindMediaEvents(this.mediaElement);
+      }
+
+      this.source = source;
+      this.selectedQualityId = 'auto';
+      this.qualitySignature = '';
+      const poster = source.poster || this.options.poster;
+      if (poster) this.mediaElement.setAttribute('poster', poster);
+      else this.mediaElement.removeAttribute('poster');
+      this.mediaElement.setAttribute('src', source.src);
+
+      if (provider === 'html5') this.mediaElement.load?.();
+      this.refreshQualityMenu();
+
+      this.titleLabel.textContent = source.title || this.options.title || source.src.split('/').pop() || 'Universal Player';
+      this.stage.setAttribute('aria-label', (source.title || this.options.title || 'Universal Player') + ' video');
+      this.stage.dataset.provider = provider;
+      this.stage.classList.toggle('up-portrait', provider === 'tiktok');
+      this.stage.style.aspectRatio = provider === 'tiktok' ? '9 / 16' : (this.options.aspectRatio || '16 / 9');
+      this.updateLiveUI();
+      this.emit('sourcechange', { source: { ...source }, provider });
+      this.syncUI();
+    } finally {
+      // Resolve this call's waiter; play() checks the request id and follows the
+      // newest source if another URL was submitted while an adapter was loading.
+      settleSource();
     }
-
-    if (provider !== this.provider) {
-      const previousMedia = this.mediaElement;
-      this.unbindMediaEvents();
-      this.teardownMedia(previousMedia);
-      this.mediaElement = this.createMediaElement(provider);
-      this.stage.replaceChild(this.mediaElement, previousMedia);
-      this.provider = provider;
-      this.bindMediaEvents(this.mediaElement);
-    }
-
-    this.source = source;
-    this.selectedQualityId = 'auto';
-    this.qualitySignature = '';
-    const poster = source.poster || this.options.poster;
-    if (poster) this.mediaElement.setAttribute('poster', poster);
-    else this.mediaElement.removeAttribute('poster');
-    this.mediaElement.setAttribute('src', source.src);
-
-    if (provider === 'html5') this.mediaElement.load?.();
-    this.refreshQualityMenu();
-
-    this.titleLabel.textContent = source.title || this.options.title || source.src.split('/').pop() || 'Universal Player';
-    this.stage.setAttribute('aria-label', (source.title || this.options.title || 'Universal Player') + ' video');
-    this.stage.dataset.provider = provider;
-    this.stage.classList.toggle('up-portrait', provider === 'tiktok');
-    this.updateLiveUI();
-    this.stage.style.aspectRatio = provider === 'tiktok' ? '9 / 16' : (this.options.aspectRatio || '16 / 9');
-    this.emit('sourcechange', { source: { ...source }, provider });
-    this.syncUI();
   }
 
-  play(): Promise<void> {
+  async play(): Promise<void> {
     this.assertAlive();
-    return this.mediaElement.play();
+    const requestId = this.sourceRequestId;
+    const pendingSource = this.sourceReadyPromise;
+    await pendingSource;
+    this.assertAlive();
+    if (requestId !== this.sourceRequestId) {
+      await this.play();
+      return;
+    }
+    await this.mediaElement.play();
   }
 
   pause(): void {
