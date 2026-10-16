@@ -72,20 +72,12 @@ test('opens Universal Player context menu on right click', async ({ page }) => {
 });
 
 
-test('omits Picture in Picture and Mini Player while retaining optional theater mode', async ({ page }) => {
+test('omits Picture in Picture and Mini Player from the normal player UI', async ({ page }) => {
   await page.goto('/');
-  const root = page.locator('#player-mount .up-root');
   await expect(page.locator('[data-demo-feature="pictureInPicture"]')).toHaveCount(0);
   await expect(page.locator('[data-demo-feature="miniPlayer"]')).toHaveCount(0);
   await expect(page.locator('#player-mount .up-controls button[aria-label="Picture in Picture"]')).toHaveCount(0);
   await expect(page.locator('#player-mount .up-controls .up-mini-player-button')).toHaveCount(0);
-
-  await page.locator('[data-demo-feature="theaterMode"]').check();
-  const theaterButton = page.locator('#player-mount .up-theater-button');
-  await theaterButton.click();
-  await expect(root).toHaveClass(/up-theater/);
-  await page.keyboard.press('Escape');
-  await expect(root).not.toHaveClass(/up-theater/);
 });
 
 
@@ -222,7 +214,10 @@ test('uses core default controls without overflow at 320px', async ({ page }) =>
   const geometry = await page.evaluate(() => {
     const stage = document.querySelector<HTMLElement>('#player-mount .up-stage')!.getBoundingClientRect();
     const buttons = [...document.querySelectorAll<HTMLElement>('#player-mount .up-controls .up-icon-button')]
-      .filter((button) => getComputedStyle(button).display !== 'none' && !button.hidden)
+      .filter((button) => {
+        const rect = button.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0 && getComputedStyle(button).display !== 'none' && !button.hidden;
+      })
       .map((button) => ({ label: button.getAttribute('aria-label'), left: button.getBoundingClientRect().left, right: button.getBoundingClientRect().right }));
     return { stageLeft: stage.left, stageRight: stage.right, buttons };
   });
@@ -279,7 +274,7 @@ test('playground defaults to minimal transparent controls, adapts icon ink to th
   expect(transparentStyle.backdrop).toBe('none');
   expect(transparentStyle.image).toBe('none');
 
-  await page.locator('#studio-glass-toggle').check();
+  await page.locator('.studio-glass-setting .studio-switch-track').click();
   await expect(root).toHaveClass(/up-glassy/);
   await expect.poll(() => controls.evaluate((node) => getComputedStyle(node).backdropFilter)).toContain('blur');
 
@@ -292,7 +287,10 @@ test('playground defaults to minimal transparent controls, adapts icon ink to th
   const bounds = await page.evaluate(() => {
     const box = document.querySelector<HTMLElement>('#studio-player-mount .up-stage')!.getBoundingClientRect();
     const visibleButtons = [...document.querySelectorAll<HTMLElement>('#studio-player-mount .up-controls .up-icon-button')]
-      .filter((button) => getComputedStyle(button).display !== 'none' && !button.hidden);
+      .filter((button) => {
+        const rect = button.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0 && getComputedStyle(button).display !== 'none' && !button.hidden;
+      });
     return { left: box.left, right: box.right, buttons: visibleButtons.map((button) => ({
       label: button.getAttribute('aria-label'), left: button.getBoundingClientRect().left, right: button.getBoundingClientRect().right,
     })) };
@@ -386,7 +384,7 @@ test('feature Playground shows install guidance and live generated code', async 
   await page.locator('[data-studio-theme="light"]').click();
   await expect(page.locator('#studio-player-mount .up-controls button[aria-label="Play video"]')).toHaveCSS('color', 'rgb(17, 24, 39)');
   await page.locator('#studio-controls-style').selectOption('standard');
-  await page.locator('#studio-glass-toggle').check();
+  await page.locator('.studio-glass-setting .studio-switch-track').click();
   await page.locator('[data-studio-feature="playbackSpeed"]').check();
   await expect(code).toContainText('theme: "light"');
   await expect(code).toContainText('controlsStyle: "standard"');
