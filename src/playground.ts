@@ -39,10 +39,15 @@ const featureHint = document.querySelector<HTMLElement>('#studio-feature-hint');
 const eventLog = document.querySelector<HTMLElement>('#studio-event-log');
 const runtimeBadge = document.querySelector<HTMLElement>('#studio-runtime-badge');
 const toast = document.querySelector<HTMLElement>('#studio-toast');
+const generatedCode = document.querySelector<HTMLElement>('#studio-generated-code');
+const installCommand = document.querySelector<HTMLElement>('#studio-install-command');
+const copyInstallButton = document.querySelector<HTMLButtonElement>('#studio-copy-install');
+const copyGeneratedCodeButton = document.querySelector<HTMLButtonElement>('#studio-copy-generated-code');
 
 if (!frame || !sidebarToggle || !themeToggle || !controlsSelect || !accentSelect || !glassToggle ||
   !resetButton || !sourceForm || !sourceInput || !statusText || !statusDot || !providerLabel ||
-  !currentSourceLabel || !qualitySupport || !enabledCount || !featureHint || !eventLog || !runtimeBadge || !toast) {
+  !currentSourceLabel || !qualitySupport || !enabledCount || !featureHint || !eventLog || !runtimeBadge || !toast ||
+  !generatedCode || !installCommand || !copyInstallButton || !copyGeneratedCodeButton) {
   throw new Error('Feature playground markup is incomplete.');
 }
 
@@ -84,6 +89,51 @@ const player = createPlayer('#studio-player-mount', {
   controlsStyle: 'minimal',
   accentColor: 'rgb(54, 214, 176)',
 });
+
+
+function updateGeneratedCode(): void {
+  const source = sourceInput!.value.trim() || '/media/video.mp4';
+  const activeFeatures = featureInputs
+    .filter((input) => input.dataset.studioFeature && !['pictureInPicture', 'miniPlayer'].includes(input.dataset.studioFeature))
+    .map((input) => [input.dataset.studioFeature!, input.checked] as const);
+  const featureLines = activeFeatures.map(([key, enabled]) => '    ' + key + ': ' + enabled + ',');
+  generatedCode!.textContent = [
+    '// Install: npm install github:Labsadik/universal-player',
+    "import { createPlayer } from '@labsadik/universal-player';",
+    "import '@labsadik/universal-player/style.css';",
+    '',
+    "const player = createPlayer('#video-player', {",
+    '  source: ' + JSON.stringify(source) + ',',
+    '  theme: ' + JSON.stringify(themeValue) + ',',
+    '  controlsStyle: ' + JSON.stringify(controlsSelect!.value) + ',',
+    '  glass: ' + glassToggle!.checked + ',',
+    '  accentColor: ' + JSON.stringify(accentSelect!.value) + ',',
+    '  features: {',
+    ...featureLines,
+    '  },',
+    '});',
+    '',
+    '// Call when the component or page view is removed.',
+    'player.destroy();',
+  ].join('\\n');
+}
+
+async function copyText(text: string, successMessage: string): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast(successMessage);
+  } catch {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.append(area);
+    area.select();
+    const copied = document.execCommand('copy');
+    area.remove();
+    showToast(copied ? successMessage : 'Clipboard access was blocked.', !copied);
+  }
+}
 
 function showToast(message: string, isError = false): void {
   if (toastTimer) window.clearTimeout(toastTimer);
@@ -152,6 +202,7 @@ function setTheme(theme: UniversalPlayerTheme, persist = true): void {
     button.setAttribute('aria-pressed', String(active));
   });
   player.setTheme(theme);
+  updateGeneratedCode();
   if (persist) {
     try { window.localStorage.setItem('universal-player-site-theme', theme); } catch { /* optional preference */ }
   }
@@ -195,11 +246,13 @@ function applyAppearance(): void {
   player.setAccentColor(accentSelect!.value);
   player.setControlsStyle(controlsSelect!.value as UniversalPlayerControlsStyle);
   player.setTheme(themeValue);
+  updateGeneratedCode();
 }
 
 function applyFeature(key: FeatureKey, checked: boolean): void {
   player.setFeatures({ [key]: checked } as Partial<UniversalPlayerFeatures>);
   updateFeatureStatuses();
+  updateGeneratedCode();
   const label = document.querySelector<HTMLElement>('[data-feature-row="' + key + '"] .studio-feature-copy strong')?.textContent || key;
   featureHint!.textContent = label + (checked ? ' enabled.' : ' disabled.') +
     ' ' + (checked ? 'The player UI has been updated.' : 'The related control is hidden or inactive.');
@@ -228,6 +281,7 @@ async function loadSource(raw: string): Promise<void> {
     currentSourceLabel!.textContent = 'Custom source · ' + providerName(provider);
     providerLabel!.textContent = providerName(provider);
     sourceInput!.value = url;
+    updateGeneratedCode();
     setPlayerStatus('Source attached · ready to play', 'ready');
     featureHint!.textContent = 'Custom source attached. Test the controls; some options depend on this provider.';
     updateFeatureStatuses();
@@ -270,16 +324,21 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
 });
 controlsSelect.addEventListener('change', () => {
   applyAppearance();
+  updateGeneratedCode();
   addLog('Control density changed to ' + controlsSelect.value + '.', 'success');
 });
 accentSelect.addEventListener('change', () => {
   applyAppearance();
+  updateGeneratedCode();
   addLog('Player accent colour updated.', 'success');
 });
 glassToggle.addEventListener('change', () => {
   applyAppearance();
+  updateGeneratedCode();
   addLog('Glass controls ' + (glassToggle.checked ? 'enabled' : 'disabled') + '.', 'success');
 });
+copyInstallButton.addEventListener('click', () => { void copyText(installCommand!.textContent || 'npm install github:Labsadik/universal-player', 'Install command copied.'); });
+copyGeneratedCodeButton.addEventListener('click', () => { void copyText(generatedCode!.textContent || '', 'Current player code copied.'); });
 
 function syncSidebarButton(): void {
   const mobile = window.matchMedia('(max-width: 900px)').matches;
@@ -314,6 +373,7 @@ resetButton.addEventListener('click', async () => {
   applyAppearance();
   player.setFeatures(Object.fromEntries(featureInputs.map((input) => [input.dataset.studioFeature, input.checked])) as Partial<UniversalPlayerFeatures>);
   sourceInput!.value = '';
+  updateGeneratedCode();
   currentSourceLabel!.textContent = 'Featured stream';
   providerLabel!.textContent = 'DASH STREAM';
   featureHint!.textContent = 'Settings reset. The current source remains loaded; the URL field stays empty.';
@@ -333,6 +393,7 @@ player.on('sourcechange', (event) => {
   const name = providerName(detail.provider);
   providerLabel!.textContent = name;
   currentSourceLabel!.textContent = isDefault ? 'Featured stream' : 'Custom source · ' + name;
+  updateGeneratedCode();
   setPlayerStatus(isDefault ? 'Source ready · press play to start' : 'Custom source attached · ready to play', 'ready');
   updateFeatureStatuses();
 });
