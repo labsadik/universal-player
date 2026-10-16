@@ -46,13 +46,15 @@ const accentSelect = document.querySelector<HTMLSelectElement>('#demo-accent');
 const glassToggle = document.querySelector<HTMLInputElement>('#demo-glass');
 const resetSettings = document.querySelector<HTMLButtonElement>('#reset-player-settings');
 const customizationStatus = document.querySelector<HTMLElement>('#customization-status');
+const generatedCode = document.querySelector<HTMLElement>('#demo-generated-code');
+const copyGeneratedCodeButton = document.querySelector<HTMLButtonElement>('#copy-demo-generated-code');
 
 if (
   !statusLine || !statusWrap || !statusIndicator || !titleLine || !badge || !providerPill ||
   !videoHeading || !videoSubtitle || !feedback || !urlForm || !urlInput || !sideUrlInput ||
   !sideLoadButton || !pasteButton || !likeButton || !likeCount || !shareButton || !copyButton ||
   !restoreButton || !toast || !sidebar || !sidebarToggle || !themeToggle || !themeSelect || !controlsSelect ||
-  !accentSelect || !glassToggle || !resetSettings || !customizationStatus
+  !accentSelect || !glassToggle || !resetSettings || !customizationStatus || !generatedCode || !copyGeneratedCodeButton
 ) {
   throw new Error('Universal Player demo markup is incomplete.');
 }
@@ -60,6 +62,7 @@ if (
 let objectUrl: string | undefined;
 let toastTimer: number | undefined;
 let isLiked = false;
+let generatedSource = '/media/video.mp4';
 
 const player = createPlayer('#player-mount', {
   title: 'Featured video',
@@ -77,6 +80,35 @@ const player = createPlayer('#player-mount', {
 });
 
 
+
+function updateGeneratedCode(): void {
+  const features: Record<string, boolean> = {};
+  document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((input) => {
+    const key = input.dataset.demoFeature;
+    if (key) features[key] = input.checked;
+  });
+  const featureLines = Object.entries(features).map(([key, enabled]) => '    ' + key + ': ' + enabled + ',');
+  generatedCode!.textContent = [
+    '// Install: npm install github:Labsadik/universal-player',
+    "import { createPlayer } from '@labsadik/universal-player';",
+    "import '@labsadik/universal-player/style.css';",
+    '',
+    "const player = createPlayer('#video-player', {",
+    '  source: ' + JSON.stringify(generatedSource) + ',',
+    '  theme: ' + JSON.stringify(themeSelect!.value) + ',',
+    '  controlsStyle: ' + JSON.stringify(controlsSelect!.value) + ',',
+    '  glass: ' + glassToggle!.checked + ',',
+    '  accentColor: ' + JSON.stringify(accentSelect!.value) + ',',
+    '  features: {',
+    ...featureLines,
+    '  },',
+    '});',
+    '',
+    '// Call when the component or page view is removed.',
+    'player.destroy();',
+  ].join('\\n');
+}
+
 function applyCustomization(): void {
   player.setTheme(themeSelect!.value as 'dark' | 'light' | 'system');
   player.setGlassEffect(glassToggle!.checked);
@@ -87,6 +119,7 @@ function applyCustomization(): void {
     features[input.dataset.demoFeature as keyof UniversalPlayerFeatures] = input.checked;
   });
   player.setFeatures(features);
+  updateGeneratedCode();
   customizationStatus!.textContent = 'Applied · ' + themeSelect!.selectedOptions[0]?.textContent +
     ' theme · ' + controlsSelect!.selectedOptions[0]?.textContent + ' controls · ' +
     (glassToggle!.checked ? 'glass enabled' : 'glass disabled');
@@ -303,6 +336,8 @@ async function loadVideo(rawUrl: string, explicitTitle?: string): Promise<void> 
 
 player.on('sourcechange', (event) => {
   const detail = (event as CustomEvent<{ source: { src: string; title?: string }; provider: string }>).detail;
+  generatedSource = detail.source.src === DEFAULT_DASH_URL ? '/media/video.mp4' : detail.source.src;
+  updateGeneratedCode();
   const name = detail.source.title || displayName(detail.source.src);
   setSourceInfo(name, detail.source.src);
   setStatus('Source attached · waiting for media metadata', 'loading');
@@ -403,6 +438,23 @@ async function copyCurrentUrl(): Promise<void> {
   }
 }
 copyButton.addEventListener('click', () => { void copyCurrentUrl(); });
+copyGeneratedCodeButton.addEventListener('click', async () => {
+  const text = generatedCode!.textContent || '';
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('Current player configuration copied.');
+  } catch {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.append(area);
+    area.select();
+    const copied = document.execCommand('copy');
+    area.remove();
+    showToast(copied ? 'Current player configuration copied.' : 'Clipboard access was blocked.', copied ? 'success' : 'error');
+  }
+});
 shareButton.addEventListener('click', async () => {
   const url = player.currentSource?.src || window.location.href;
   const title = videoHeading!.textContent || 'Universal Player';
