@@ -9,20 +9,14 @@ Requirements: Node.js 20.19+ and npm.
 Before a public npm registry release, install the current repository using npm's Git dependency syntax:
 
 ~~~bash
-npm install github:WorkRCS/easy-video-player
+npm install github:Labsadik/universal-player
 ~~~
 
-The package's prepare lifecycle builds the library, CSS, TypeScript declarations and provider chunks during installation. After the scoped package is published to npm, use:
+The package's prepare lifecycle builds the library, CSS, TypeScript declarations and provider chunks during installation. To run the website locally:
 
 ~~~bash
-npm install @labsadik/universal-player
-~~~
-
-To run the website locally:
-
-~~~bash
-git clone https://github.com/WorkRCS/easy-video-player.git
-cd easy-video-player
+git clone https://github.com/Labsadik/universal-player.git
+cd universal-player
 npm install
 npm run dev
 ~~~
@@ -138,7 +132,7 @@ Use the framework's browser/client lifecycle. Create only after the mount elemen
 Python serves HTML, media and the static player bundle; the browser executes the player. Build with npm, then copy the JavaScript, stylesheet and full provider chunks directory. Preserve their relative paths.
 
 ~~~bash
-npm install github:WorkRCS/easy-video-player
+npm install github:Labsadik/universal-player
 mkdir -p static/player/chunks
 cp node_modules/@labsadik/universal-player/dist/universal-player.js static/player/
 cp node_modules/@labsadik/universal-player/dist/universal-player.css static/player/
@@ -181,7 +175,7 @@ Flask/Django use the same markup with their normal static-file and template conf
 The player is not a Maven dependency. Copy the JavaScript, CSS and full chunks/ directory into src/main/resources/static/player/; Spring Boot will serve those files from /player/.
 
 ~~~bash
-npm install github:WorkRCS/easy-video-player
+npm install github:Labsadik/universal-player
 mkdir -p src/main/resources/static/player/chunks
 cp node_modules/@labsadik/universal-player/dist/universal-player.js src/main/resources/static/player/
 cp node_modules/@labsadik/universal-player/dist/universal-player.css src/main/resources/static/player/
