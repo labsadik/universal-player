@@ -756,3 +756,7 @@
   .up-control-group-right { gap: 0; }
   .up-center-play { width: 54px; height: 54px; }
 }
+
+
+.up-center-play:disabled { opacity: .64; cursor: progress; transform: translate(-50%, -50%); }
+.up-icon-button:disabled { cursor: progress; }
