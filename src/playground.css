@@ -250,3 +250,15 @@ body.studio-theme-dark .studio-secondary-button:hover,body.studio-theme-dark .st
   .studio-breadcrumb a { display: none; }
   .studio-breadcrumb strong { min-width: 0; }
 }
+
+
+@media (max-width: 650px) {
+  .studio-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+  .studio-header-left { width: 100%; min-width: 0; }
+  .studio-header-actions { width: max-content; min-width: 0; justify-self: end; }
+  .studio-breadcrumb { min-width: 0; width: 100%; max-width: min(40vw, 150px); }
+}
