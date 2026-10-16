@@ -98,7 +98,7 @@ function updateGeneratedCode(): void {
     .map((input) => [input.dataset.studioFeature!, input.checked] as const);
   const featureLines = activeFeatures.map(([key, enabled]) => '    ' + key + ': ' + enabled + ',');
   generatedCode!.textContent = [
-    '// Install: npm install github:Labsadik/universal-player',
+    '// Install: npm install github:labsadik/universal-player',
     "import { createPlayer } from '@labsadik/universal-player';",
     "import '@labsadik/universal-player/style.css';",
     '',
@@ -337,7 +337,7 @@ glassToggle.addEventListener('change', () => {
   updateGeneratedCode();
   addLog('Glass controls ' + (glassToggle.checked ? 'enabled' : 'disabled') + '.', 'success');
 });
-copyInstallButton.addEventListener('click', () => { void copyText(installCommand!.textContent || 'npm install github:Labsadik/universal-player', 'Install command copied.'); });
+copyInstallButton.addEventListener('click', () => { void copyText(installCommand!.textContent || 'npm install github:labsadik/universal-player', 'Install command copied.'); });
 copyGeneratedCodeButton.addEventListener('click', () => { void copyText(generatedCode!.textContent || '', 'Current player code copied.'); });
 
 function syncSidebarButton(): void {
