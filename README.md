@@ -14,7 +14,7 @@
 - **Video providers:** YouTube, Vimeo, TikTok, Twitch, Wistia and known Player.js-compatible embeds through provider adapters.
 - **Framework-neutral core:** mount createPlayer() from vanilla JS or a browser lifecycle hook in React, Vue, Svelte, Angular or another browser framework.
 
-This is a development version and is not published to npm yet.
+**Publishing status:** this repository is the source of the package. Until a release is published, install from GitHub or clone the repository; the npm install command below will work after the first public release.
 
 ## Run locally in VS Code
 
@@ -56,6 +56,10 @@ const player = createPlayer('#player', {
   title: 'Product demo',
   preload: 'metadata',
   aspectRatio: '16 / 9',
+  theme: 'system', // 'dark' | 'light' | 'system'
+  glass: true,
+  accentColor: 'rgb(54, 214, 176)',
+  controlsStyle: 'standard', // 'standard' | 'compact' | 'minimal'
 });
 
 await player.ready;
@@ -63,6 +67,11 @@ await player.play();
 player.seek(12);
 player.setVolume(0.8);
 player.setPlaybackRate(1.25);
+player.setTheme('dark');
+player.setGlassEffect(true);
+player.setAccentColor('rgb(54, 214, 176)');
+player.setControlsStyle('compact');
+player.setFeatures({ stats: false, miniPlayer: false });
 
 player.on('playing', () => console.log('Playing'));
 
@@ -94,3 +103,75 @@ Universal Player is MIT licensed. Video.js and optional playback adapters retain
 - The UI is styled with Tailwind CSS v4 and CSS, and icons use the locally bundled Lucide package.
 
 The goal is a familiar video-player experience, not an exact copy of YouTube branding. Provider-specific embeds may limit quality, captions, playback rate, picture-in-picture or fullscreen.
+
+
+## npm install and plug-and-play usage
+
+After a public release is available:
+
+~~~bash
+npm install @workrcs/universal-player
+~~~
+
+Create a mount element, import the CSS once, and create the player:
+
+~~~html
+<div id="player"></div>
+~~~
+
+~~~ts
+import { createPlayer } from '@workrcs/universal-player';
+import '@workrcs/universal-player/style.css';
+
+const player = createPlayer('#player', {
+  source: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+  theme: 'system',
+  glass: true,
+  accentColor: 'rgb(54, 214, 176)',
+  controlsStyle: 'standard',
+});
+
+// Optional runtime customization
+player.setTheme('light');
+player.setGlassEffect(false);
+player.setControlsStyle('compact');
+player.setFeatures({ stats: false, miniPlayer: false });
+
+// On route/component unmount:
+player.destroy();
+~~~
+
+For the current unreleased code, install from the GitHub repository with your package manager's Git URL support or clone it and run `npm install`.
+
+## Themes and features
+
+- `theme`: `dark`, `light`, or `system`
+- `glass`: frosted glass treatment for control surfaces
+- `accentColor`: any valid CSS color, including RGB/HSL/hex
+- `controlsStyle`: `standard`, `compact`, or `minimal`
+- `features`: opt in/out of `seek`, `skip`, `volume`, `playbackSpeed`, `quality`, `captions`, `pictureInPicture`, `miniPlayer`, `theaterMode`, `fullscreen`, `contextMenu`, `loop`, `copyLink`, `stats`, `keyboardHelp`, and `liveIndicator`
+- Live sources may use `{ src, live: true }`. The Go Live button seeks to the last available seekable range when the provider exposes it.
+
+## Framework integration
+
+Universal Player is framework-neutral, so you can use it inside React, Vue, Svelte, Angular or plain TypeScript. Create it after the mount element exists, and always call `destroy()` when that component is removed. Example React integration:
+
+~~~tsx
+import { useEffect, useRef } from 'react';
+import { createPlayer } from '@workrcs/universal-player';
+import '@workrcs/universal-player/style.css';
+
+export function VideoPlayer({ src }: { src: string }) {
+  const mount = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!mount.current) return;
+    const player = createPlayer(mount.current, { source: src, theme: 'system' });
+    return () => player.destroy();
+  }, [src]);
+  return <div ref={mount} />;
+}
+~~~
+
+## Quality, live streams and limitations
+
+HLS/DASH quality choices come from the renditions exposed by the stream's adaptive playback adapter. A regular MP4 URL is normally a single rendition, so the player cannot invent 1080p/4K options that the source does not contain. Live-edge seeking works only when the underlying provider exposes seekable ranges. Third-party providers can restrict captions, quality, PiP, seeking, or embedding. DRM, login-gated content, CORS, unsupported codecs, and provider policies still apply.
