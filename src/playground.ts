@@ -80,7 +80,8 @@ const player = createPlayer('#studio-player-mount', {
   autohide: true,
   hideSourceUrl: true,
   theme: 'system',
-  glass: true,
+  glass: false,
+  controlsStyle: 'minimal',
   accentColor: 'rgb(54, 214, 176)',
 });
 
@@ -306,9 +307,9 @@ syncSidebarButton();
 
 resetButton.addEventListener('click', async () => {
   setTheme('system');
-  controlsSelect!.value = 'standard';
+  controlsSelect!.value = 'minimal';
   accentSelect!.value = 'rgb(54, 214, 176)';
-  glassToggle!.checked = true;
+  glassToggle!.checked = false;
   featureInputs.forEach((input) => { input.checked = input.dataset.default !== 'off'; });
   applyAppearance();
   player.setFeatures(Object.fromEntries(featureInputs.map((input) => [input.dataset.studioFeature, input.checked])) as Partial<UniversalPlayerFeatures>);
