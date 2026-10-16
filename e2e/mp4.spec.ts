@@ -126,6 +126,21 @@ test('the Flower sample button works in a single click and does not fill the URL
   }), { timeout: 60000 }).toBe(true);
 });
 
+
+test('playground sidebar starts hidden on mobile and toggles with the correct indication', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/playground.html');
+  const toggle = page.locator('#studio-sidebar-toggle');
+  const frame = page.locator('#studio-frame');
+  await expect(toggle).toHaveAttribute('aria-label', 'Show sidebar');
+  await toggle.click();
+  await expect(frame).toHaveClass(/sidebar-open/);
+  await expect(toggle).toHaveAttribute('aria-label', 'Hide sidebar');
+  await expect(page.locator('#studio-sidebar')).toBeVisible();
+  await toggle.click();
+  await expect(frame).not.toHaveClass(/sidebar-open/);
+  await expect(toggle).toHaveAttribute('aria-label', 'Show sidebar');
+});
 test('pasting a URL into the playground attaches the source without a second load click', async ({ page }) => {
   await page.goto('/playground.html');
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
