@@ -107,6 +107,11 @@ test('keeps the preloaded DASH demo URL out of the visible UI', async ({ page })
   await expect(page.locator('#player-mount .up-stage[data-provider="dash"]')).toBeAttached();
   await expect(page.locator('#player-section')).not.toContainText('stream.mpd');
   await expect(page.locator('#video-subtitle')).not.toContainText('vidstack.io');
+  await page.locator('#player-mount .up-stage').click({ button: 'right', position: { x: 160, y: 100 } });
+  await page.locator('#player-mount .up-context-menu').getByRole('menuitem', { name: 'Playback stats' }).click();
+  const stats = page.locator('#player-mount [aria-label="Playback statistics"]');
+  await expect(stats).toContainText('Hidden by player configuration');
+  await expect(stats).not.toContainText('stream.mpd');
 });
 
 test('feature playground toggles a feature on the first click and collapses the sidebar', async ({ page }) => {
