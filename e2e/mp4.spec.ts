@@ -227,8 +227,8 @@ test('uses core default controls without overflow at 320px', async ({ page }) =>
   for (const label of ['Play video','Toggle captions','Playback settings','Enter fullscreen']) {
     await expect(page.locator('#player-mount .up-controls button[aria-label="' + label + '"]')).toBeVisible();
   }
-  await expect(page.locator('#player-mount .up-controls button[aria-label="Back 10 seconds"]')).toBeHidden();
-  await expect(page.locator('#player-mount .up-controls button[aria-label="Forward 10 seconds"]')).toBeHidden();
+  await expect(page.locator('#player-mount .up-controls button[aria-label="Back 10 seconds"]')).toBeVisible();
+  await expect(page.locator('#player-mount .up-controls button[aria-label="Forward 10 seconds"]')).toBeVisible();
   await expect(page.locator('#player-mount .up-controls .up-mini-player-button')).toHaveCount(0);
   await expect(page.locator('#player-mount .up-controls button[aria-label="Picture in Picture"]')).toHaveCount(0);
   await expect(page.locator('#player-mount .up-controls .up-theater-button')).toBeHidden();
@@ -348,7 +348,10 @@ test('settings gear conditionally shows Speed and actual source Quality sections
 
   await page.keyboard.press('Escape');
   await speedToggle.uncheck();
-  await expect(gear).toBeHidden();
+  await expect(gear).toBeVisible();
+  await gear.click();
+  await expect(menu.locator('.up-settings-empty')).toBeVisible();
+  await expect(menu.locator('.up-settings-empty')).toContainText('Enable Speed or Quality');
 });
 
 test('never invents quality labels for fixed-quality MP4 sources', async ({ page }) => {
@@ -363,4 +366,41 @@ test('never invents quality labels for fixed-quality MP4 sources', async ({ page
   await expect(qualitySection.locator('[data-quality-id]')).toHaveCount(0);
   await expect(qualitySection.locator('.up-quality-unavailable')).toContainText('not exposed by this source');
   await expect(page.locator('#player-mount .up-quality-option')).toHaveCount(0);
+});
+
+
+test('homepage generated setup code follows theme, density, glass and feature selections', async ({ page }) => {
+  await page.goto('/');
+  const code = page.locator('#demo-generated-code');
+  await expect(page.locator('.live-config-install')).toContainText('npm install github:Labsadik/universal-player');
+  await expect(code).toContainText('theme: "system"');
+  await expect(code).toContainText('controlsStyle: "minimal"');
+  await expect(code).toContainText('glass: false');
+
+  await page.locator('#demo-theme').selectOption('light');
+  await page.locator('#demo-controls').selectOption('compact');
+  await page.locator('#demo-glass').check();
+  await page.locator('[data-demo-feature="playbackSpeed"]').check();
+  await expect(code).toContainText('theme: "light"');
+  await expect(code).toContainText('controlsStyle: "compact"');
+  await expect(code).toContainText('glass: true');
+  await expect(code).toContainText('playbackSpeed: true');
+});
+
+test('feature Playground shows install guidance and live generated code', async ({ page }) => {
+  await page.goto('/playground.html');
+  const code = page.locator('#studio-generated-code');
+  await expect(page.locator('#studio-install-command')).toHaveText('npm install github:Labsadik/universal-player');
+  await expect(code).toContainText('controlsStyle: "minimal"');
+  await expect(code).toContainText('glass: false');
+
+  await page.locator('[data-studio-theme="light"]').click();
+  await page.locator('#studio-controls-style').selectOption('standard');
+  await page.locator('#studio-glass-toggle').check();
+  await page.locator('[data-studio-feature="playbackSpeed"]').check();
+  await expect(code).toContainText('theme: "light"');
+  await expect(code).toContainText('controlsStyle: "standard"');
+  await expect(code).toContainText('glass: true');
+  await expect(code).toContainText('playbackSpeed: true');
+  await expect(code).toContainText('npm install github:Labsadik/universal-player');
 });
