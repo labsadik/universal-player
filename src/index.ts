@@ -57,6 +57,8 @@ export interface UniversalPlayerOptions {
   accentColor?: string;
   controlsStyle?: UniversalPlayerControlsStyle;
   live?: boolean;
+  /** Hide the source URL from the playback statistics panel (copy-link still works). */
+  hideSourceUrl?: boolean;
   features?: Partial<UniversalPlayerFeatures>;
 }
 
@@ -1019,7 +1021,7 @@ export class UniversalPlayer {
       ['Playback rate', (this.mediaElement.playbackRate || 1) + '×'],
       ['Buffered to', bufferedText],
       ['Ready state', String(media.readyState ?? 'n/a')],
-      ['Link', (this.currentSource?.src || '').slice(0, 120) || 'No source'],
+      ['Link', this.options.hideSourceUrl ? 'Hidden by player configuration' : ((this.currentSource?.src || '').slice(0, 120) || 'No source')],
     ];
     for (const [label, value] of rows) {
       const row = document.createElement('div');
