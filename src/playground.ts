@@ -78,6 +78,7 @@ const player = createPlayer('#studio-player-mount', {
   objectFit: 'contain',
   playbackRates: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
   autohide: true,
+  hideSourceUrl: true,
   theme: 'light',
   glass: true,
   accentColor: 'rgb(54, 214, 176)',
