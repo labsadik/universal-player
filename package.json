@@ -19,7 +19,11 @@
     "node": ">=20.19.0"
   },
   "files": [
-    "dist",
+    "dist/universal-player.js",
+    "dist/universal-player.css",
+    "dist/chunks/**",
+    "dist/*.d.ts",
+    "dist/*.d.ts.map",
     "README.md",
     "LICENSE"
   ],
@@ -36,7 +40,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "build": "vite build && tsc -p tsconfig.build.json",
+    "build": "vite build && tsc -p tsconfig.build.json && vite build --config vite.demo.config.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
