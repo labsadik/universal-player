@@ -385,7 +385,7 @@ test('feature Playground shows install guidance and live generated code', async 
   await expect(page.locator('#studio-player-mount .up-controls button[aria-label="Play video"]')).toHaveCSS('color', 'rgb(17, 24, 39)');
   await page.locator('#studio-controls-style').selectOption('standard');
   await page.locator('.studio-glass-setting .studio-switch-track').click();
-  await page.locator('[data-studio-feature="playbackSpeed"]').check();
+  await page.locator('[data-feature-row="playbackSpeed"]').click();
   await expect(code).toContainText('theme: "light"');
   await expect(code).toContainText('controlsStyle: "standard"');
   await expect(code).toContainText('glass: true');
