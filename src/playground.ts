@@ -2,7 +2,7 @@ import './playground.css';
 import {
   createIcons, Activity, ArrowRight, ArrowUpRight, Captions, Code2, Copy, Gauge,
   House, Keyboard, Layers, Link2, Maximize, Menu, Moon, Monitor, MonitorPlay,
-  MousePointer2, PanelLeftClose, PanelLeftOpen, PictureInPicture2, Play, RadioTower,
+  MousePointer2, PanelLeftClose, PanelLeftOpen, PanelTop, PictureInPicture2, Play, RadioTower,
   Repeat, RotateCcw, ShieldCheck, SkipForward, SlidersHorizontal, Sparkles, Sun, Volume2,
 } from 'lucide';
 import { createPlayer, type UniversalPlayerFeatures, type UniversalPlayerTheme, type UniversalPlayerControlsStyle } from './index.js';
@@ -14,7 +14,7 @@ type FeatureKey = keyof UniversalPlayerFeatures;
 const iconSet = {
   Activity, ArrowRight, ArrowUpRight, Captions, Code2, Copy, Gauge,
   House, Keyboard, Layers, Link2, Maximize, Menu, Moon, Monitor, MonitorPlay,
-  MousePointer2, PanelLeftClose, PanelLeftOpen, PictureInPicture2, Play, RadioTower,
+  MousePointer2, PanelLeftClose, PanelLeftOpen, PanelTop, PictureInPicture2, Play, RadioTower,
   Repeat, RotateCcw, ShieldCheck, SkipForward, SlidersHorizontal, Sparkles, Sun, Volume2,
 };
 createIcons({ icons: iconSet, attrs: { class: 'studio-icon', 'stroke-width': 1.8 } });
