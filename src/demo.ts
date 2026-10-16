@@ -89,7 +89,7 @@ function updateGeneratedCode(): void {
   });
   const featureLines = Object.entries(features).map(([key, enabled]) => '    ' + key + ': ' + enabled + ',');
   generatedCode!.textContent = [
-    '// Install: npm install github:Labsadik/universal-player',
+    '// Install: npm install github:labsadik/universal-player',
     "import { createPlayer } from '@labsadik/universal-player';",
     "import '@labsadik/universal-player/style.css';",
     '',
