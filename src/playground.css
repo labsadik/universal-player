@@ -223,3 +223,15 @@ body.studio-theme-dark .studio-secondary-button:hover,body.studio-theme-dark .st
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; }
 }
+
+
+@media (min-width: 901px) {
+  .studio-frame.nav-hidden .studio-sidebar {
+    width: 0;
+    padding-inline: 0;
+    border-right: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-8px);
+  }
+}
