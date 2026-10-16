@@ -431,8 +431,15 @@ window.addEventListener('beforeunload', () => {
 
 player.ready.then(() => {
   applyCustomization();
-  setSourceInfo('Featured demo', DEFAULT_DASH_URL);
-  setStatus('Demo source attached · waiting for media metadata', 'loading');
+  const current = player.currentSource;
+  if (current?.src === DEFAULT_DASH_URL || !current) {
+    setSourceInfo('Featured demo', DEFAULT_DASH_URL);
+    setStatus('Demo source attached · waiting for media metadata', 'loading');
+  } else {
+    const currentTitle = current.title || displayName(current.src);
+    setSourceInfo(currentTitle, current.src);
+    setStatus('Custom source attached · waiting for media metadata', 'loading');
+  }
 }).catch((error: unknown) => {
   setStatus(error instanceof Error ? error.message : 'Player initialization failed.', 'error');
 });
