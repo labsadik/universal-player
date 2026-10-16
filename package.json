@@ -1,5 +1,5 @@
 {
-  "name": "@workrcs/universal-player",
+  "name": "@labsadik/universal-player",
   "version": "0.1.0",
   "description": "A framework-neutral, accessible video player built on Video.js with a custom UI.",
   "type": "module",
