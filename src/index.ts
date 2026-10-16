@@ -167,6 +167,7 @@ export class UniversalPlayer {
   private source: PlayerSource | undefined;
   private sourceRequestId = 0;
   private sourceReadyPromise: Promise<void> = Promise.resolve();
+  private sourceLoading = false;
   private mediaCleanup: Array<() => void> = [];
   private uiCleanup: Array<() => void> = [];
   private destroyed = false;
@@ -348,6 +349,8 @@ export class UniversalPlayer {
     const requestId = ++this.sourceRequestId;
     let settleSource!: () => void;
     this.sourceReadyPromise = new Promise<void>((resolve) => { settleSource = resolve; });
+    this.sourceLoading = true;
+    this.syncUI();
     try {
       const source = normalizeSource(input);
       const provider = detectProvider(source);
@@ -391,6 +394,11 @@ export class UniversalPlayer {
       this.emit('sourcechange', { source: { ...source }, provider });
       this.syncUI();
     } finally {
+      // Keep controls disabled until the most recent source has been attached.
+      if (requestId === this.sourceRequestId) {
+        this.sourceLoading = false;
+        this.syncUI();
+      }
       // Resolve this call's waiter; play() checks the request id and follows the
       // newest source if another URL was submitted while an adapter was loading.
       settleSource();
@@ -1180,6 +1188,9 @@ export class UniversalPlayer {
     this.seekInput.style.setProperty('--up-buffered', buffered + '%');
     this.currentLabel.textContent = formatTime(current);
     this.durationLabel.textContent = validDuration ? formatTime(duration) : 'LIVE';
+    this.playButton.disabled = this.sourceLoading;
+    this.centerPlay.disabled = this.sourceLoading;
+    this.centerPlay.title = this.sourceLoading ? 'Loading video source…' : (this.mediaElement.paused ? 'Play video' : 'Pause video');
     this.playButton.replaceChildren(makeIcon(this.mediaElement.paused ? 'play' : 'pause'));
     this.playButton.setAttribute('aria-label', this.mediaElement.paused ? 'Play video' : 'Pause video');
     this.playButton.title = this.mediaElement.paused ? 'Play' : 'Pause';
