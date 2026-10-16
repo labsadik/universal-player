@@ -908,17 +908,29 @@ export class UniversalPlayer {
     this.refreshQualityMenu();
   }
 
+  private showQualityUnavailable(message: string): void {
+    this.qualityMenuGroup.hidden = false;
+    const signature = 'unavailable:' + message;
+    if (this.qualitySignature === signature) return;
+    this.qualitySignature = signature;
+    const note = document.createElement('div');
+    note.className = 'up-quality-unavailable';
+    note.setAttribute('role', 'status');
+    note.textContent = message;
+    this.qualityMenuGroup.replaceChildren(this.qualityMenuTitle, note);
+  }
+
   private refreshQualityMenu(): void {
     if (!this.qualityMenuGroup || !this.qualityMenuTitle) return;
     if (this.provider !== 'hls' && this.provider !== 'dash') {
-      this.qualityMenuGroup.hidden = true;
+      this.showQualityUnavailable('Quality options are not exposed by this source.');
       return;
     }
 
     const host = this.element as HTMLElement & { store?: { state: unknown } };
     const store = host.store;
     if (!store) {
-      this.qualityMenuGroup.hidden = true;
+      this.showQualityUnavailable('Quality options are not available for this source.');
       return;
     }
 
@@ -940,7 +952,10 @@ export class UniversalPlayer {
       })
       .filter((rendition) => rendition.id.length > 0 && rendition.label.length > 0);
     if (renditions.length < 2) {
-      this.qualityMenuGroup.hidden = true;
+      const message = renditions.length === 1
+        ? 'Only available quality: ' + renditions[0].label + '.'
+        : 'No selectable quality levels are exposed by this stream.';
+      this.showQualityUnavailable(message);
       return;
     }
 
@@ -973,7 +988,7 @@ export class UniversalPlayer {
 
       addQualityOption('auto', 'Auto');
       [...renditions]
-        .sort((a, b) => (b.height || b.width || b.bitrate) - (a.height || a.width || a.bitrate))
+        .sort((a, b) => (b.height - a.height) || (b.width - a.width) || (b.bitrate - a.bitrate))
         .forEach((rendition) => {
           addQualityOption(rendition.id, rendition.label);
         });
