@@ -71,8 +71,8 @@ const featureStatusCopy: Record<FeatureKey, string> = {
 };
 
 const player = createPlayer('#studio-player-mount', {
-  title: 'Featured demo',
-  source: { src: DEFAULT_DASH_URL, type: 'application/dash+xml', title: 'Featured demo' },
+  title: 'Featured video',
+  source: { src: DEFAULT_DASH_URL, type: 'application/dash+xml', title: 'Featured video' },
   preload: 'metadata',
   aspectRatio: '16 / 9',
   objectFit: 'contain',
@@ -308,14 +308,14 @@ resetButton.addEventListener('click', async () => {
   applyAppearance();
   player.setFeatures(Object.fromEntries(featureInputs.map((input) => [input.dataset.studioFeature, true])) as Partial<UniversalPlayerFeatures>);
   sourceInput!.value = '';
-  currentSourceLabel!.textContent = 'Built-in demo stream';
+  currentSourceLabel!.textContent = 'Featured stream';
   providerLabel!.textContent = 'DASH STREAM';
-  featureHint!.textContent = 'Settings reset. The built-in demo remains loaded; its URL stays hidden.';
+  featureHint!.textContent = 'Settings reset. The current source remains loaded; the URL field stays empty.';
   updateFeatureStatuses();
-  addLog('All settings reset. Restored the hidden demo source.', 'success');
+  addLog('All settings reset. Restored the featured source.', 'success');
   try {
-    await player.setSource({ src: DEFAULT_DASH_URL, type: 'application/dash+xml', title: 'Featured demo' });
-    setPlayerStatus('Demo source attached · press play to start', 'ready');
+    await player.setSource({ src: DEFAULT_DASH_URL, type: 'application/dash+xml', title: 'Featured video' });
+    setPlayerStatus('Source ready · press play to start', 'ready');
   } catch (error) {
     setPlayerStatus(error instanceof Error ? error.message : 'Unable to restore demo.', 'error');
   }
@@ -326,8 +326,8 @@ player.on('sourcechange', (event) => {
   const isDefault = detail.source.src === DEFAULT_DASH_URL;
   const name = providerName(detail.provider);
   providerLabel!.textContent = name;
-  currentSourceLabel!.textContent = isDefault ? 'Built-in demo stream' : 'Custom source · ' + name;
-  setPlayerStatus(isDefault ? 'Demo stream attached · press play to start' : 'Custom source attached · ready to play', 'ready');
+  currentSourceLabel!.textContent = isDefault ? 'Featured stream' : 'Custom source · ' + name;
+  setPlayerStatus(isDefault ? 'Source ready · press play to start' : 'Custom source attached · ready to play', 'ready');
   updateFeatureStatuses();
 });
 player.on('loadstart', () => setPlayerStatus('Loading media…', 'loading'));
@@ -366,8 +366,8 @@ applyAppearance();
 player.ready.then(() => {
   const current = player.currentSource;
   if (current?.src === DEFAULT_DASH_URL || !current) {
-    setPlayerStatus('Demo source attached · press play to start', 'ready');
-    addLog('Player initialized with the built-in demo stream.', 'success');
+    setPlayerStatus('Source ready · press play to start', 'ready');
+    addLog('Player initialized with the featured source.', 'success');
   } else {
     setPlayerStatus('Custom source attached · ready to play', 'ready');
     addLog('Player initialized with the selected custom source.', 'success');
