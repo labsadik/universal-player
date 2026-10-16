@@ -5,7 +5,7 @@
 This package is under development and is not yet published to npm. To use the demo:
 
 ~~~bash
-git clone https://github.com/WorkRCS/easy-video-player.git
+git clone https://github.com/Labsadik/easy-video-player.git
 cd easy-video-player
 npm install
 npm run dev
@@ -14,8 +14,8 @@ npm run dev
 ## Create a player
 
 ~~~ts
-import { createPlayer } from '@workrcs/universal-player';
-import '@workrcs/universal-player/style.css';
+import { createPlayer } from '@labsadik/universal-player';
+import '@labsadik/universal-player/style.css';
 
 const player = createPlayer('#player-slot', {
   source: { src: '/videos/sample.mp4', type: 'video/mp4' },
@@ -44,7 +44,7 @@ The core is DOM-based and has no React runtime dependency. In React, create the 
 ## Loading pasted URLs
 
 ~~~ts
-import { createPlayer, normalizePastedVideoUrl, detectProvider } from '@workrcs/universal-player';
+import { createPlayer, normalizePastedVideoUrl, detectProvider } from '@labsadik/universal-player';
 
 const url = normalizePastedVideoUrl(userPastedText);
 const provider = detectProvider(url);
