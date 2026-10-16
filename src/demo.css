@@ -439,3 +439,20 @@ body.site-theme-dark .nav-new-indicator { color: #a7f3d0; border-color: rgba(16,
 body.site-theme-light .setup-step-grid article { background:#fff; border-color:#e2e8f0; }
 body.site-theme-light .setup-step-grid article > strong { color:#1e293b; }
 @media (max-width:760px) { .setup-step-grid { grid-template-columns:1fr; } .setup-step-grid article { padding:11px 12px; } }
+
+
+.live-config-panel { overflow: hidden; border-color: rgba(148,163,184,.22); background: rgba(8,13,22,.68); }
+.live-config-heading { color: #e5edf7; }
+.live-config-install { color: #9fb0c5; background: rgba(255,255,255,.04); }
+.live-config-install code { color: #a7f3d0; overflow-wrap: anywhere; }
+.live-config-code {
+  margin: 0; max-height: 380px; overflow: auto; padding: 16px;
+  color: #d5dfec; background: #0b111b;
+  font: 11px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace;
+  white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2;
+}
+body.site-theme-light .live-config-panel { border-color: #dce4ed; background: #fff; }
+body.site-theme-light .live-config-heading { color: #172033; }
+body.site-theme-light .live-config-install { color: #475569; background: #f8fafc; }
+body.site-theme-light .live-config-install code { color: #047857; }
+body.site-theme-light .live-config-code { color: #172033; background: #f8fafc; border-top: 1px solid #e2e8f0; }
