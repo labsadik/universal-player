@@ -30,5 +30,7 @@ jobs:
         run: npm run build
       - name: Verify exported stylesheet
         run: test -f dist/universal-player.css
+      - name: Verify website pages are built
+        run: test -f dist/site/index.html && test -f dist/site/playground.html
       - name: Verify package contents
         run: npm run pack:check
