@@ -168,6 +168,73 @@
             </aside>
           </div>
 
+          <section id="player-playground" class="mt-8 rounded-[22px] border border-white/10 bg-[#111923] p-4 sm:p-6">
+            <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
+              <div><p class="mb-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-emerald-300">Customize & test</p><h2 class="text-xl font-extrabold text-white">Make the player yours</h2><p class="mt-1 max-w-2xl text-xs leading-5 text-slate-400">Change the theme, glass effect, accent and control density live. These settings are the same public API your app can call.</p></div>
+              <button id="reset-player-settings" type="button" class="action-chip"><i data-lucide="rotate-ccw"></i><span>Reset</span></button>
+            </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <label class="custom-setting"><span>Theme</span><select id="demo-theme"><option value="dark">Dark</option><option value="system">System</option><option value="light">Light</option></select></label>
+              <label class="custom-setting"><span>Control layout</span><select id="demo-controls"><option value="standard">Standard</option><option value="compact">Compact</option><option value="minimal">Minimal</option></select></label>
+              <label class="custom-setting"><span>Accent color</span><select id="demo-accent"><option value="rgb(54, 214, 176)">Mint + blue (default)</option><option value="#3b82f6">Blue</option><option value="#22c55e">Green</option><option value="#a78bfa">Violet</option><option value="#fb7185">Rose</option></select></label>
+              <label class="custom-setting"><span>Glass effect</span><span class="custom-toggle"><input id="demo-glass" type="checkbox" checked /><span>Frosted glass controls</span></span></label>
+            </div>
+            <div class="mt-5 border-t border-white/[.08] pt-5">
+              <div class="mb-3 flex flex-wrap items-center justify-between gap-2"><h3 class="text-sm font-bold text-white">Feature switches</h3><span class="text-[10px] text-slate-500">Changes apply immediately</span></div>
+              <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="seek" checked><span>Seek timeline</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="skip" checked><span>Skip ±10s</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="volume" checked><span>Volume</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="playbackSpeed" checked><span>Playback speed</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="quality" checked><span>Quality menu</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="captions" checked><span>Captions</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="pictureInPicture" checked><span>Picture in Picture</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="miniPlayer" checked><span>Mini player</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="theaterMode" checked><span>Theater mode</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="fullscreen" checked><span>Fullscreen</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="contextMenu" checked><span>Right-click menu</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="loop" checked><span>Loop video</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="copyLink" checked><span>Copy link</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="stats" checked><span>Playback stats</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="keyboardHelp" checked><span>Keyboard shortcuts</span></label>
+                <label class="feature-switch"><input type="checkbox" data-demo-feature="liveIndicator" checked><span>Live indicator</span></label>
+              </div>
+            </div>
+            <p id="customization-status" class="mt-4 text-[11px] text-slate-500" aria-live="polite">Ready · Try changing the settings above.</p>
+          </section>
+          <section id="npm-setup" class="mt-8 rounded-[22px] border border-white/10 bg-[#111923] p-4 sm:p-6">
+            <p class="mb-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-blue-300">Plug & play setup</p>
+            <h2 class="text-xl font-extrabold text-white">Install with npm</h2>
+            <p class="mt-2 text-xs leading-6 text-slate-400">Install the package, import the stylesheet, and mount the player. You do not need to copy player source files into your project.</p>
+            <div class="mt-4 rounded-xl border border-white/10 bg-black/25 p-4">
+              <p class="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">1 · Install</p><pre class="setup-code"><code>npm install @workrcs/universal-player</code></pre>
+              <p class="mb-2 mt-5 text-[10px] font-bold uppercase tracking-wider text-slate-500">2 · Vanilla JS / TypeScript</p><pre class="setup-code"><code>import { createPlayer } from '@workrcs/universal-player';
+import '@workrcs/universal-player/style.css';
+
+const player = createPlayer('#video-player', {
+  source: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+  theme: 'system',       // 'dark' | 'light' | 'system'
+  glass: true,
+  accentColor: 'rgb(54, 214, 176)',
+  controlsStyle: 'standard',
+});
+
+player.setTheme('dark');
+player.setGlassEffect(true);
+player.setControlsStyle('compact');
+player.setFeatures({ stats: false, miniPlayer: false });
+
+// Later, when the component unmounts:
+// player.destroy();</code></pre>
+              <p class="mb-2 mt-5 text-[10px] font-bold uppercase tracking-wider text-slate-500">3 · Add a mount point</p><pre class="setup-code"><code>&lt;div id="video-player"&gt;&lt;/div&gt;</code></pre>
+            </div>
+            <div class="mt-4 grid gap-3 text-xs leading-5 text-slate-400 md:grid-cols-3">
+              <div class="rounded-xl border border-white/[.07] p-3"><strong class="text-white">React</strong><p class="mt-1">Create the player in <code>useEffect</code> and call <code>destroy()</code> in cleanup.</p></div>
+              <div class="rounded-xl border border-white/[.07] p-3"><strong class="text-white">Vue / Svelte</strong><p class="mt-1">Mount in the component's mounted lifecycle and destroy on unmount.</p></div>
+              <div class="rounded-xl border border-white/[.07] p-3"><strong class="text-white">Quality & streams</strong><p class="mt-1">Adaptive HLS/DASH quality options depend on renditions provided by the stream. A plain MP4 generally has one encoded quality.</p></div>
+            </div>
+            <p class="mt-4 text-[11px] leading-5 text-slate-500">Note: browser codec support, CORS, provider embed rules, DRM and authentication can limit playback. “Any URL” cannot mean every webpage or protected video is playable; use direct media URLs or supported provider links.</p>
+          </section>
           <footer class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.07] px-1 py-5 text-[10px] text-slate-600">
             <span>Universal Player · Open-source development preview</span>
             <a class="inline-flex items-center gap-1.5 transition hover:text-emerald-200" href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer">View source on GitHub <i data-lucide="external-link"></i></a>
