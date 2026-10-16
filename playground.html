@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8fafc" />
+    <meta name="description" content="Test Universal Player controls, themes and features in an interactive media playground." />
+    <title>Feature Playground — Universal Player</title>
+  </head>
+  <body class="studio-theme-light">
+    <div class="studio-frame" id="studio-frame">
+      <aside class="studio-sidebar" id="studio-sidebar">
+        <a class="studio-brand" href="/">
+          <span class="studio-brand-mark"><i data-lucide="play"></i></span>
+          <span><strong>Universal Player</strong><small>LABSADIK · PLAYGROUND</small></span>
+        </a>
+        <p class="studio-nav-label">WORKSPACE</p>
+        <a class="studio-nav-item" href="/"><i data-lucide="house"></i><span>Landing page</span></a>
+        <a class="studio-nav-item active" href="/playground.html"><i data-lucide="sliders-horizontal"></i><span>Feature playground</span><span class="studio-nav-indicator"></span></a>
+        <a class="studio-nav-item" href="/#supported-formats"><i data-lucide="layers"></i><span>Sources & formats</span></a>
+        <div class="studio-sidebar-rule"></div>
+        <div class="studio-sidebar-tip">
+          <span class="studio-tip-icon"><i data-lucide="sparkles"></i></span>
+          <strong>Try it live</strong>
+          <p>Change one setting at a time. The preview updates immediately so you can see what the player does.</p>
+        </div>
+        <div class="studio-sidebar-footer"><span class="studio-online-dot"></span> Interactive demo <span>·</span> Local UI</div>
+      </aside>
+
+      <div class="studio-body">
+        <header class="studio-header">
+          <div class="studio-header-left">
+            <button id="studio-sidebar-toggle" class="studio-icon-button" type="button" aria-label="Hide sidebar" title="Hide sidebar"><i data-lucide="panel-left-close"></i></button>
+            <div class="studio-breadcrumb"><a href="/">Universal Player</a><span>/</span><strong>Feature playground</strong></div>
+          </div>
+          <div class="studio-header-actions">
+            <span class="studio-head-status"><span></span> Changes apply live</span>
+            <button id="studio-theme-toggle" class="studio-icon-button" type="button" aria-label="Switch to dark theme" title="Switch to dark theme"><i data-lucide="moon"></i></button>
+            <a class="studio-github-link" href="https://github.com/Labsadik/easy-video-player" target="_blank" rel="noreferrer" aria-label="Open GitHub repository" title="GitHub"><i data-lucide="code-2"></i></a>
+          </div>
+        </header>
+
+        <main class="studio-main">
+          <div class="studio-page-heading">
+            <div>
+              <p class="studio-eyebrow"><span class="studio-eyebrow-dot"></span> UNIVERSAL PLAYER · CONTROL CENTER</p>
+              <h1>Feature <span>playground</span></h1>
+              <p class="studio-lede">A live sandbox to explore every control, theme and playback option. The player is on the left; testable features and their current state are on the right.</p>
+            </div>
+            <button id="studio-reset" class="studio-secondary-button" type="button"><i data-lucide="rotate-ccw"></i> Reset all</button>
+          </div>
+
+          <section class="studio-quick-source" aria-label="Load a custom video source">
+            <div class="studio-source-icon"><i data-lucide="link-2"></i></div>
+            <div class="studio-source-copy"><strong>Try your own video</strong><small>Paste a direct MP4, HLS/DASH manifest, or a supported provider URL. The demo source is kept hidden in this empty field.</small></div>
+            <form id="studio-source-form" class="studio-source-form">
+              <input id="studio-source-url" type="url" inputmode="url" spellcheck="false" autocomplete="off" placeholder="Paste a video URL…" aria-label="Paste a video URL" />
+              <button type="submit" aria-label="Load video URL" title="Load video"><i data-lucide="arrow-right"></i><span>Load</span></button>
+            </form>
+          </section>
+
+          <div class="studio-workspace">
+            <section class="studio-preview-column" aria-label="Player preview">
+              <article class="studio-panel studio-preview-card">
+                <div class="studio-panel-heading studio-preview-heading">
+                  <div><p class="studio-panel-kicker">LIVE PREVIEW</p><h2>Player window</h2></div>
+                  <span class="studio-preview-pill"><span></span> Interactive</span>
+                </div>
+                <div id="studio-player-mount" class="studio-player-mount"></div>
+                <div class="studio-player-info">
+                  <div class="studio-status-line"><span id="studio-status-dot" class="studio-status-dot loading"></span><span id="studio-status-text" aria-live="polite">Preparing demo stream…</span></div>
+                  <div class="studio-player-meta"><span id="studio-provider-label">DASH STREAM</span><span>16:9 · Adaptive playback</span></div>
+                  <p id="studio-feature-hint">Choose a feature on the right to enable, disable or inspect its behaviour.</p>
+                </div>
+              </article>
+
+              <article class="studio-panel studio-source-info">
+                <div class="studio-small-heading"><i data-lucide="shield-check"></i><strong>Playback support</strong></div>
+                <div class="studio-support-row"><span>Current source</span><strong id="studio-current-source">Built-in demo stream</strong></div>
+                <div class="studio-support-row"><span>Quality options</span><strong id="studio-quality-support">Depends on available renditions</strong></div>
+                <div class="studio-support-row"><span>Captions / PiP</span><strong>Depends on source & browser</strong></div>
+                <p class="studio-support-note">Some options depend on the media provider or browser. A switch can be enabled while the source itself does not expose that capability.</p>
+              </article>
+            </section>
+
+            <section class="studio-controls-column" aria-label="Player configuration and feature testing">
+              <article class="studio-panel studio-appearance-panel">
+                <div class="studio-panel-heading">
+                  <div><p class="studio-panel-kicker">PERSONALIZE</p><h2>Appearance</h2></div>
+                  <span class="studio-panel-count">01</span>
+                </div>
+                <div class="studio-settings-grid">
+                  <div class="studio-setting-block studio-theme-setting">
+                    <span class="studio-setting-label">Player theme</span>
+                    <div class="studio-segmented-control" role="group" aria-label="Player theme">
+                      <button type="button" data-studio-theme="light" class="active" aria-pressed="true"><i data-lucide="sun"></i> Light</button>
+                      <button type="button" data-studio-theme="dark" aria-pressed="false"><i data-lucide="moon"></i> Dark</button>
+                      <button type="button" data-studio-theme="system" aria-pressed="false"><i data-lucide="monitor"></i> System</button>
+                    </div>
+                  </div>
+                  <label class="studio-setting-block"><span class="studio-setting-label">Control density</span><select id="studio-controls-style"><option value="standard">Standard</option><option value="compact">Compact</option><option value="minimal">Minimal</option></select></label>
+                  <label class="studio-setting-block"><span class="studio-setting-label">Accent colour</span><select id="studio-accent"><option value="rgb(54, 214, 176)">Mint + blue</option><option value="#3b82f6">Blue</option><option value="#22c55e">Green</option><option value="#a78bfa">Violet</option><option value="#fb7185">Rose</option></select></label>
+                  <label class="studio-glass-setting"><span><strong>Glass controls</strong><small>Frosted / translucent surface</small></span><input id="studio-glass-toggle" type="checkbox" checked /><span class="studio-switch-track"></span></label>
+                </div>
+              </article>
+
+              <article class="studio-panel studio-feature-panel">
+                <div class="studio-panel-heading">
+                  <div><p class="studio-panel-kicker">FEATURE INSPECTOR</p><h2>Player features</h2></div>
+                  <span id="studio-enabled-count" class="studio-enabled-count">16 / 16 active</span>
+                </div>
+                <p class="studio-feature-intro">Toggle any feature once. Its state badge and the player preview update immediately.</p>
+                <div class="studio-feature-grid" id="studio-feature-grid">
+                  <label class="studio-feature-row" data-feature-row="seek"><span class="studio-feature-icon"><i data-lucide="sliders-horizontal"></i></span><span class="studio-feature-copy"><strong>Seek timeline</strong><small>Scrub through the available timeline</small><em data-feature-status="seek">Enabled</em></span><input type="checkbox" data-studio-feature="seek" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="skip"><span class="studio-feature-icon"><i data-lucide="skip-forward"></i></span><span class="studio-feature-copy"><strong>Skip ±10 seconds</strong><small>Jump backwards or forwards</small><em data-feature-status="skip">Enabled</em></span><input type="checkbox" data-studio-feature="skip" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="volume"><span class="studio-feature-icon"><i data-lucide="volume-2"></i></span><span class="studio-feature-copy"><strong>Volume controls</strong><small>Mute and adjust the audio level</small><em data-feature-status="volume">Enabled</em></span><input type="checkbox" data-studio-feature="volume" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="playbackSpeed"><span class="studio-feature-icon"><i data-lucide="gauge"></i></span><span class="studio-feature-copy"><strong>Playback speed</strong><small>Choose slow motion or faster playback</small><em data-feature-status="playbackSpeed">Enabled</em></span><input type="checkbox" data-studio-feature="playbackSpeed" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="quality"><span class="studio-feature-icon"><i data-lucide="layers"></i></span><span class="studio-feature-copy"><strong>Quality menu</strong><small>Choose a stream rendition, when provided</small><em data-feature-status="quality">Enabled · stream-dependent</em></span><input type="checkbox" data-studio-feature="quality" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="captions"><span class="studio-feature-icon"><i data-lucide="captions"></i></span><span class="studio-feature-copy"><strong>Captions</strong><small>Display available caption tracks</small><em data-feature-status="captions">Enabled · track-dependent</em></span><input type="checkbox" data-studio-feature="captions" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="pictureInPicture"><span class="studio-feature-icon"><i data-lucide="picture-in-picture-2"></i></span><span class="studio-feature-copy"><strong>Picture in Picture</strong><small>Float video in a separate browser window</small><em data-feature-status="pictureInPicture">Enabled · browser-dependent</em></span><input type="checkbox" data-studio-feature="pictureInPicture" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="miniPlayer"><span class="studio-feature-icon"><i data-lucide="panel-top"></i></span><span class="studio-feature-copy"><strong>Mini player</strong><small>Keep a small floating player on the page</small><em data-feature-status="miniPlayer">Enabled</em></span><input type="checkbox" data-studio-feature="miniPlayer" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="theaterMode"><span class="studio-feature-icon"><i data-lucide="monitor-play"></i></span><span class="studio-feature-copy"><strong>Theater mode</strong><small>Expand the player for immersive viewing</small><em data-feature-status="theaterMode">Enabled</em></span><input type="checkbox" data-studio-feature="theaterMode" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="fullscreen"><span class="studio-feature-icon"><i data-lucide="maximize"></i></span><span class="studio-feature-copy"><strong>Fullscreen</strong><small>Use the full display area</small><em data-feature-status="fullscreen">Enabled · browser-dependent</em></span><input type="checkbox" data-studio-feature="fullscreen" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="contextMenu"><span class="studio-feature-icon"><i data-lucide="mouse-pointer-2"></i></span><span class="studio-feature-copy"><strong>Right-click menu</strong><small>Open contextual playback actions</small><em data-feature-status="contextMenu">Enabled</em></span><input type="checkbox" data-studio-feature="contextMenu" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="loop"><span class="studio-feature-icon"><i data-lucide="repeat"></i></span><span class="studio-feature-copy"><strong>Loop playback</strong><small>Repeat the current media source</small><em data-feature-status="loop">Enabled</em></span><input type="checkbox" data-studio-feature="loop" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="copyLink"><span class="studio-feature-icon"><i data-lucide="copy"></i></span><span class="studio-feature-copy"><strong>Copy source link</strong><small>Copy the active media URL on request</small><em data-feature-status="copyLink">Enabled</em></span><input type="checkbox" data-studio-feature="copyLink" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="stats"><span class="studio-feature-icon"><i data-lucide="activity"></i></span><span class="studio-feature-copy"><strong>Playback stats</strong><small>Inspect source and playback information</small><em data-feature-status="stats">Enabled</em></span><input type="checkbox" data-studio-feature="stats" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="keyboardHelp"><span class="studio-feature-icon"><i data-lucide="keyboard"></i></span><span class="studio-feature-copy"><strong>Keyboard shortcuts</strong><small>See supported player key bindings</small><em data-feature-status="keyboardHelp">Enabled</em></span><input type="checkbox" data-studio-feature="keyboardHelp" checked /><span class="studio-switch-track"></span></label>
+                  <label class="studio-feature-row" data-feature-row="liveIndicator"><span class="studio-feature-icon"><i data-lucide="radio-tower"></i></span><span class="studio-feature-copy"><strong>Live indicator / Go Live</strong><small>Jump to a live edge when the stream exposes one</small><em data-feature-status="liveIndicator">Enabled · live sources only</em></span><input type="checkbox" data-studio-feature="liveIndicator" checked /><span class="studio-switch-track"></span></label>
+                </div>
+              </article>
+
+              <article class="studio-panel studio-event-panel">
+                <div class="studio-panel-heading"><div><p class="studio-panel-kicker">RUNTIME FEEDBACK</p><h2>What is happening?</h2></div><span id="studio-runtime-badge" class="studio-runtime-badge">Ready</span></div>
+                <div id="studio-event-log" class="studio-event-log" role="status" aria-live="polite"><div class="studio-event-line"><span></span><p>Playground initialized. Toggle a feature to inspect its state.</p><time>Now</time></div></div>
+              </article>
+            </section>
+          </div>
+          <footer class="studio-footer"><span>Universal Player · Feature playground</span><a href="/">Back to landing page <i data-lucide="arrow-up-right"></i></a></footer>
+        </main>
+      </div>
+    </div>
+    <div id="studio-toast" class="studio-toast" role="status" aria-live="polite" hidden></div>
+    <script type="module" src="/src/playground.ts"></script>
+  </body>
+</html>
