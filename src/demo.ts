@@ -71,7 +71,8 @@ const player = createPlayer('#player-mount', {
   autohide: true,
   hideSourceUrl: true,
   theme: 'system',
-  glass: true,
+  glass: false,
+  controlsStyle: 'minimal',
   accentColor: 'rgb(54, 214, 176)',
 });
 
@@ -198,9 +199,9 @@ document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((inpu
 resetSettings.addEventListener('click', () => {
   setWebsiteTheme('system');
   themeSelect!.value = 'system';
-  controlsSelect!.value = 'standard';
+  controlsSelect!.value = 'minimal';
   accentSelect!.value = 'rgb(54, 214, 176)';
-  glassToggle!.checked = true;
+  glassToggle!.checked = false;
   document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((input) => { input.checked = input.dataset.default !== 'off'; });
   applyCustomization();
 });
