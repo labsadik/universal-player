@@ -965,3 +965,10 @@
   text-transform: uppercase;
 }
 .up-settings-wrap > .up-icon-button svg { width: 19px; height: 19px; }
+
+.up-quality-unavailable {
+  padding: 10px 9px 8px;
+  color: var(--up-menu-muted, #94a3b8);
+  font-size: 11px;
+  line-height: 1.45;
+}
