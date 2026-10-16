@@ -570,7 +570,6 @@
 .up-root.up-controls-compact .up-controls { padding: 7px 10px; gap: 6px; }
 .up-root.up-controls-compact .up-icon-button { width: 30px; height: 30px; }
 .up-root.up-controls-minimal .up-volume-group,
-.up-root.up-controls-minimal .up-skip-button,
 .up-root.up-controls-minimal .up-mini-button,
 .up-root.up-controls-minimal .up-theater-button { display: none !important; }
 .up-live-indicator {
@@ -972,3 +971,57 @@
   font-size: 11px;
   line-height: 1.45;
 }
+
+
+/* White/light mode must use dark control glyphs, including active buttons. */
+.up-root[data-theme="light"] .up-controls .up-icon-button,
+.up-root[data-theme="light"] .up-controls .up-icon-button.is-active,
+.up-root[data-theme="light"] .up-controls .up-icon-button svg {
+  color: #111827 !important;
+  stroke: currentColor !important;
+  filter: none !important;
+}
+.up-root[data-theme="light"] .up-controls .up-time {
+  color: #111827 !important;
+  text-shadow: none !important;
+}
+.up-root[data-theme="light"] .up-controls .up-time-separator,
+.up-root[data-theme="light"] .up-controls .up-time-duration { color: #374151 !important; }
+@media (prefers-color-scheme: light) {
+  .up-root[data-theme="system"] .up-controls .up-icon-button,
+  .up-root[data-theme="system"] .up-controls .up-icon-button.is-active,
+  .up-root[data-theme="system"] .up-controls .up-icon-button svg {
+    color: #111827 !important;
+    stroke: currentColor !important;
+    filter: none !important;
+  }
+  .up-root[data-theme="system"] .up-controls .up-time {
+    color: #111827 !important;
+    text-shadow: none !important;
+  }
+  .up-root[data-theme="system"] .up-controls .up-time-separator,
+  .up-root[data-theme="system"] .up-controls .up-time-duration { color: #374151 !important; }
+}
+.up-root[data-theme="dark"] .up-controls .up-icon-button,
+.up-root[data-theme="dark"] .up-controls .up-icon-button.is-active,
+.up-root[data-theme="dark"] .up-controls .up-icon-button svg {
+  color: #f8fafc !important;
+  stroke: currentColor !important;
+}
+.up-root[data-theme="dark"] .up-controls .up-time { color: #f8fafc !important; }
+@media (prefers-color-scheme: dark) {
+  .up-root[data-theme="system"] .up-controls .up-icon-button,
+  .up-root[data-theme="system"] .up-controls .up-icon-button.is-active,
+  .up-root[data-theme="system"] .up-controls .up-icon-button svg {
+    color: #f8fafc !important;
+    stroke: currentColor !important;
+  }
+  .up-root[data-theme="system"] .up-controls .up-time { color: #f8fafc !important; }
+}
+.up-settings-empty {
+  padding: 10px 9px 8px;
+  color: var(--up-menu-muted, #94a3b8);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.up-settings-empty[hidden] { display: none !important; }
