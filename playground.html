@@ -52,7 +52,7 @@
 
           <section class="studio-quick-source" aria-label="Load a custom video source">
             <div class="studio-source-icon"><i data-lucide="link-2"></i></div>
-            <div class="studio-source-copy"><strong>Try your own video</strong><small>Paste a direct MP4, HLS/DASH manifest, or a supported provider URL. The demo source is kept hidden in this empty field.</small></div>
+            <div class="studio-source-copy"><strong>Try your own video</strong><small>Paste a direct MP4, HLS/DASH manifest, or a supported provider URL. The source field starts empty; paste your own link to switch playback.</small></div>
             <form id="studio-source-form" class="studio-source-form">
               <input id="studio-source-url" type="url" inputmode="url" spellcheck="false" autocomplete="off" placeholder="Paste a video URL…" aria-label="Paste a video URL" />
               <button type="submit" aria-label="Load video URL" title="Load video"><i data-lucide="arrow-right"></i><span>Load</span></button>
@@ -68,7 +68,7 @@
                 </div>
                 <div id="studio-player-mount" class="studio-player-mount"></div>
                 <div class="studio-player-info">
-                  <div class="studio-status-line"><span id="studio-status-dot" class="studio-status-dot loading"></span><span id="studio-status-text" aria-live="polite">Preparing demo stream…</span></div>
+                  <div class="studio-status-line"><span id="studio-status-dot" class="studio-status-dot loading"></span><span id="studio-status-text" aria-live="polite">Preparing video stream…</span></div>
                   <div class="studio-player-meta"><span id="studio-provider-label">DASH STREAM</span><span>16:9 · Adaptive playback</span></div>
                   <p id="studio-feature-hint">Choose a feature on the right to enable, disable or inspect its behaviour.</p>
                 </div>
@@ -76,7 +76,7 @@
 
               <article class="studio-panel studio-source-info">
                 <div class="studio-small-heading"><i data-lucide="shield-check"></i><strong>Playback support</strong></div>
-                <div class="studio-support-row"><span>Current source</span><strong id="studio-current-source">Built-in demo stream</strong></div>
+                <div class="studio-support-row"><span>Current source</span><strong id="studio-current-source">Featured stream</strong></div>
                 <div class="studio-support-row"><span>Quality options</span><strong id="studio-quality-support">Depends on available renditions</strong></div>
                 <div class="studio-support-row"><span>Captions / PiP</span><strong>Depends on source & browser</strong></div>
                 <p class="studio-support-note">Some options depend on the media provider or browser. A switch can be enabled while the source itself does not expose that capability.</p>
