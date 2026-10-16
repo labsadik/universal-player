@@ -1,5 +1,5 @@
 import './demo.css';
-import { createIcons, Menu, Play, Link2, ClipboardPaste, ArrowUpRight, ArrowRight, House, History, Layers, Code2, SlidersHorizontal, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film, ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon } from 'lucide';
+import { createIcons, Menu, Play, Link2, ClipboardPaste, ArrowUpRight, ArrowRight, House, History, Layers, Code2, SlidersHorizontal, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film, ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon, Layers3, Package, Info } from 'lucide';
 import { createPlayer, type UniversalPlayerFeatures } from './index.js';
 import { detectProvider, normalizePastedVideoUrl } from './source.js';
 
@@ -10,7 +10,7 @@ const BIG_BUCK_MP4 = 'https://storage.googleapis.com/gtv-videos-bucket/sample/Fo
 const iconSet = {
   Menu, Play, Link2, ClipboardPaste, ArrowUpRight, House, History, Layers, Code2,
   ArrowRight, SlidersHorizontal, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film,
-  ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon,
+  ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon, Layers3, Package, Info,
 };
 createIcons({
   icons: iconSet,
