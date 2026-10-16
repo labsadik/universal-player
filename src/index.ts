@@ -1079,35 +1079,43 @@ export class UniversalPlayer {
           this.togglePlayback();
           break;
         case 'arrowleft':
+          if (!this.featureOptions.seek) break;
           keyboard.preventDefault();
           this.seek(Math.max(0, this.currentTime - 5));
           break;
         case 'arrowright':
+          if (!this.featureOptions.seek) break;
           keyboard.preventDefault();
           this.seek(this.currentTime + 5);
           break;
         case 'j':
+          if (!this.featureOptions.skip) break;
           keyboard.preventDefault();
           this.seek(Math.max(0, this.currentTime - 10));
           break;
         case 'l':
+          if (!this.featureOptions.skip) break;
           keyboard.preventDefault();
           this.seek(this.currentTime + 10);
           break;
         case 'm':
+          if (!this.featureOptions.volume) break;
           keyboard.preventDefault();
           this.setMuted(!this.mediaElement.muted);
           break;
         case 'f':
+          if (!this.featureOptions.fullscreen) break;
           keyboard.preventDefault();
           if (document.fullscreenElement) document.exitFullscreen().catch(() => undefined);
           else this.requestFullscreen().catch(() => undefined);
           break;
         case 't':
+          if (!this.featureOptions.theaterMode) break;
           keyboard.preventDefault();
           this.toggleTheaterMode();
           break;
         case 'i':
+          if (!this.featureOptions.miniPlayer) break;
           keyboard.preventDefault();
           this.toggleMiniPlayer();
           break;
