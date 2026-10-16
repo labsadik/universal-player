@@ -946,3 +946,22 @@
     backdrop-filter: none !important;
   }
 }
+
+
+/* Gear menu: distinct Speed and Quality sections, shown by feature availability. */
+.up-settings-section + .up-settings-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--up-menu-border, rgba(148,163,184,.2));
+}
+.up-settings-section[hidden],
+.up-settings-section[style*="display: none"] { display: none !important; }
+.up-settings-section .up-menu-title {
+  color: var(--up-menu-muted, rgba(148,163,184,.8));
+  padding: 7px 9px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.up-settings-wrap > .up-icon-button svg { width: 19px; height: 19px; }
