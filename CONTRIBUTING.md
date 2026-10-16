@@ -7,7 +7,7 @@ Thanks for helping improve Universal Player.
 After the repository migration, clone the canonical repository and install dependencies:
 
 ~~~bash
-git clone https://github.com/Labsadik/universal-player.git
+git clone https://github.com/labsadik/universal-player.git
 cd universal-player
 npm install
 ~~~
