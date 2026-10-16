@@ -38,12 +38,19 @@ const restoreButton = document.querySelector<HTMLButtonElement>('#restore-sample
 const toast = document.querySelector<HTMLElement>('#toast');
 const sidebar = document.querySelector<HTMLElement>('#sidebar');
 const sidebarToggle = document.querySelector<HTMLButtonElement>('#sidebar-toggle');
+const themeSelect = document.querySelector<HTMLSelectElement>('#demo-theme');
+const controlsSelect = document.querySelector<HTMLSelectElement>('#demo-controls');
+const accentSelect = document.querySelector<HTMLSelectElement>('#demo-accent');
+const glassToggle = document.querySelector<HTMLInputElement>('#demo-glass');
+const resetSettings = document.querySelector<HTMLButtonElement>('#reset-player-settings');
+const customizationStatus = document.querySelector<HTMLElement>('#customization-status');
 
 if (
   !statusLine || !statusWrap || !statusIndicator || !titleLine || !badge || !providerPill ||
   !videoHeading || !videoSubtitle || !feedback || !urlForm || !urlInput || !sideUrlInput ||
   !sideLoadButton || !pasteButton || !likeButton || !likeCount || !shareButton || !copyButton ||
-  !restoreButton || !toast || !sidebar || !sidebarToggle
+  !restoreButton || !toast || !sidebar || !sidebarToggle || !themeSelect || !controlsSelect ||
+  !accentSelect || !glassToggle || !resetSettings || !customizationStatus
 ) {
   throw new Error('Universal Player demo markup is incomplete.');
 }
@@ -60,6 +67,40 @@ const player = createPlayer('#player-mount', {
   objectFit: 'contain',
   playbackRates: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
   autohide: true,
+  theme: 'dark',
+  glass: true,
+  accentColor: 'rgb(54, 214, 176)',
+});
+
+
+function applyCustomization(): void {
+  player.setTheme(themeSelect!.value as 'dark' | 'light' | 'system');
+  player.setGlassEffect(glassToggle!.checked);
+  player.setAccentColor(accentSelect!.value);
+  player.setControlsStyle(controlsSelect!.value as 'standard' | 'compact' | 'minimal');
+  const features: Record<string, boolean> = {};
+  document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((input) => {
+    features[input.dataset.demoFeature || ''] = input.checked;
+  });
+  player.setFeatures(features);
+  customizationStatus!.textContent = 'Applied · ' + themeSelect!.selectedOptions[0]?.textContent +
+    ' theme · ' + controlsSelect!.selectedOptions[0]?.textContent + ' controls · ' +
+    (glassToggle!.checked ? 'glass enabled' : 'glass disabled');
+}
+themeSelect.addEventListener('change', applyCustomization);
+controlsSelect.addEventListener('change', applyCustomization);
+accentSelect.addEventListener('change', applyCustomization);
+glassToggle.addEventListener('change', applyCustomization);
+document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((input) => {
+  input.addEventListener('change', applyCustomization);
+});
+resetSettings.addEventListener('click', () => {
+  themeSelect!.value = 'dark';
+  controlsSelect!.value = 'standard';
+  accentSelect!.value = 'rgb(54, 214, 176)';
+  glassToggle!.checked = true;
+  document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((input) => { input.checked = true; });
+  applyCustomization();
 });
 
 function setStatus(
@@ -282,6 +323,7 @@ window.addEventListener('beforeunload', () => {
 });
 
 player.ready.then(() => {
+  applyCustomization();
   setSourceInfo('Flower · MP4 sample', SAMPLE_MP4);
   setStatus('MP4 source attached · waiting for media metadata', 'loading');
 }).catch((error: unknown) => {
