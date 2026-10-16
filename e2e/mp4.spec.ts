@@ -89,12 +89,17 @@ test('omits Picture in Picture and Mini Player while retaining optional theater 
 });
 
 
-test('keeps quality selection hidden for a fixed-quality MP4', async ({ page }) => {
+test('shows no fabricated quality options for a fixed-quality MP4', async ({ page }) => {
   await page.goto('/');
   await page.locator('#video-url').fill('https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4');
   await page.locator('#load-video').click();
   await expect(page.locator('#provider-pill')).toHaveText('HTML5 VIDEO');
-  await expect(page.locator('#player-mount .up-quality-menu-group')).toBeHidden();
+  const quality = page.locator('#player-mount .up-quality-menu-group');
+  await expect(quality).toBeVisible();
+  await expect(quality.locator('.up-menu-title')).toHaveText('Quality');
+  await expect(quality.locator('.up-quality-unavailable')).toContainText('not exposed by this source');
+  await expect(quality.locator('[data-quality-id]')).toHaveCount(0);
+  await expect(page.locator('#player-mount .up-quality-option')).toHaveCount(0);
 });
 
 test('keeps the preloaded DASH demo URL out of the visible UI', async ({ page }) => {
@@ -353,7 +358,9 @@ test('never invents quality labels for fixed-quality MP4 sources', async ({ page
   await expect(page.locator('#provider-pill')).toHaveText('HTML5 VIDEO');
 
   const qualitySection = page.locator('#player-mount .up-quality-menu-group');
-  await expect(qualitySection).toBeHidden();
+  await expect(qualitySection).toBeVisible();
+  await expect(qualitySection.locator('.up-menu-title')).toHaveText('Quality');
   await expect(qualitySection.locator('[data-quality-id]')).toHaveCount(0);
+  await expect(qualitySection.locator('.up-quality-unavailable')).toContainText('not exposed by this source');
   await expect(page.locator('#player-mount .up-quality-option')).toHaveCount(0);
 });
