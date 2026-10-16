@@ -15,6 +15,8 @@ export interface PlayerSource {
   provider?: SourceProvider | 'auto';
   title?: string;
   poster?: string;
+  /** Mark a source as live before a stream exposes its seekable range. */
+  live?: boolean;
 }
 
 const hostIs = (host: string, domain: string): boolean =>
