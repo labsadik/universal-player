@@ -178,9 +178,9 @@
             </div>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <label class="custom-setting"><span>Theme</span><select id="demo-theme"><option value="dark">Dark</option><option value="system">System</option><option value="light">Light</option></select></label>
-              <label class="custom-setting"><span>Control layout</span><select id="demo-controls"><option value="standard">Standard</option><option value="compact">Compact</option><option value="minimal">Minimal</option></select></label>
+              <label class="custom-setting"><span>Control layout</span><select id="demo-controls"><option value="minimal" selected>Minimal</option><option value="standard">Standard</option><option value="compact">Compact</option></select></label>
               <label class="custom-setting"><span>Accent color</span><select id="demo-accent"><option value="rgb(54, 214, 176)">Mint + blue (default)</option><option value="#3b82f6">Blue</option><option value="#22c55e">Green</option><option value="#a78bfa">Violet</option><option value="#fb7185">Rose</option></select></label>
-              <label class="custom-setting"><span>Glass effect</span><span class="custom-toggle"><input id="demo-glass" type="checkbox" checked /><span>Frosted glass controls</span></span></label>
+              <label class="custom-setting"><span>Glass effect</span><span class="custom-toggle"><input id="demo-glass" type="checkbox" /><span>Frosted glass controls</span></span></label>
             </div>
             <div class="mt-5 border-t border-white/[.08] pt-5">
               <div class="mb-3 flex flex-wrap items-center justify-between gap-2"><h3 class="text-sm font-bold text-white">Feature switches</h3><span class="text-[10px] text-slate-500">Changes apply immediately</span></div>
@@ -191,8 +191,6 @@
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="playbackSpeed" data-default="off"><span>Playback speed</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="quality" checked><span>Quality menu</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="captions" checked><span>Captions</span></label>
-                <label class="feature-switch"><input type="checkbox" data-demo-feature="pictureInPicture" checked><span>Picture in Picture</span></label>
-                <label class="feature-switch"><input type="checkbox" data-demo-feature="miniPlayer" data-default="off"><span>Mini player</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="theaterMode" data-default="off"><span>Theater mode</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="fullscreen" checked><span>Fullscreen</span></label>
                 <label class="feature-switch"><input type="checkbox" data-demo-feature="contextMenu" checked><span>Right-click menu</span></label>
@@ -264,14 +262,14 @@
 <span class="monaco-line">  source: <span class="token-string">'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'</span>,</span>
 <span class="monaco-line">  title: <span class="token-string">'Product demo'</span>,</span>
 <span class="monaco-line">  theme: <span class="token-string">'system'</span>, <span class="token-comment">// 'dark' | 'light' | 'system'</span></span>
-<span class="monaco-line">  glass: <span class="token-boolean">true</span>,</span>
+<span class="monaco-line">  glass: <span class="token-boolean">false</span>,</span>
 <span class="monaco-line">  accentColor: <span class="token-string">'rgb(54, 214, 176)'</span>,</span>
-<span class="monaco-line">  controlsStyle: <span class="token-string">'standard'</span>,</span>
+<span class="monaco-line">  controlsStyle: <span class="token-string">'minimal'</span>,</span>
 <span class="monaco-line">});</span>
 <span class="monaco-line"></span>
 <span class="monaco-line"><span class="token-comment">// 3. Optional runtime controls</span></span>
 <span class="monaco-line">player.<span class="token-function">setTheme</span>(<span class="token-string">'dark'</span>);</span>
-<span class="monaco-line">player.<span class="token-function">setFeatures</span>({ stats: <span class="token-boolean">false</span>, miniPlayer: <span class="token-boolean">false</span> });</span>
+<span class="monaco-line">player.<span class="token-function">setFeatures</span>({ stats: <span class="token-boolean">false</span> });</span>
 <span class="monaco-line"></span>
 <span class="monaco-line"><span class="token-comment">// 4. Clean up when your view is removed</span></span>
 <span class="monaco-line">player.<span class="token-function">destroy</span>();</span></pre>
@@ -290,14 +288,14 @@
 <span class="monaco-line">  source: <span class="token-string">'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'</span>,</span>
 <span class="monaco-line">  title: <span class="token-string">'Product demo'</span>,</span>
 <span class="monaco-line">  theme: <span class="token-string">'system'</span>, <span class="token-comment">// 'dark' | 'light' | 'system'</span></span>
-<span class="monaco-line">  glass: <span class="token-boolean">true</span>,</span>
+<span class="monaco-line">  glass: <span class="token-boolean">false</span>,</span>
 <span class="monaco-line">  accentColor: <span class="token-string">'rgb(54, 214, 176)'</span>,</span>
-<span class="monaco-line">  controlsStyle: <span class="token-string">'standard'</span>,</span>
+<span class="monaco-line">  controlsStyle: <span class="token-string">'minimal'</span>,</span>
 <span class="monaco-line">});</span>
 <span class="monaco-line"></span>
 <span class="monaco-line"><span class="token-comment">// 3. Optional runtime controls</span></span>
 <span class="monaco-line">player.<span class="token-function">setTheme</span>(<span class="token-string">'dark'</span>);</span>
-<span class="monaco-line">player.<span class="token-function">setFeatures</span>({ stats: <span class="token-boolean">false</span>, miniPlayer: <span class="token-boolean">false</span> });</span>
+<span class="monaco-line">player.<span class="token-function">setFeatures</span>({ stats: <span class="token-boolean">false</span> });</span>
 <span class="monaco-line"></span>
 <span class="monaco-line"><span class="token-comment">// 4. Clean up when your view is removed</span></span>
 <span class="monaco-line">player.<span class="token-function">destroy</span>();</span>
