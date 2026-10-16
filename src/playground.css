@@ -269,3 +269,19 @@ body.studio-theme-dark .studio-secondary-button:hover,body.studio-theme-dark .st
   .studio-header-actions { position: relative; z-index: 1; }
   #studio-sidebar-toggle { position: relative; z-index: 4; flex: 0 0 35px; }
 }
+
+
+@media (max-width: 650px) {
+  /* Reserve a dedicated left slot for the navigation control; the breadcrumb
+     is redundant on narrow screens and must not collide with right-side actions. */
+  .studio-header-left {
+    width: 35px;
+    max-width: 35px;
+    flex: 0 0 35px;
+    overflow: visible;
+    position: relative;
+    z-index: 5;
+  }
+  .studio-breadcrumb { display: none; }
+  #studio-sidebar-toggle { width: 35px; min-width: 35px; flex: 0 0 35px; }
+}
