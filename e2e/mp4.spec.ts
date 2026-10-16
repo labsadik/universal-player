@@ -132,6 +132,12 @@ test('playground sidebar starts hidden on mobile and toggles with the correct in
   await page.goto('/playground.html');
   const toggle = page.locator('#studio-sidebar-toggle');
   const frame = page.locator('#studio-frame');
+  const headerGeometry = await page.evaluate(() => {
+    const toggle = document.querySelector<HTMLElement>('#studio-sidebar-toggle')!.getBoundingClientRect();
+    const theme = document.querySelector<HTMLElement>('#studio-theme-toggle')!.getBoundingClientRect();
+    return { toggle: { left: toggle.left, right: toggle.right, width: toggle.width }, theme: { left: theme.left, right: theme.right, width: theme.width } };
+  });
+  expect(headerGeometry.toggle.right, JSON.stringify(headerGeometry)).toBeLessThanOrEqual(headerGeometry.theme.left);
   await expect(toggle).toHaveAttribute('aria-label', 'Show sidebar');
   await toggle.click();
   await expect(frame).toHaveClass(/sidebar-open/);
