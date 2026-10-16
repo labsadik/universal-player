@@ -72,20 +72,16 @@ test('opens Universal Player context menu on right click', async ({ page }) => {
 });
 
 
-test('toggles the in-page mini player and theater mode after enabling the optional features', async ({ page }) => {
+test('omits Picture in Picture and Mini Player while retaining optional theater mode', async ({ page }) => {
   await page.goto('/');
-  await page.locator('[data-demo-feature="miniPlayer"]').check();
-  await page.locator('[data-demo-feature="theaterMode"]').check();
   const root = page.locator('#player-mount .up-root');
-  const miniButton = page.locator('#player-mount .up-mini-player-button');
+  await expect(page.locator('[data-demo-feature="pictureInPicture"]')).toHaveCount(0);
+  await expect(page.locator('[data-demo-feature="miniPlayer"]')).toHaveCount(0);
+  await expect(page.locator('#player-mount .up-controls button[aria-label="Picture in Picture"]')).toHaveCount(0);
+  await expect(page.locator('#player-mount .up-controls .up-mini-player-button')).toHaveCount(0);
+
+  await page.locator('[data-demo-feature="theaterMode"]').check();
   const theaterButton = page.locator('#player-mount .up-theater-button');
-
-  await expect(root).not.toHaveClass(/up-mini-player/);
-  await miniButton.click();
-  await expect(root).toHaveClass(/up-mini-player/);
-  await page.keyboard.press('Escape');
-  await expect(root).not.toHaveClass(/up-mini-player/);
-
   await theaterButton.click();
   await expect(root).toHaveClass(/up-theater/);
   await page.keyboard.press('Escape');
@@ -221,10 +217,15 @@ test('uses core default controls without overflow at 320px', async ({ page }) =>
   const root = page.locator('#player-mount .up-root');
   const stage = page.locator('#player-mount .up-stage');
   await expect(stage).toBeVisible();
-  for (const label of ['Play video','Back 10 seconds','Forward 10 seconds','Toggle captions','Playback settings','Picture in Picture','Enter fullscreen']) {
+  await expect(root).toHaveAttribute('data-controls-style', 'minimal');
+  await expect(root).not.toHaveClass(/up-glassy/);
+  for (const label of ['Play video','Toggle captions','Playback settings','Enter fullscreen']) {
     await expect(page.locator('#player-mount .up-controls button[aria-label="' + label + '"]')).toBeVisible();
   }
-  await expect(page.locator('#player-mount .up-controls .up-mini-player-button')).toBeHidden();
+  await expect(page.locator('#player-mount .up-controls button[aria-label="Back 10 seconds"]')).toBeHidden();
+  await expect(page.locator('#player-mount .up-controls button[aria-label="Forward 10 seconds"]')).toBeHidden();
+  await expect(page.locator('#player-mount .up-controls .up-mini-player-button')).toHaveCount(0);
+  await expect(page.locator('#player-mount .up-controls button[aria-label="Picture in Picture"]')).toHaveCount(0);
   await expect(page.locator('#player-mount .up-controls .up-theater-button')).toBeHidden();
   const geometry = await page.evaluate(() => {
     const stage = document.querySelector<HTMLElement>('#player-mount .up-stage')!.getBoundingClientRect();
@@ -238,16 +239,74 @@ test('uses core default controls without overflow at 320px', async ({ page }) =>
     expect(button.right, JSON.stringify({button,geometry})).toBeLessThanOrEqual(geometry.stageRight + 1);
   }
   const controlCss = await page.locator('#player-mount .up-controls').evaluate((node) => {
-    const s = getComputedStyle(node); return { image:s.backgroundImage,filter:s.backdropFilter };
+    const s = getComputedStyle(node); return { image:s.backgroundImage,filter:s.backdropFilter,background:s.backgroundColor };
   });
   expect(controlCss.image).toBe('none');
   expect(controlCss.filter).toBe('none');
+  expect(controlCss.background).toBe('rgba(0, 0, 0, 0)');
   await page.locator('#demo-theme').selectOption('system');
   await page.emulateMedia({ colorScheme: 'dark' });
   await expect(page.locator('body')).toHaveClass(/site-theme-dark/);
   await expect(root).toHaveAttribute('data-theme','system');
   await page.emulateMedia({ colorScheme: 'light' });
   await expect(page.locator('body')).toHaveClass(/site-theme-light/);
+  await expect(page.locator('#player-mount .up-controls button[aria-label="Play video"]')).toHaveCSS('color', 'rgb(23, 32, 51)');
+  await page.locator('#demo-glass').check();
+  await expect(root).toHaveClass(/up-glassy/);
+  await expect.poll(() => page.locator('#player-mount .up-controls').evaluate((node) => getComputedStyle(node).backdropFilter)).toContain('blur');
+  await page.locator('#demo-glass').uncheck();
+  await expect(root).not.toHaveClass(/up-glassy/);
   await page.locator('#demo-accent').selectOption('#a78bfa');
   await expect(root).toHaveCSS('--up-accent-user','#a78bfa');
+});
+
+test('playground defaults to minimal transparent controls, adapts icon ink to theme, and stays responsive', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/playground.html');
+
+  const root = page.locator('#studio-player-mount .up-root');
+  const controls = page.locator('#studio-player-mount .up-controls');
+  const play = page.locator('#studio-player-mount .up-controls button[aria-label="Play video"]');
+
+  await expect(page.locator('#studio-controls-style')).toHaveValue('minimal');
+  await expect(page.locator('#studio-glass-toggle')).not.toBeChecked();
+  await expect(root).toHaveAttribute('data-controls-style', 'minimal');
+  await expect(root).not.toHaveClass(/up-glassy/);
+  await expect(page.locator('[data-studio-feature="pictureInPicture"]')).toHaveCount(0);
+  await expect(page.locator('[data-studio-feature="miniPlayer"]')).toHaveCount(0);
+  await expect(controls.locator('button[aria-label="Picture in Picture"]')).toHaveCount(0);
+  await expect(controls.locator('.up-mini-player-button')).toHaveCount(0);
+  await expect(play).toHaveCSS('color', 'rgb(23, 32, 51)');
+
+  const transparentStyle = await controls.evaluate((node) => {
+    const css = getComputedStyle(node);
+    return { background: css.backgroundColor, backdrop: css.backdropFilter, image: css.backgroundImage };
+  });
+  expect(transparentStyle.background).toBe('rgba(0, 0, 0, 0)');
+  expect(transparentStyle.backdrop).toBe('none');
+  expect(transparentStyle.image).toBe('none');
+
+  await page.locator('#studio-glass-toggle').check();
+  await expect(root).toHaveClass(/up-glassy/);
+  await expect.poll(() => controls.evaluate((node) => getComputedStyle(node).backdropFilter)).toContain('blur');
+
+  await page.locator('[data-studio-theme="system"]').click();
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await expect(play).toHaveCSS('color', 'rgb(248, 250, 252)');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect(play).toHaveCSS('color', 'rgb(23, 32, 51)');
+
+  const bounds = await page.evaluate(() => {
+    const box = document.querySelector<HTMLElement>('#studio-player-mount .up-stage')!.getBoundingClientRect();
+    const visibleButtons = [...document.querySelectorAll<HTMLElement>('#studio-player-mount .up-controls .up-icon-button')]
+      .filter((button) => getComputedStyle(button).display !== 'none' && !button.hidden);
+    return { left: box.left, right: box.right, buttons: visibleButtons.map((button) => ({
+      label: button.getAttribute('aria-label'), left: button.getBoundingClientRect().left, right: button.getBoundingClientRect().right,
+    })) };
+  });
+  for (const button of bounds.buttons) {
+    expect(button.left, JSON.stringify({button,bounds})).toBeGreaterThanOrEqual(bounds.left - 1);
+    expect(button.right, JSON.stringify({button,bounds})).toBeLessThanOrEqual(bounds.right + 1);
+  }
 });
