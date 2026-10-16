@@ -241,3 +241,12 @@ body.studio-theme-dark .studio-secondary-button:hover,body.studio-theme-dark .st
   /* Keep the header toggle above the mobile slide-out panel so it can close it. */
   .studio-header { z-index: 50; }
 }
+
+
+@media (max-width: 650px) {
+  .studio-header-left { flex: 1 1 auto; overflow: hidden; }
+  .studio-header-actions { flex: 0 0 auto; }
+  .studio-breadcrumb { max-width: min(40vw, 150px); flex: 1 1 auto; overflow: hidden; }
+  .studio-breadcrumb a { display: none; }
+  .studio-breadcrumb strong { min-width: 0; }
+}
