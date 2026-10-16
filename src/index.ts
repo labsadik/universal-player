@@ -541,6 +541,7 @@ export class UniversalPlayer {
     });
     this.qualityMenuGroup = document.createElement('div');
     this.qualityMenuGroup.className = 'up-quality-menu-group';
+    this.qualityMenuGroup.dataset.feature = 'quality';
     this.qualityMenuGroup.hidden = true;
     this.qualityMenuTitle = document.createElement('div');
     this.qualityMenuTitle.className = 'up-menu-title';
