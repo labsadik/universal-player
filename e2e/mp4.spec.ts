@@ -114,6 +114,34 @@ test('keeps the preloaded DASH demo URL out of the visible UI', async ({ page })
   await expect(stats).not.toContainText('stream.mpd');
 });
 
+
+test('the Flower sample button works in a single click and does not fill the URL field', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-sample="flower"]').click();
+  await expect(page.locator('#provider-pill')).toHaveText('HTML5 VIDEO');
+  await expect(page.locator('#video-url')).toHaveValue('');
+  await expect.poll(() => page.locator('#player-mount video').first().evaluate((node) => {
+    const media = node as HTMLVideoElement;
+    return media.currentSrc.includes('flower.mp4') && media.readyState >= HTMLMediaElement.HAVE_METADATA;
+  }), { timeout: 60000 }).toBe(true);
+});
+
+test('pasting a URL into the playground attaches the source without a second load click', async ({ page }) => {
+  await page.goto('/playground.html');
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  const url = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
+  await page.evaluate(async (source) => navigator.clipboard.writeText(source), url);
+  const input = page.locator('#studio-source-url');
+  await input.focus();
+  await page.keyboard.press('Control+V');
+  await expect(page.locator('#studio-provider-label')).toHaveText('HTML5 VIDEO', { timeout: 15000 });
+  await expect.poll(() => page.locator('#studio-player-mount video').first().evaluate((node) => {
+    const media = node as HTMLVideoElement;
+    return media.currentSrc.includes('flower.mp4') && media.readyState >= HTMLMediaElement.HAVE_METADATA;
+  }), { timeout: 60000 }).toBe(true);
+  await expect(page.locator('#studio-source-url')).toHaveValue(url);
+});
+
 test('feature playground toggles a feature on the first click and collapses the sidebar', async ({ page }) => {
   await page.setViewportSize({ width: 1360, height: 900 });
   await page.goto('/playground.html');
