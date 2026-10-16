@@ -163,6 +163,7 @@ export class UniversalPlayer {
   private mediaElement: MediaElementLike;
   private provider: SourceProvider = 'html5';
   private source: PlayerSource | undefined;
+  private sourceRequestId = 0;
   private mediaCleanup: Array<() => void> = [];
   private uiCleanup: Array<() => void> = [];
   private destroyed = false;
@@ -341,12 +342,16 @@ export class UniversalPlayer {
 
   async setSource(input: string | PlayerSource): Promise<void> {
     this.assertAlive();
+    const requestId = ++this.sourceRequestId;
     const source = normalizeSource(input);
     const provider = detectProvider(source);
 
     if (provider !== 'html5') {
       await ADAPTERS[provider]();
       this.assertAlive();
+      // If a newer URL was requested while a provider adapter loaded, never
+      // let this older asynchronous request replace the newest selected source.
+      if (requestId !== this.sourceRequestId) return;
     }
 
     if (provider !== this.provider) {
