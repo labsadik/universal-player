@@ -262,3 +262,10 @@ body.studio-theme-dark .studio-secondary-button:hover,body.studio-theme-dark .st
   .studio-header-actions { width: max-content; min-width: 0; justify-self: end; }
   .studio-breadcrumb { min-width: 0; width: 100%; max-width: min(40vw, 150px); }
 }
+
+
+@media (max-width: 900px) {
+  .studio-header-left { position: relative; z-index: 3; }
+  .studio-header-actions { position: relative; z-index: 1; }
+  #studio-sidebar-toggle { position: relative; z-index: 4; flex: 0 0 35px; }
+}
