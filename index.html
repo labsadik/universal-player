@@ -7,7 +7,7 @@
     <meta name="description" content="Universal Player — one beautiful video player for direct video links and popular video hosts." />
     <title>Universal Player — watch anything, your way</title>
   </head>
-  <body class="min-h-screen bg-[#0a1118] text-slate-100 antialiased selection:bg-emerald-300/30">
+  <body class="site-theme-light min-h-screen bg-[#0a1118] text-slate-100 antialiased selection:bg-emerald-300/30">
     <div class="min-h-screen">
       <header class="sticky top-0 z-40 border-b border-white/10 bg-[#0a1118]/90 backdrop-blur-xl">
         <div class="mx-auto flex h-[72px] max-w-[1700px] items-center gap-4 px-4 md:px-6">
@@ -31,7 +31,8 @@
             </button>
           </form>
 
-          <a href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer" class="icon-surface flex h-10 w-10 shrink-0 items-center justify-center rounded-full" aria-label="Open GitHub repository" title="GitHub">
+          <button id="theme-toggle" class="icon-surface theme-toggle flex h-10 w-10 shrink-0 items-center justify-center rounded-full" type="button" aria-label="Switch to dark theme" title="Switch to dark theme"><i data-lucide="moon"></i></button>
+          <a href="https://github.com/Labsadik/easy-video-player" target="_blank" rel="noreferrer" class="icon-surface flex h-10 w-10 shrink-0 items-center justify-center rounded-full" aria-label="Open GitHub repository" title="GitHub">
             <i data-lucide="code-2"></i>
           </a>
         </div>
@@ -46,7 +47,7 @@
             <div class="my-5 border-t border-white/10"></div>
             <p class="px-3 pb-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-600">Your workspace</p>
             <a href="#player-section" class="sidebar-link"><i data-lucide="history"></i><span>Recently opened</span></a>
-            <a href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer" class="sidebar-link"><i data-lucide="code-2"></i><span>Open source</span><i data-lucide="arrow-up-right" class="ml-auto h-3.5 w-3.5 text-slate-600"></i></a>
+            <a href="https://github.com/Labsadik/easy-video-player" target="_blank" rel="noreferrer" class="sidebar-link"><i data-lucide="code-2"></i><span>Open source</span><i data-lucide="arrow-up-right" class="ml-auto h-3.5 w-3.5 text-slate-600"></i></a>
             <div class="mt-8 rounded-2xl border border-emerald-300/15 bg-gradient-to-br from-emerald-300/[.09] to-blue-400/[.07] p-4">
               <span class="mb-3 grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-emerald-300 to-blue-400 text-slate-950"><i data-lucide="sparkles"></i></span>
               <p class="text-sm font-bold text-white">One player. Many sources.</p>
@@ -202,42 +203,134 @@
             </div>
             <p id="customization-status" class="mt-4 text-[11px] text-slate-500" aria-live="polite">Ready · Try changing the settings above.</p>
           </section>
-          <section id="npm-setup" class="mt-8 rounded-[22px] border border-white/10 bg-[#111923] p-4 sm:p-6">
-            <p class="mb-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-blue-300">Plug & play setup</p>
-            <h2 class="text-xl font-extrabold text-white">Install with npm</h2>
-            <p class="mt-2 text-xs leading-6 text-slate-400">Install the package, import the stylesheet, and mount the player. You do not need to copy player source files into your project.</p>
-            <div class="mt-4 rounded-xl border border-white/10 bg-black/25 p-4">
-              <p class="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">1 · Install</p><pre class="setup-code"><code>npm install @workrcs/universal-player</code></pre>
-              <p class="mb-2 mt-5 text-[10px] font-bold uppercase tracking-wider text-slate-500">2 · Vanilla JS / TypeScript</p><pre class="setup-code"><code>import { createPlayer } from '@workrcs/universal-player';
-import '@workrcs/universal-player/style.css';
-
-const player = createPlayer('#video-player', {
-  source: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-  theme: 'system',       // 'dark' | 'light' | 'system'
-  glass: true,
-  accentColor: 'rgb(54, 214, 176)',
-  controlsStyle: 'standard',
-});
-
-player.setTheme('dark');
-player.setGlassEffect(true);
-player.setControlsStyle('compact');
-player.setFeatures({ stats: false, miniPlayer: false });
-
-// Later, when the component unmounts:
-// player.destroy();</code></pre>
-              <p class="mb-2 mt-5 text-[10px] font-bold uppercase tracking-wider text-slate-500">3 · Add a mount point</p><pre class="setup-code"><code>&lt;div id="video-player"&gt;&lt;/div&gt;</code></pre>
+          <section id="npm-setup" class="monaco-setup-section mt-8 rounded-[22px] border border-white/10 bg-[#111923] p-4 sm:p-6">
+            <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p class="mb-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-blue-300">Developer quick start</p>
+                <h2 class="text-xl font-extrabold text-white">Ship your first player</h2>
+                <p class="mt-2 max-w-2xl text-xs leading-6 text-slate-400">Pick your stack, copy a complete starter example, and mount Universal Player in your app. The editor below is inspired by the Monaco / VS Code workflow.</p>
+              </div>
+              <span class="package-name-pill"><i data-lucide="package"></i><code>@labsadik/universal-player</code></span>
             </div>
-            <div class="mt-4 grid gap-3 text-xs leading-5 text-slate-400 md:grid-cols-3">
-              <div class="rounded-xl border border-white/[.07] p-3"><strong class="text-white">React</strong><p class="mt-1">Create the player in <code>useEffect</code> and call <code>destroy()</code> in cleanup.</p></div>
-              <div class="rounded-xl border border-white/[.07] p-3"><strong class="text-white">Vue / Svelte</strong><p class="mt-1">Mount in the component's mounted lifecycle and destroy on unmount.</p></div>
-              <div class="rounded-xl border border-white/[.07] p-3"><strong class="text-white">Quality & streams</strong><p class="mt-1">Adaptive HLS/DASH quality options depend on renditions provided by the stream. A plain MP4 generally has one encoded quality.</p></div>
+
+            <div class="install-command-row">
+              <div><span class="install-step">01 / INSTALL</span><strong>Install the package</strong><p>Once the package is published to npm under the Labsadik scope.</p></div>
+              <code class="install-command">npm install @labsadik/universal-player</code>
             </div>
-            <p class="mt-4 text-[11px] leading-5 text-slate-500">Note: browser codec support, CORS, provider embed rules, DRM and authentication can limit playback. “Any URL” cannot mean every webpage or protected video is playable; use direct media URLs or supported provider links.</p>
+
+            <div class="monaco-workbench" aria-label="Monaco-style code example editor">
+              <div class="monaco-titlebar">
+                <div class="monaco-window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div class="monaco-title">universal-player <span>/</span> examples</div>
+                <div class="monaco-title-meta">Labsadik · Quick start</div>
+              </div>
+              <div class="monaco-tabbar" role="tablist" aria-label="Example framework">
+                <button class="monaco-tab is-active" id="code-tab-vanilla" type="button" role="tab" aria-selected="true" data-code-tab="vanilla"><span class="monaco-tab-dot"></span> Vanilla TS</button>
+                <button class="monaco-tab" id="code-tab-react" type="button" role="tab" aria-selected="false" data-code-tab="react"><span class="monaco-tab-dot react-dot"></span> React</button>
+                <button class="monaco-tab" id="code-tab-vue" type="button" role="tab" aria-selected="false" data-code-tab="vue"><span class="monaco-tab-dot vue-dot"></span> Vue 3</button>
+                <div class="monaco-tab-actions"><span id="code-language-label">TypeScript</span><button id="copy-example-code" type="button" class="monaco-copy-button"><i data-lucide="copy"></i><span>Copy code</span></button></div>
+              </div>
+              <div class="monaco-editor-shell">
+                <div class="monaco-activity-rail" aria-hidden="true"><span class="is-selected">▤</span><span>⌕</span><span>⌘</span><span>⊞</span></div>
+                <aside class="monaco-file-tree" aria-label="Example files">
+                  <p class="monaco-tree-heading">EXPLORER</p>
+                  <p class="monaco-tree-root">⌄ EXAMPLES</p>
+                  <p class="monaco-tree-file is-selected" data-tree-file="vanilla">TS&nbsp;&nbsp; main.ts</p>
+                  <p class="monaco-tree-file" data-tree-file="react">TSX&nbsp; VideoPlayer.tsx</p>
+                  <p class="monaco-tree-file" data-tree-file="vue">VUE&nbsp; VideoPlayer.vue</p>
+                  <div class="monaco-tree-note"><span class="monaco-tree-note-dot"></span> Syntax-highlighted starter examples</div>
+                </aside>
+                <div class="monaco-code-area">
+                  <div class="monaco-breadcrumb"><span>examples</span><span class="crumb-chevron">›</span><strong id="code-file-label">main.ts</strong></div>
+                  <pre class="monaco-code-content" id="monaco-code-content" role="tabpanel" aria-labelledby="code-tab-vanilla"><span class="monaco-line"><span class="token-comment">// 1. Install: npm install @labsadik/universal-player</span></span>
+<span class="monaco-line"><span class="token-keyword">import</span> { createPlayer } <span class="token-keyword">from</span> <span class="token-string">'@labsadik/universal-player'</span>;</span>
+<span class="monaco-line"><span class="token-keyword">import</span> <span class="token-string">'@labsadik/universal-player/style.css'</span>;</span>
+<span class="monaco-line"></span>
+<span class="monaco-line"><span class="token-comment">// 2. Put &lt;div id="video-player"&gt;&lt;/div&gt; in your HTML</span></span>
+<span class="monaco-line"><span class="token-keyword">const</span> player = <span class="token-function">createPlayer</span>(<span class="token-string">'#video-player'</span>, {</span>
+<span class="monaco-line">  source: <span class="token-string">'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'</span>,</span>
+<span class="monaco-line">  title: <span class="token-string">'Product demo'</span>,</span>
+<span class="monaco-line">  theme: <span class="token-string">'system'</span>, <span class="token-comment">// 'dark' | 'light' | 'system'</span></span>
+<span class="monaco-line">  glass: <span class="token-boolean">true</span>,</span>
+<span class="monaco-line">  accentColor: <span class="token-string">'rgb(54, 214, 176)'</span>,</span>
+<span class="monaco-line">  controlsStyle: <span class="token-string">'standard'</span>,</span>
+<span class="monaco-line">});</span>
+<span class="monaco-line"></span>
+<span class="monaco-line"><span class="token-comment">// 3. Optional runtime controls</span></span>
+<span class="monaco-line">player.<span class="token-function">setTheme</span>(<span class="token-string">'dark'</span>);</span>
+<span class="monaco-line">player.<span class="token-function">setFeatures</span>({ stats: <span class="token-boolean">false</span>, miniPlayer: <span class="token-boolean">false</span> });</span>
+<span class="monaco-line"></span>
+<span class="monaco-line"><span class="token-comment">// 4. Clean up when your view is removed</span></span>
+<span class="monaco-line">player.<span class="token-function">destroy</span>();</span></pre>
+                </div>
+              </div>
+              <div class="monaco-statusbar"><span>⎇ main*</span><span>UTF-8</span><span id="monaco-status-language">TypeScript</span><span class="monaco-status-ready"><span></span> Ready</span></div>
+            </div>
+
+            <template id="code-template-vanilla">
+<span class="monaco-line"><span class="token-comment">// 1. Install: npm install @labsadik/universal-player</span></span>
+<span class="monaco-line"><span class="token-keyword">import</span> { createPlayer } <span class="token-keyword">from</span> <span class="token-string">'@labsadik/universal-player'</span>;</span>
+<span class="monaco-line"><span class="token-keyword">import</span> <span class="token-string">'@labsadik/universal-player/style.css'</span>;</span>
+<span class="monaco-line"></span>
+<span class="monaco-line"><span class="token-comment">// 2. Put &lt;div id="video-player"&gt;&lt;/div&gt; in your HTML</span></span>
+<span class="monaco-line"><span class="token-keyword">const</span> player = <span class="token-function">createPlayer</span>(<span class="token-string">'#video-player'</span>, {</span>
+<span class="monaco-line">  source: <span class="token-string">'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'</span>,</span>
+<span class="monaco-line">  title: <span class="token-string">'Product demo'</span>,</span>
+<span class="monaco-line">  theme: <span class="token-string">'system'</span>, <span class="token-comment">// 'dark' | 'light' | 'system'</span></span>
+<span class="monaco-line">  glass: <span class="token-boolean">true</span>,</span>
+<span class="monaco-line">  accentColor: <span class="token-string">'rgb(54, 214, 176)'</span>,</span>
+<span class="monaco-line">  controlsStyle: <span class="token-string">'standard'</span>,</span>
+<span class="monaco-line">});</span>
+<span class="monaco-line"></span>
+<span class="monaco-line"><span class="token-comment">// 3. Optional runtime controls</span></span>
+<span class="monaco-line">player.<span class="token-function">setTheme</span>(<span class="token-string">'dark'</span>);</span>
+<span class="monaco-line">player.<span class="token-function">setFeatures</span>({ stats: <span class="token-boolean">false</span>, miniPlayer: <span class="token-boolean">false</span> });</span>
+<span class="monaco-line"></span>
+<span class="monaco-line"><span class="token-comment">// 4. Clean up when your view is removed</span></span>
+<span class="monaco-line">player.<span class="token-function">destroy</span>();</span>
+            </template>
+            <template id="code-template-react">
+<span class="monaco-line"><span class="token-keyword">import</span> { useEffect, useRef } <span class="token-keyword">from</span> <span class="token-string">'react'</span>;</span>
+<span class="monaco-line"><span class="token-keyword">import</span> { createPlayer } <span class="token-keyword">from</span> <span class="token-string">'@labsadik/universal-player'</span>;</span>
+<span class="monaco-line"><span class="token-keyword">import</span> <span class="token-string">'@labsadik/universal-player/style.css'</span>;</span>
+<span class="monaco-line"></span>
+<span class="monaco-line"><span class="token-keyword">type</span> VideoPlayerProps = { src: <span class="token-type">string</span> };</span>
+<span class="monaco-line"></span>
+<span class="monaco-line"><span class="token-keyword">export</span> <span class="token-keyword">function</span> <span class="token-function">VideoPlayer</span>({ src }: VideoPlayerProps) {</span>
+<span class="monaco-line">  <span class="token-keyword">const</span> mount = <span class="token-function">useRef</span>&lt;HTMLDivElement&gt;(<span class="token-boolean">null</span>);</span>
+<span class="monaco-line">  <span class="token-function">useEffect</span>(() =&gt; {</span>
+<span class="monaco-line">    <span class="token-keyword">if</span> (!mount.current) <span class="token-keyword">return</span>;</span>
+<span class="monaco-line">    <span class="token-keyword">const</span> player = <span class="token-function">createPlayer</span>(mount.current, { source: src, theme: <span class="token-string">'system'</span> });</span>
+<span class="monaco-line">    <span class="token-keyword">return</span> () =&gt; player.<span class="token-function">destroy</span>();</span>
+<span class="monaco-line">  }, [src]);</span>
+<span class="monaco-line">  <span class="token-keyword">return</span> &lt;<span class="token-type">div</span> ref={mount} /&gt;;</span>
+<span class="monaco-line">}</span>
+            </template>
+            <template id="code-template-vue">
+<span class="monaco-line">&lt;<span class="token-type">script</span> <span class="token-attribute">setup</span> <span class="token-keyword">lang</span>=<span class="token-string">"ts"</span>&gt;</span>
+<span class="monaco-line"><span class="token-keyword">import</span> { ref, onMounted, onBeforeUnmount } <span class="token-keyword">from</span> <span class="token-string">'vue'</span>;</span>
+<span class="monaco-line"><span class="token-keyword">import</span> { createPlayer } <span class="token-keyword">from</span> <span class="token-string">'@labsadik/universal-player'</span>;</span>
+<span class="monaco-line"><span class="token-keyword">import</span> <span class="token-string">'@labsadik/universal-player/style.css'</span>;</span>
+<span class="monaco-line"><span class="token-keyword">const</span> mount = <span class="token-function">ref</span>&lt;HTMLDivElement | <span class="token-type">null</span>&gt;(<span class="token-boolean">null</span>);</span>
+<span class="monaco-line"><span class="token-keyword">let</span> player: <span class="token-type">ReturnType</span>&lt;<span class="token-type">typeof</span> createPlayer&gt; | <span class="token-type">undefined</span>;</span>
+<span class="monaco-line"><span class="token-function">onMounted</span>(() =&gt; {</span>
+<span class="monaco-line">  <span class="token-keyword">if</span> (mount.value) player = <span class="token-function">createPlayer</span>(mount.value, { source: <span class="token-string">'/media/demo.mp4'</span>, theme: <span class="token-string">'system'</span> });</span>
+<span class="monaco-line">});</span>
+<span class="monaco-line"><span class="token-function">onBeforeUnmount</span>(() =&gt; player?.<span class="token-function">destroy</span>());</span>
+<span class="monaco-line">&lt;/<span class="token-type">script</span>&gt;</span>
+<span class="monaco-line"></span>
+<span class="monaco-line">&lt;<span class="token-type">template</span>&gt;</span>
+<span class="monaco-line">  &lt;<span class="token-type">div</span> ref="mount"&gt;&lt;/<span class="token-type">div</span>&gt;</span>
+<span class="monaco-line">&lt;/<span class="token-type">template</span>&gt;</span>
+            </template>
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-500">
+              <p><i data-lucide="info" class="inline-block align-middle"></i> Lifecycle rule: call <code>player.destroy()</code> when the component unmounts.</p>
+              <p class="npm-publish-note">The npm install command works after the first public release under <code>@labsadik</code>.</p>
+            </div>
           </section>
           <footer class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.07] px-1 py-5 text-[10px] text-slate-600">
             <span>Universal Player · Open-source development preview</span>
-            <a class="inline-flex items-center gap-1.5 transition hover:text-emerald-200" href="https://github.com/WorkRCS/easy-video-player" target="_blank" rel="noreferrer">View source on GitHub <i data-lucide="external-link"></i></a>
+            <a class="inline-flex items-center gap-1.5 transition hover:text-emerald-200" href="https://github.com/Labsadik/easy-video-player" target="_blank" rel="noreferrer">View source on GitHub <i data-lucide="external-link"></i></a>
           </footer>
         </main>
       </div>
