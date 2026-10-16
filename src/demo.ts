@@ -415,7 +415,7 @@ document.querySelectorAll<HTMLButtonElement>('[data-sample]').forEach((button) =
   button.addEventListener('click', () => {
     const name = button.dataset.sample;
     if (name === 'big-buck') void loadVideo(BIG_BUCK_MP4, 'Big Buck Bunny · MP4 sample');
-    else void restoreDefaultSample();
+    else void loadVideo(SAMPLE_MP4, 'Flower · MP4 sample');
   });
 });
 
