@@ -84,7 +84,6 @@ When a URL's extension does not reveal its source type, supply a type or explici
 - setVolume(0..1), setMuted(boolean) — volume controls.
 - setPlaybackRate(rate) — positive playback speed.
 - requestFullscreen() — fullscreen if the browser permits it.
-- requestPictureInPicture() — native media PiP when exposed by the current media provider.
 - on(event, listener) / off(event, listener) — subscribe to events.
 - destroy() — unbind listeners, stop media and remove the player DOM.
 
@@ -99,7 +98,7 @@ player.setTheme('light'); // 'light' | 'dark' | 'system'
 player.setGlassEffect(true);
 player.setAccentColor('rgb(54, 214, 176)');
 player.setControlsStyle('compact'); // 'standard' | 'compact' | 'minimal'
-player.setFeatures({ stats: false, miniPlayer: false });
+player.setFeatures({ stats: false });
 player.goLive(); // when the current source is marked live and exposes a seekable edge
 ~~~
 
@@ -118,7 +117,7 @@ Native media events are surfaced via player.on(), including loadstart, loadedmet
 
 ## Additional UI features
 
-The custom UI includes a timestamp preview while seeking, auto-hiding controls, loop toggle, copy-source-link, playback statistics, keyboard help, an in-page mini player (I) and theater mode (T). Escape closes menus and exits the display modes. Native Picture-in-Picture uses requestPictureInPicture() where the media provider exposes it.
+The custom UI defaults to minimal, non-glass controls. It includes a timestamp preview while seeking, auto-hiding controls, loop toggle, copy-source-link, playback statistics, keyboard help, and optional theater mode (T). The built-in UI does not expose Picture-in-Picture or Mini Player. Escape closes menus and exits theater mode.
 
 The playback settings menu shows a quality section only when the current HLS/DASH player store exposes two or more renditions through the Video.js quality feature. “Auto” returns quality choice to adaptive bitrate selection. MP4/WebM direct files are fixed-quality sources, so this setting is hidden for them.
 
