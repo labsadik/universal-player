@@ -350,18 +350,27 @@
 <span class="monaco-line"><span class="token-tag">&lt;div</span> <span class="token-attribute">bind:this</span>={mount}<span class="token-tag">&gt;&lt;/div&gt;</span></span>
             </template>
             <template id="code-template-python">
-<span class="monaco-line"><span class="token-comment"># Python backend: keep JS, CSS and the whole chunks/ directory together.</span></span>
+<span class="monaco-line"><span class="token-comment"># main.py — a self-contained FastAPI route</span></span>
 <span class="monaco-line"><span class="token-keyword">from</span> fastapi <span class="token-keyword">import</span> FastAPI</span>
+<span class="monaco-line"><span class="token-keyword">from</span> fastapi.responses <span class="token-keyword">import</span> HTMLResponse</span>
 <span class="monaco-line"><span class="token-keyword">from</span> fastapi.staticfiles <span class="token-keyword">import</span> StaticFiles</span>
 <span class="monaco-line">app = FastAPI()</span>
 <span class="monaco-line">app.mount(<span class="token-string">"/player"</span>, StaticFiles(directory=<span class="token-string">"static/player"</span>), name=<span class="token-string">"player"</span>)</span>
 <span class="monaco-line"></span>
-<span class="monaco-line">&lt;<span class="token-type">div</span> id=<span class="token-string">"video-player"</span>&gt;&lt;/<span class="token-type">div</span>&gt;</span>
-<span class="monaco-line">&lt;<span class="token-type">link</span> rel=<span class="token-string">"stylesheet"</span> href=<span class="token-string">"/player/universal-player.css"</span> /&gt;</span>
-<span class="monaco-line">&lt;<span class="token-type">script</span> type=<span class="token-string">"module"</span>&gt;</span>
+<span class="monaco-line">@app.get(<span class="token-string">"/"</span>, response_class=HTMLResponse)</span>
+<span class="monaco-line"><span class="token-keyword">def</span> watch():</span>
+<span class="monaco-line">    <span class="token-keyword">return</span> HTMLResponse(<span class="token-string">"""</span></span>
+<span class="monaco-line">&lt;!doctype html&gt;</span>
+<span class="monaco-line">&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;</span>
+<span class="monaco-line">&lt;link rel="stylesheet" href="/player/universal-player.css"&gt;</span>
+<span class="monaco-line">&lt;/head&gt;&lt;body&gt;</span>
+<span class="monaco-line">&lt;div id="video-player"&gt;&lt;/div&gt;</span>
+<span class="monaco-line">&lt;script type="module"&gt;</span>
 <span class="monaco-line">  <span class="token-keyword">import</span> { createPlayer } <span class="token-keyword">from</span> <span class="token-string">"/player/universal-player.js"</span>;</span>
-<span class="monaco-line">  createPlayer(<span class="token-string">"#video-player"</span>, { source: <span class="token-string">"/media/sample.mp4"</span>, theme: <span class="token-string">"system"</span> });</span>
-<span class="monaco-line">&lt;/<span class="token-type">script</span>&gt;</span>
+<span class="monaco-line">  createPlayer(<span class="token-string">"#video-player"</span>, { source: <span class="token-string">"https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"</span>, theme: <span class="token-string">"system"</span> });</span>
+<span class="monaco-line">&lt;/script&gt;</span>
+<span class="monaco-line">&lt;/body&gt;&lt;/html&gt;</span>
+<span class="monaco-line"><span class="token-string">"""</span>)</span>
             </template>
             <template id="code-template-java">
 <span class="monaco-line"><span class="token-comment">&lt;!-- Spring Boot / Thymeleaf: src/main/resources/templates/player.html --&gt;</span></span>

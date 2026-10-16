@@ -243,7 +243,11 @@ test('uses core default controls without overflow at 320px', async ({ page }) =>
   expect(controlCss.image).toBe('none');
   expect(controlCss.filter).toBe('none');
   await page.locator('#demo-theme').selectOption('system');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await expect(page.locator('body')).toHaveClass(/site-theme-dark/);
   await expect(root).toHaveAttribute('data-theme','system');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect(page.locator('body')).toHaveClass(/site-theme-light/);
   await page.locator('#demo-accent').selectOption('#a78bfa');
   await expect(root).toHaveCSS('--up-accent-user','#a78bfa');
 });

@@ -90,7 +90,7 @@ function applyCustomization(): void {
     ' theme · ' + controlsSelect!.selectedOptions[0]?.textContent + ' controls · ' +
     (glassToggle!.checked ? 'glass enabled' : 'glass disabled');
 }
-themeSelect.addEventListener('change', applyCustomization);
+themeSelect.addEventListener('change', () => setWebsiteTheme(themeSelect!.value as 'dark' | 'light' | 'system'));
 
 let websiteThemePreference: 'light' | 'dark' | 'system' = 'system';
 
@@ -143,7 +143,7 @@ const exampleMeta: Record<string, { file: string; language: string }> = {
   react: { file: 'VideoPlayer.tsx', language: 'TypeScript React' },
   vue: { file: 'VideoPlayer.vue', language: 'Vue / TypeScript' },
   svelte: { file: 'VideoPlayer.svelte', language: 'Svelte / TypeScript' },
-  python: { file: 'watch.html', language: 'Python + HTML' },
+  python: { file: 'main.py', language: 'Python / FastAPI' },
   java: { file: 'player.html', language: 'Java / Thymeleaf' },
 };
 
