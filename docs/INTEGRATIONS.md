@@ -219,10 +219,10 @@ player.setTheme('system'); // light, dark, or system
 player.setAccentColor('#7c3aed');
 player.setGlassEffect(false);
 player.setControlsStyle('compact');
-player.setFeatures({ miniPlayer: true, theaterMode: true, playbackSpeed: true });
+player.setFeatures({ theaterMode: true, playbackSpeed: true });
 ~~~
 
-Core controls are play/pause, skip, seek timeline, volume/mute, captions, settings/quality when the stream exposes multiple renditions, Picture-in-Picture and fullscreen. Playback speed, mini player and theater mode are opt-in.
+The built-in UI defaults to minimal controls with the glass effect off. Core controls are play/pause, seek timeline, captions, settings/quality when the stream exposes multiple renditions, and fullscreen. Playback speed and theater mode are opt-in. The built-in UI does not provide Mini Player or Picture-in-Picture.
 
 ## 8. Playback smoothness and compatibility
 
