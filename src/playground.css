@@ -285,3 +285,9 @@ body.studio-theme-dark .studio-secondary-button:hover,body.studio-theme-dark .st
   .studio-breadcrumb { display: none; }
   #studio-sidebar-toggle { width: 35px; min-width: 35px; flex: 0 0 35px; }
 }
+
+
+/* The sidebar becomes fixed on mobile, so explicitly keep the main content
+   in grid column two instead of allowing auto-placement into the zero-width rail. */
+.studio-sidebar { grid-column: 1; }
+.studio-body { grid-column: 2; min-width: 0; width: 100%; }
