@@ -93,6 +93,7 @@ themeSelect.addEventListener('change', applyCustomization);
 function setWebsiteTheme(theme: 'light' | 'dark', persist = true): void {
   document.body.classList.toggle('site-theme-light', theme === 'light');
   document.body.classList.toggle('site-theme-dark', theme === 'dark');
+  document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f8fafc' : '#080d16');
   const nextTheme = theme === 'light' ? 'dark' : 'light';
   themeToggle!.setAttribute('aria-label', 'Switch to ' + nextTheme + ' theme');
   themeToggle!.setAttribute('title', 'Switch to ' + nextTheme + ' theme');
