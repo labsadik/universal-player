@@ -6,16 +6,16 @@ Universal Player is a browser-side JavaScript video player, not a Python or Java
 
 Requirements: Node.js 20.19+ and npm.
 
-After the repository has been migrated to Labsadik/universal-player, install it directly from GitHub using this command:
+After the repository has been migrated to labsadik/universal-player, install it directly from GitHub using this command:
 
 ~~~bash
-npm install github:Labsadik/universal-player
+npm install github:labsadik/universal-player
 ~~~
 
 The package's prepare lifecycle builds the library, CSS, TypeScript declarations and provider chunks during installation. To run the website locally:
 
 ~~~bash
-git clone https://github.com/Labsadik/universal-player.git
+git clone https://github.com/labsadik/universal-player.git
 cd universal-player
 npm install
 npm run dev
@@ -132,7 +132,7 @@ Use the framework's browser/client lifecycle. Create only after the mount elemen
 Python serves HTML, media and the static player bundle; the browser executes the player. Build with npm, then copy the JavaScript, stylesheet and full provider chunks directory. Preserve their relative paths.
 
 ~~~bash
-npm install github:Labsadik/universal-player
+npm install github:labsadik/universal-player
 mkdir -p static/player/chunks
 cp node_modules/@labsadik/universal-player/dist/universal-player.js static/player/
 cp node_modules/@labsadik/universal-player/dist/universal-player.css static/player/
@@ -175,7 +175,7 @@ Flask/Django use the same markup with their normal static-file and template conf
 The player is not a Maven dependency. Copy the JavaScript, CSS and full chunks/ directory into src/main/resources/static/player/; Spring Boot will serve those files from /player/.
 
 ~~~bash
-npm install github:Labsadik/universal-player
+npm install github:labsadik/universal-player
 mkdir -p src/main/resources/static/player/chunks
 cp node_modules/@labsadik/universal-player/dist/universal-player.js src/main/resources/static/player/
 cp node_modules/@labsadik/universal-player/dist/universal-player.css src/main/resources/static/player/
