@@ -317,7 +317,7 @@ resetButton.addEventListener('click', async () => {
     await player.setSource({ src: DEFAULT_DASH_URL, type: 'application/dash+xml', title: 'Featured video' });
     setPlayerStatus('Source ready · press play to start', 'ready');
   } catch (error) {
-    setPlayerStatus(error instanceof Error ? error.message : 'Unable to restore demo.', 'error');
+    setPlayerStatus(error instanceof Error ? error.message : 'Unable to restore the featured source.', 'error');
   }
 });
 
