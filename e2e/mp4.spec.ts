@@ -133,9 +133,24 @@ test('playground sidebar starts hidden on mobile and toggles with the correct in
   const toggle = page.locator('#studio-sidebar-toggle');
   const frame = page.locator('#studio-frame');
   const headerGeometry = await page.evaluate(() => {
-    const toggle = document.querySelector<HTMLElement>('#studio-sidebar-toggle')!.getBoundingClientRect();
-    const theme = document.querySelector<HTMLElement>('#studio-theme-toggle')!.getBoundingClientRect();
-    return { toggle: { left: toggle.left, right: toggle.right, width: toggle.width }, theme: { left: theme.left, right: theme.right, width: theme.width } };
+    const rect = (selector: string) => {
+      const el = document.querySelector<HTMLElement>(selector)!;
+      const box = el.getBoundingClientRect();
+      const style = getComputedStyle(el);
+      return {
+        left: box.left, right: box.right, top: box.top, bottom: box.bottom,
+        width: box.width, height: box.height, display: style.display,
+        position: style.position, zIndex: style.zIndex, flex: style.flex,
+        widthStyle: style.width,
+      };
+    };
+    const header = rect('.studio-header');
+    const left = rect('.studio-header-left');
+    const actions = rect('.studio-header-actions');
+    const toggle = rect('#studio-sidebar-toggle');
+    const theme = rect('#studio-theme-toggle');
+    return { viewportWidth: innerWidth, header, left, actions, toggle, theme,
+      gridTemplateColumns: getComputedStyle(document.querySelector('.studio-header')!).gridTemplateColumns };
   });
   expect(headerGeometry.toggle.right, JSON.stringify(headerGeometry)).toBeLessThanOrEqual(headerGeometry.theme.left);
   await expect(toggle).toHaveAttribute('aria-label', 'Show sidebar');
