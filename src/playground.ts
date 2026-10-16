@@ -12,7 +12,7 @@ const DEFAULT_DASH_URL = 'https://files.vidstack.io/sprite-fight/dash/stream.mpd
 type FeatureKey = keyof UniversalPlayerFeatures;
 
 const iconSet = {
-  createIcons, Activity, ArrowRight, ArrowUpRight, Captions, Code2, Copy, Gauge,
+  Activity, ArrowRight, ArrowUpRight, Captions, Code2, Copy, Gauge,
   House, Keyboard, Layers, Link2, Maximize, Menu, Moon, Monitor, MonitorPlay,
   MousePointer2, PanelLeftClose, PanelLeftOpen, PictureInPicture2, Play, RadioTower,
   Repeat, RotateCcw, ShieldCheck, SkipForward, SlidersHorizontal, Sparkles, Sun, Volume2,
