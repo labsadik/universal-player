@@ -10,6 +10,35 @@ import type { PlayerSource, SourceProvider } from './source.js';
 export type { PlayerSource, SourceProvider } from './source.js';
 export { detectProvider, formatTime, normalizePastedVideoUrl, normalizeSource } from './source.js';
 
+export type UniversalPlayerTheme = 'dark' | 'light' | 'system';
+export type UniversalPlayerControlsStyle = 'standard' | 'compact' | 'minimal';
+
+export interface UniversalPlayerFeatures {
+  seek: boolean;
+  volume: boolean;
+  playbackSpeed: boolean;
+  quality: boolean;
+  captions: boolean;
+  pictureInPicture: boolean;
+  miniPlayer: boolean;
+  theaterMode: boolean;
+  fullscreen: boolean;
+  skip: boolean;
+  contextMenu: boolean;
+  loop: boolean;
+  copyLink: boolean;
+  stats: boolean;
+  keyboardHelp: boolean;
+  liveIndicator: boolean;
+}
+
+const DEFAULT_FEATURES: UniversalPlayerFeatures = {
+  seek: true, volume: true, playbackSpeed: true, quality: true, captions: true,
+  pictureInPicture: true, miniPlayer: true, theaterMode: true, fullscreen: true,
+  skip: true, contextMenu: true, loop: true, copyLink: true, stats: true,
+  keyboardHelp: true, liveIndicator: true,
+};
+
 export interface UniversalPlayerOptions {
   source?: string | PlayerSource;
   poster?: string;
@@ -23,6 +52,12 @@ export interface UniversalPlayerOptions {
   objectFit?: 'contain' | 'cover' | 'fill';
   playbackRates?: number[];
   autohide?: boolean;
+  theme?: UniversalPlayerTheme;
+  glass?: boolean;
+  accentColor?: string;
+  controlsStyle?: UniversalPlayerControlsStyle;
+  live?: boolean;
+  features?: Partial<UniversalPlayerFeatures>;
 }
 
 interface MediaElementLike extends HTMLElement {
@@ -132,6 +167,9 @@ export class UniversalPlayer {
   private uiCleanup: Array<() => void> = [];
   private destroyed = false;
   private readonly rates: number[];
+  private featureOptions: UniversalPlayerFeatures;
+  private liveIndicator!: HTMLSpanElement;
+  private liveButton!: HTMLButtonElement;
   private controlsRoot!: HTMLDivElement;
   private centerPlay!: HTMLButtonElement;
   private playButton!: HTMLButtonElement;
@@ -168,6 +206,7 @@ export class UniversalPlayer {
       throw new TypeError('createPlayer target must be an HTMLElement.');
     }
 
+    this.featureOptions = { ...DEFAULT_FEATURES, ...(options.features || {}) };
     this.rates = [...new Set((options.playbackRates || [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]).filter((rate) => Number.isFinite(rate) && rate > 0))];
     if (!this.rates.includes(1)) this.rates.push(1);
     this.rates.sort((a, b) => a - b);
@@ -198,6 +237,11 @@ export class UniversalPlayer {
     this.element.append(this.stage);
     this.container.append(this.element);
     target.append(this.container);
+    this.setTheme(options.theme || 'system');
+    this.setGlassEffect(options.glass !== false);
+    this.setAccentColor(options.accentColor || 'rgb(54, 214, 176)');
+    this.setControlsStyle(options.controlsStyle || 'standard');
+    this.applyFeatureVisibility();
 
     this.bindMediaEvents(this.mediaElement);
     this.bindKeyboard();
@@ -217,6 +261,70 @@ export class UniversalPlayer {
 
   get currentProvider(): SourceProvider {
     return this.provider;
+  }
+
+  get features(): UniversalPlayerFeatures {
+    return { ...this.featureOptions };
+  }
+
+  get isLiveStream(): boolean {
+    return Boolean(this.options.live || this.source?.live);
+  }
+
+  setTheme(theme: UniversalPlayerTheme): void {
+    this.assertAlive();
+    this.container.dataset.theme = theme;
+    this.emit('themechange', { theme });
+  }
+
+  setGlassEffect(enabled: boolean): void {
+    this.assertAlive();
+    this.container.classList.toggle('up-glassy', Boolean(enabled));
+    this.emit('glasschange', { enabled: Boolean(enabled) });
+  }
+
+  setAccentColor(color: string): void {
+    this.assertAlive();
+    if (typeof color !== 'string' || !color.trim()) throw new TypeError('setAccentColor() expects a non-empty CSS color.');
+    if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && !CSS.supports('color', color)) {
+      throw new TypeError('setAccentColor() expects a valid CSS color.');
+    }
+    this.container.style.setProperty('--up-accent-user', color.trim());
+    this.emit('accentchange', { color: color.trim() });
+  }
+
+  setControlsStyle(style: UniversalPlayerControlsStyle): void {
+    this.assertAlive();
+    if (!['standard', 'compact', 'minimal'].includes(style)) {
+      throw new TypeError('setControlsStyle() expects standard, compact, or minimal.');
+    }
+    this.container.classList.remove('up-controls-compact', 'up-controls-minimal');
+    if (style === 'compact') this.container.classList.add('up-controls-compact');
+    if (style === 'minimal') this.container.classList.add('up-controls-minimal');
+    this.container.dataset.controlsStyle = style;
+    this.emit('controlsstylechange', { style });
+  }
+
+  setFeatures(features: Partial<UniversalPlayerFeatures>): void {
+    this.assertAlive();
+    this.featureOptions = { ...this.featureOptions, ...features };
+    this.applyFeatureVisibility();
+    this.emit('featureschange', { features: this.features });
+  }
+
+  goLive(): boolean {
+    this.assertAlive();
+    if (!this.isLiveStream) return false;
+    try {
+      const ranges = this.mediaElement.seekable;
+      if (!ranges || ranges.length < 1) return false;
+      this.mediaElement.currentTime = ranges.end(ranges.length - 1);
+      this.syncUI();
+      this.emit('golive', { currentTime: this.currentTime });
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   get currentTime(): number {
@@ -266,6 +374,7 @@ export class UniversalPlayer {
     this.stage.setAttribute('aria-label', (source.title || this.options.title || 'Universal Player') + ' video');
     this.stage.dataset.provider = provider;
     this.stage.classList.toggle('up-portrait', provider === 'tiktok');
+    this.updateLiveUI();
     this.stage.style.aspectRatio = provider === 'tiktok' ? '9 / 16' : (this.options.aspectRatio || '16 / 9');
     this.emit('sourcechange', { source: { ...source }, provider });
     this.syncUI();
@@ -427,7 +536,12 @@ export class UniversalPlayer {
     const liveLabel = document.createElement('span');
     liveLabel.className = 'up-brand-label';
     liveLabel.innerHTML = '<span></span> UNIVERSAL PLAYER';
-    top.append(this.titleLabel, liveLabel);
+    this.liveIndicator = document.createElement('span');
+    this.liveIndicator.className = 'up-live-indicator';
+    this.liveIndicator.textContent = 'LIVE';
+    this.liveIndicator.hidden = true;
+    this.liveIndicator.dataset.feature = 'liveIndicator';
+    top.append(this.titleLabel, this.liveIndicator, liveLabel);
 
     this.spinner = document.createElement('div');
     this.spinner.className = 'up-buffering';
@@ -442,6 +556,7 @@ export class UniversalPlayer {
 
     const timeline = document.createElement('div');
     timeline.className = 'up-timeline-row';
+    timeline.dataset.feature = 'seek';
     this.seekInput = document.createElement('input');
     this.seekInput.className = 'up-seek';
     this.seekInput.type = 'range';
@@ -470,8 +585,12 @@ export class UniversalPlayer {
     this.listen(this.playButton, 'click', () => this.togglePlayback());
 
     const backButton = makeButton('Back 10 seconds', 'back');
+    backButton.classList.add('up-skip-button');
+    backButton.dataset.feature = 'skip';
     this.listen(backButton, 'click', () => this.seek(Math.max(0, this.currentTime - 10)));
     const forwardButton = makeButton('Forward 10 seconds', 'forward');
+    forwardButton.classList.add('up-skip-button');
+    forwardButton.dataset.feature = 'skip';
     this.listen(forwardButton, 'click', () => {
       const end = this.duration;
       this.seek(Number.isFinite(end) && end > 0 ? Math.min(end, this.currentTime + 10) : this.currentTime + 10);
@@ -490,6 +609,16 @@ export class UniversalPlayer {
     time.className = 'up-time';
     time.append(this.currentLabel, slash, this.durationLabel);
 
+    this.liveButton = document.createElement('button');
+    this.liveButton.type = 'button';
+    this.liveButton.className = 'up-live-button';
+    this.liveButton.textContent = 'GO LIVE';
+    this.liveButton.dataset.feature = 'liveIndicator';
+    this.liveButton.hidden = true;
+    this.listen(this.liveButton, 'click', () => {
+      if (!this.goLive()) this.emit('featureerror', { feature: 'go-live', error: new Error('The live edge is not currently seekable.') });
+    });
+
     this.muteButton = makeButton('Mute', 'volume');
     this.listen(this.muteButton, 'click', () => this.setMuted(!this.mediaElement.muted));
     this.volumeInput = document.createElement('input');
@@ -504,10 +633,12 @@ export class UniversalPlayer {
 
     const volumeGroup = document.createElement('div');
     volumeGroup.className = 'up-volume-group';
+    volumeGroup.dataset.feature = 'volume';
     volumeGroup.append(this.muteButton, this.volumeInput);
 
     const settingsWrap = document.createElement('div');
     settingsWrap.className = 'up-settings-wrap';
+    settingsWrap.dataset.feature = 'settings';
     this.settingsButton = makeButton('Playback settings', 'settings');
     this.settingsButton.setAttribute('aria-haspopup', 'menu');
     this.settingsButton.setAttribute('aria-expanded', 'false');
@@ -527,6 +658,7 @@ export class UniversalPlayer {
       item.setAttribute('role', 'menuitemradio');
       item.setAttribute('aria-checked', rate === 1 ? 'true' : 'false');
       item.dataset.rate = String(rate);
+      item.dataset.feature = 'playbackSpeed';
       item.textContent = String(rate) + '×' + (rate === 1 ? ' · Normal' : '');
       this.listen(item, 'click', () => {
         this.setPlaybackRate(rate);
@@ -553,19 +685,24 @@ export class UniversalPlayer {
 
     this.trackButton = makeButton('Toggle captions', 'captions');
     this.trackButton.classList.add('up-track-button');
+    this.trackButton.dataset.feature = 'captions';
     this.listen(this.trackButton, 'click', () => this.toggleCaptions());
     this.pipButton = makeButton('Picture in Picture', 'pip');
+    this.pipButton.dataset.feature = 'pictureInPicture';
     this.listen(this.pipButton, 'click', () => {
       this.requestPictureInPicture().catch((error: unknown) => this.emit('featureerror', { feature: 'picture-in-picture', error }));
     });
     this.miniPlayerButton = makeButton('Enter mini player', 'mini');
     this.miniPlayerButton.classList.add('up-mini-player-button');
+    this.miniPlayerButton.dataset.feature = 'miniPlayer';
     this.listen(this.miniPlayerButton, 'click', () => this.toggleMiniPlayer());
     this.theaterButton = makeButton('Enter theater mode', 'theater');
     this.theaterButton.classList.add('up-theater-button');
+    this.theaterButton.dataset.feature = 'theaterMode';
     this.listen(this.theaterButton, 'click', () => this.toggleTheaterMode());
 
     this.fullscreenButton = makeButton('Enter fullscreen', 'fullscreen');
+    this.fullscreenButton.dataset.feature = 'fullscreen';
     this.listen(this.fullscreenButton, 'click', () => {
       if (document.fullscreenElement) {
         document.exitFullscreen().catch((error: unknown) => this.emit('featureerror', { feature: 'fullscreen', error }));
@@ -574,7 +711,7 @@ export class UniversalPlayer {
       }
     });
 
-    left.append(this.playButton, backButton, forwardButton, time);
+    left.append(this.playButton, backButton, forwardButton, time, this.liveButton);
     right.append(volumeGroup, this.trackButton, settingsWrap, this.pipButton, this.miniPlayerButton, this.theaterButton, this.fullscreenButton);
     controlRow.append(left, right);
     this.controlsRoot.append(timeline, controlRow);
@@ -613,21 +750,25 @@ export class UniversalPlayer {
       this.loopMenuItem.querySelector('.up-context-label')!.textContent = 'Loop: ' + (this.mediaElement.loop ? 'On' : 'Off');
       this.emit('loopchange', { loop: this.mediaElement.loop });
     });
-    this.contextMenu.append(
-      this.loopMenuItem,
-      this.createContextItem('Copy video link', 'copy', () => { void this.copySourceLink(); }),
-      this.createContextItem('Mini player', 'mini', () => this.toggleMiniPlayer()),
-      this.createContextItem('Theater mode', 'theater', () => this.toggleTheaterMode()),
-      this.createContextItem('Playback stats', 'info', () => {
+    this.loopMenuItem.dataset.feature = 'loop';
+    const copyLinkItem = this.createContextItem('Copy video link', 'copy', () => { void this.copySourceLink(); });
+    copyLinkItem.dataset.feature = 'copyLink';
+    const miniMenuItem = this.createContextItem('Mini player', 'mini', () => this.toggleMiniPlayer());
+    miniMenuItem.dataset.feature = 'miniPlayer';
+    const theaterMenuItem = this.createContextItem('Theater mode', 'theater', () => this.toggleTheaterMode());
+    theaterMenuItem.dataset.feature = 'theaterMode';
+    const statsMenuItem = this.createContextItem('Playback stats', 'info', () => {
         this.refreshStats();
         this.statsPanel.hidden = !this.statsPanel.hidden;
         this.contextMenu.hidden = true;
-      }),
-      this.createContextItem('Keyboard shortcuts', 'keyboard', () => {
-        this.helpPanel.hidden = !this.helpPanel.hidden;
-        this.contextMenu.hidden = true;
-      }),
-    );
+      });
+    statsMenuItem.dataset.feature = 'stats';
+    const keyboardMenuItem = this.createContextItem('Keyboard shortcuts', 'keyboard', () => {
+      this.helpPanel.hidden = !this.helpPanel.hidden;
+      this.contextMenu.hidden = true;
+    });
+    keyboardMenuItem.dataset.feature = 'keyboardHelp';
+    this.contextMenu.append(this.loopMenuItem, copyLinkItem, miniMenuItem, theaterMenuItem, statsMenuItem, keyboardMenuItem);
 
     this.statsPanel = document.createElement('div');
     this.statsPanel.className = 'up-stats-panel';
@@ -658,6 +799,7 @@ export class UniversalPlayer {
       this.queueHideControls(true);
     });
     this.listen(this.stage, 'contextmenu', (event) => {
+      if (!this.featureOptions.contextMenu) return;
       event.preventDefault();
       const pointer = event as MouseEvent;
       const rect = this.stage.getBoundingClientRect();
@@ -696,6 +838,8 @@ export class UniversalPlayer {
     });
 
     this.updateOptionalControls();
+    this.updateLiveUI();
+    this.applyFeatureVisibility();
   }
 
   private connectQualityStore(): void {
@@ -1028,6 +1172,43 @@ export class UniversalPlayer {
     this.loopMenuItem?.querySelector('.up-context-label') && (this.loopMenuItem.querySelector('.up-context-label')!.textContent = 'Loop: ' + (this.mediaElement.loop ? 'On' : 'Off'));
     this.spinner.hidden = !this.stage.classList.contains('is-buffering');
     this.updateOptionalControls();
+  }
+
+  private updateLiveUI(): void {
+    if (!this.liveIndicator || !this.liveButton) return;
+    const visible = this.isLiveStream && this.featureOptions.liveIndicator;
+    this.liveIndicator.hidden = !visible;
+    this.liveButton.hidden = !visible;
+    const ranges = this.mediaElement?.seekable;
+    let atLiveEdge = false;
+    try {
+      if (ranges && ranges.length > 0) atLiveEdge = ranges.end(ranges.length - 1) - this.currentTime < 3;
+    } catch { /* some remote providers do not expose seekable ranges */ }
+    this.liveButton.classList.toggle('is-at-live', atLiveEdge);
+    this.liveButton.textContent = atLiveEdge ? 'LIVE' : 'GO LIVE';
+  }
+
+  private applyFeatureVisibility(): void {
+    if (!this.container || !this.controlsRoot) return;
+    this.container.querySelectorAll<HTMLElement>('[data-feature]').forEach((element) => {
+      const feature = element.dataset.feature;
+      if (!feature) return;
+      if (feature === 'settings') {
+        element.hidden = !(this.featureOptions.playbackSpeed || this.featureOptions.quality);
+        return;
+      }
+      if (feature === 'quality') {
+        element.style.display = this.featureOptions.quality ? '' : 'none';
+        return;
+      }
+      if (feature === 'liveIndicator') {
+        this.updateLiveUI();
+        return;
+      }
+      const enabled = this.featureOptions[feature as keyof UniversalPlayerFeatures];
+      if (typeof enabled === 'boolean') element.hidden = !enabled;
+    });
+    this.updateLiveUI();
   }
 
   private hasShowingCaptions(): boolean {
