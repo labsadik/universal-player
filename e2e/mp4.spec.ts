@@ -72,8 +72,10 @@ test('opens Universal Player context menu on right click', async ({ page }) => {
 });
 
 
-test('toggles the in-page mini player and theater mode', async ({ page }) => {
+test('toggles the in-page mini player and theater mode after enabling the optional features', async ({ page }) => {
   await page.goto('/');
+  await page.locator('[data-demo-feature="miniPlayer"]').check();
+  await page.locator('[data-demo-feature="theaterMode"]').check();
   const root = page.locator('#player-mount .up-root');
   const miniButton = page.locator('#player-mount .up-mini-player-button');
   const theaterButton = page.locator('#player-mount .up-theater-button');
@@ -200,6 +202,18 @@ test('feature playground toggles a feature on the first click and collapses the 
   await expect(page.locator('#studio-frame')).not.toHaveClass(/nav-hidden/);
 });
 
+
+test('setup editor serves copyable Svelte, Python and Java integration snippets', async ({ page }) => {
+  await page.goto('/');
+  const editor = page.locator('#monaco-code-content');
+  await page.locator('[data-code-tab="svelte"]').click();
+  await expect(editor).toContainText('onMount');
+  await page.locator('[data-code-tab="python"]').click();
+  await expect(editor).toContainText('StaticFiles');
+  await page.locator('[data-code-tab="java"]').click();
+  await expect(editor).toContainText('universal-player.js');
+  await expect(page.locator('#code-file-label')).toHaveText('player.html');
+});
 
 test('uses core default controls without overflow at 320px', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
