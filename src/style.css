@@ -949,7 +949,7 @@
 
 
 /* Gear menu: distinct Speed and Quality sections, shown by feature availability. */
-.up-settings-section + .up-settings-section {
+.up-speed-section:not([hidden]) + .up-quality-menu-group:not([hidden]):not([style*="display: none"]) {
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid var(--up-menu-border, rgba(148,163,184,.2));
