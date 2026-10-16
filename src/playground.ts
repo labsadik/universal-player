@@ -1,6 +1,6 @@
 import './playground.css';
 import {
-  createIcons, Activity, ArrowRight, ArrowUpRight, Captions, Code2, Copy, Gauge,
+  Activity, ArrowRight, ArrowUpRight, Captions, Code2, Copy, Gauge,
   House, Keyboard, Layers, Link2, Maximize, Menu, Moon, Monitor, MonitorPlay,
   MousePointer2, PanelLeftClose, PanelLeftOpen, PictureInPicture2, Play, RadioTower,
   Repeat, RotateCcw, ShieldCheck, SkipForward, SlidersHorizontal, Sparkles, Sun, Volume2,
@@ -62,7 +62,6 @@ const featureStatusCopy: Record<FeatureKey, string> = {
   miniPlayer: 'Ready · mini player',
   theaterMode: 'Ready · theater mode',
   fullscreen: 'Browser-dependent · fullscreen API',
-  skip: 'Ready · ±10 seconds',
   contextMenu: 'Ready · right-click',
   loop: 'Ready · repeat playback',
   copyLink: 'Ready · copy on request',
