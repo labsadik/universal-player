@@ -275,18 +275,29 @@ glassToggle.addEventListener('change', () => {
   addLog('Glass controls ' + (glassToggle.checked ? 'enabled' : 'disabled') + '.', 'success');
 });
 
+function syncSidebarButton(): void {
+  const mobile = window.matchMedia('(max-width: 900px)').matches;
+  const visible = mobile ? frame!.classList.contains('sidebar-open') : !frame!.classList.contains('nav-hidden');
+  sidebarToggle!.setAttribute('aria-label', visible ? 'Hide sidebar' : 'Show sidebar');
+  sidebarToggle!.setAttribute('title', visible ? 'Hide sidebar' : 'Show sidebar');
+  sidebarToggle!.innerHTML = '<i data-lucide="' + (visible ? 'panel-left-close' : 'panel-left-open') + '"></i>';
+  createIcons({ icons: iconSet, attrs: { class: 'studio-icon', 'stroke-width': 1.8 } });
+}
+
 sidebarToggle.addEventListener('click', () => {
   const mobile = window.matchMedia('(max-width: 900px)').matches;
   if (mobile) {
+    // Clear desktop collapse state before toggling the mobile slide-out panel.
+    frame!.classList.remove('nav-hidden');
     frame!.classList.toggle('sidebar-open');
-    sidebarToggle!.setAttribute('aria-label', frame!.classList.contains('sidebar-open') ? 'Hide sidebar' : 'Show sidebar');
   } else {
-    const hidden = frame!.classList.toggle('nav-hidden');
-    sidebarToggle!.setAttribute('aria-label', hidden ? 'Show sidebar' : 'Hide sidebar');
+    frame!.classList.remove('sidebar-open');
+    frame!.classList.toggle('nav-hidden');
   }
-  sidebarToggle!.innerHTML = '<i data-lucide="' + (sidebarToggle!.getAttribute('aria-label') === 'Hide sidebar' ? 'panel-left-close' : 'panel-left-open') + '"></i>';
-  createIcons({ icons: iconSet, attrs: { class: 'studio-icon', 'stroke-width': 1.8 } });
+  syncSidebarButton();
 });
+window.addEventListener('resize', syncSidebarButton);
+syncSidebarButton();
 
 resetButton.addEventListener('click', async () => {
   setTheme('light');
