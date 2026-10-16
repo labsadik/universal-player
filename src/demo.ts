@@ -1,6 +1,6 @@
 import './demo.css';
 import { createIcons, Menu, Play, Link2, ClipboardPaste, ArrowUpRight, ArrowRight, House, History, Layers, Code2, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film, ChevronRight, ExternalLink, Waves, AlertCircle } from 'lucide';
-import { createPlayer } from './index.js';
+import { createPlayer, type UniversalPlayerFeatures } from './index.js';
 import { detectProvider, normalizePastedVideoUrl } from './source.js';
 
 const SAMPLE_MP4 = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
@@ -78,9 +78,9 @@ function applyCustomization(): void {
   player.setGlassEffect(glassToggle!.checked);
   player.setAccentColor(accentSelect!.value);
   player.setControlsStyle(controlsSelect!.value as 'standard' | 'compact' | 'minimal');
-  const features: Record<string, boolean> = {};
+  const features: Partial<UniversalPlayerFeatures> = {};
   document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((input) => {
-    features[input.dataset.demoFeature || ''] = input.checked;
+    features[input.dataset.demoFeature as keyof UniversalPlayerFeatures] = input.checked;
   });
   player.setFeatures(features);
   customizationStatus!.textContent = 'Applied · ' + themeSelect!.selectedOptions[0]?.textContent +
