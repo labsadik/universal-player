@@ -175,6 +175,7 @@ document.querySelectorAll<HTMLInputElement>('[data-demo-feature]').forEach((inpu
   input.addEventListener('change', applyCustomization);
 });
 resetSettings.addEventListener('click', () => {
+  setWebsiteTheme('light');
   themeSelect!.value = 'light';
   controlsSelect!.value = 'standard';
   accentSelect!.value = 'rgb(54, 214, 176)';
