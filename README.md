@@ -4,10 +4,10 @@
 
 ## Install
 
-After the repository has been migrated to **[Labsadik/universal-player](https://github.com/Labsadik/universal-player)**, install the package directly from GitHub:
+After the repository has been migrated to **[labsadik/universal-player](https://github.com/labsadik/universal-player)**, install the package directly from GitHub:
 
 ~~~bash
-npm install github:Labsadik/universal-player
+npm install github:labsadik/universal-player
 ~~~
 
 The repository package is named `@labsadik/universal-player`; use that name in imports. The `prepare` script builds the library bundle, stylesheet, declarations, and provider chunks during installation. This guide uses the GitHub install command; it does not assume an npm registry release exists.
@@ -52,7 +52,7 @@ The default control layout keeps play/pause, ±10-second skip, timeline, caption
 ## Run the repository locally
 
 ~~~bash
-git clone https://github.com/Labsadik/universal-player.git
+git clone https://github.com/labsadik/universal-player.git
 cd universal-player
 npm install
 npm run dev
