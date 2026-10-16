@@ -27,7 +27,11 @@ npm install
 npm run dev
 ~~~
 
-Open the local URL printed by Vite. The demo starts with a public MP4 sample. You can also paste a direct media or supported provider URL in the top bar, or select a local video from the player's Choose video control.
+Open the local URL printed by Vite. The landing page starts with a preloaded DASH demo stream; the media URL is deliberately not shown in the page's URL fields or player details. Paste a direct media or supported provider URL to replace it, or use the sample list to test another source.
+
+The landing page links to a dedicated **Feature Playground** at `/playground.html`. It keeps a compact preview on the left and a live feature inspector on the right, with theme, glass, accent, control-density, sidebar and per-feature switches.
+
+Run `npm run build` to build both the npm player library and the static site. The library files are emitted under `dist/`; the website pages are emitted under `dist/site/`. Vercel is configured to serve `dist/site`.
 
 ## Validate
 
