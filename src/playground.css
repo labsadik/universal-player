@@ -316,3 +316,26 @@ body.studio-theme-dark .studio-secondary-button:hover,body.studio-theme-dark .st
   .studio-player-mount { padding-inline:6px; }
   .studio-event-log { padding-inline:10px; }
 }
+
+
+.studio-generated-code { min-width: 0; padding-bottom: 16px; }
+.studio-install-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 0 18px 12px; padding: 13px; border: 1px solid rgba(148,163,184,.2); border-radius: 10px; background: rgba(148,163,184,.04); }
+.studio-install-row > div { min-width: 0; display: grid; gap: 5px; }
+.studio-install-row strong { color: var(--studio-text); font-size: 10px; font-weight: 850; }
+.studio-install-row small { color: var(--studio-muted); font-size: 9px; line-height: 1.55; }
+.studio-install-row code { color: #087d67; font: 10px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+.studio-install-note { margin: 0 18px 14px; color: var(--studio-muted); font-size: 9px; line-height: 1.7; }
+.studio-install-note code { color: var(--studio-text); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.studio-generated-code-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 9px; margin: 0 18px 8px; color: var(--studio-muted); font-size: 9px; font-weight: 750; }
+.studio-code-preview { margin: 0 18px; max-height: 480px; overflow: auto; padding: 15px; border: 1px solid rgba(148,163,184,.18); border-radius: 10px; color: #d5dfec; background: #0b111b; font: 10px/1.75 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
+.studio-install-links { display: flex; flex-wrap: wrap; gap: 15px; margin: 13px 18px 0; }
+.studio-install-links a { color: #0b8a65; font-size: 9px; text-decoration: underline; text-underline-offset: 3px; }
+body.studio-theme-dark .studio-install-row { border-color: rgba(148,163,184,.18); background: rgba(148,163,184,.05); }
+body.studio-theme-dark .studio-install-row code, body.studio-theme-dark .studio-install-links a { color: #6ee7b7; }
+body.studio-theme-dark .studio-code-preview { border-color: rgba(148,163,184,.18); background: #0b111b; }
+@media (max-width: 520px) {
+  .studio-install-row { align-items: stretch; flex-direction: column; margin-inline: 12px; }
+  .studio-install-note, .studio-generated-code-toolbar { margin-inline: 12px; }
+  .studio-code-preview { margin-inline: 12px; padding: 11px; font-size: 9px; }
+  .studio-install-links { margin-inline: 12px; gap: 10px; }
+}
