@@ -82,6 +82,23 @@ When a URL's extension does not reveal its source type, supply a type or explici
 
 The custom right-click menu includes loop, copy-link, stats and keyboard help. Keyboard shortcuts include Space/K for play-pause, Left/Right for 5-second seek, J/L for 10-second seek, M for mute, and F for fullscreen.
 
+## Appearance, features and source privacy
+
+The player can be themed and customized after it is mounted:
+
+~~~ts
+player.setTheme('light'); // 'light' | 'dark' | 'system'
+player.setGlassEffect(true);
+player.setAccentColor('rgb(54, 214, 176)');
+player.setControlsStyle('compact'); // 'standard' | 'compact' | 'minimal'
+player.setFeatures({ stats: false, miniPlayer: false });
+player.goLive(); // when the current source is marked live and exposes a seekable edge
+~~~
+
+Use `hideSourceUrl: true` in the `createPlayer()` options to replace the source URL in the playback-statistics panel with a privacy label. The explicit copy-link action remains available. Feature availability can still depend on source capabilities (for example, captions need a caption track and quality selection needs adaptive renditions).
+
+The repository demo includes a dedicated `/playground.html` page with a compact player preview, live appearance controls, feature switches, and current support status. Run `npm run build` to produce the package and both static pages; the website output is in `dist/site/`.
+
 ## Provider limits
 
 A browser can play only supported codecs and media types. Direct media URLs can fail because of CORS, missing byte-range support, inaccessible segments, expiring signatures or server policy. Embedded platforms may constrain playback rate, quality, captions, PiP and fullscreen. Twitch embeds can require the consuming site's domain as a parent parameter/allowlist. DRM-protected media needs the relevant CDM and licence flow. The Player.js adapter works only for embeds implementing the Player.js protocol.
