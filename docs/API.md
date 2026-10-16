@@ -2,16 +2,16 @@
 
 ## Install and local development
 
-After the repository has been migrated to [Labsadik/universal-player](https://github.com/Labsadik/universal-player), install it directly from GitHub:
+After the repository has been migrated to [labsadik/universal-player](https://github.com/labsadik/universal-player), install it directly from GitHub:
 
 ~~~bash
-npm install github:Labsadik/universal-player
+npm install github:labsadik/universal-player
 ~~~
 
 To run the website locally:
 
 ~~~bash
-git clone https://github.com/Labsadik/universal-player.git
+git clone https://github.com/labsadik/universal-player.git
 cd universal-player
 npm install
 npm run dev
