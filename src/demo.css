@@ -89,3 +89,264 @@ a { -webkit-tap-highlight-color: transparent; }
 .setup-code { overflow-x:auto; white-space:pre; color:#d1fae5; font:12px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace; }
 .setup-code code { font:inherit; }
 @media (max-width:520px) { .feature-switch { font-size:10px; padding:8px; } }
+
+
+/* Site-level theme tokens: the demo defaults to a calm, polished light theme. */
+:root {
+  color-scheme: light;
+  --site-bg: #f5f7fb;
+  --site-panel: #ffffff;
+  --site-panel-soft: #f8fafc;
+  --site-border: #e2e8f0;
+  --site-text: #172033;
+  --site-muted: #64748b;
+  --site-green: #059669;
+  --site-blue: #2563eb;
+  background: var(--site-bg);
+}
+body {
+  color: var(--site-text);
+  background:
+    radial-gradient(ellipse at 78% 0%, rgba(59,130,246,.09), transparent 33%),
+    radial-gradient(ellipse at 12% 13%, rgba(16,185,129,.07), transparent 28%),
+    var(--site-bg);
+  transition: color .2s ease, background-color .2s ease;
+}
+body.site-theme-light { color-scheme: light; }
+body.site-theme-dark {
+  color-scheme: dark;
+  --site-bg: #080d16;
+  --site-panel: #111827;
+  --site-panel-soft: #0f1724;
+  --site-border: rgba(148,163,184,.18);
+  --site-text: #e5edf7;
+  --site-muted: #94a3b8;
+  background:
+    radial-gradient(ellipse at 78% 0%, rgba(59,130,246,.10), transparent 33%),
+    radial-gradient(ellipse at 12% 13%, rgba(16,185,129,.07), transparent 28%),
+    var(--site-bg);
+}
+/* Lift the existing utility-based layout into a coherent light theme without
+   changing the player itself. The player has its own independent theme API. */
+body.site-theme-light header {
+  background: rgba(255,255,255,.88) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 0 rgba(15,23,42,.025);
+}
+body.site-theme-light [class~="bg-[#111923]"],
+body.site-theme-light [class~="bg-[#0a1118]"] {
+  background-color: #fff !important;
+}
+body.site-theme-light [class*="bg-white/"] { background-color: rgba(15,23,42,.025) !important; }
+body.site-theme-light [class*="bg-black/"] { background-color: #f8fafc !important; }
+body.site-theme-light .text-white { color: #172033 !important; }
+body.site-theme-light .text-slate-100 { color: #1e293b !important; }
+body.site-theme-light .text-slate-300 { color: #334155 !important; }
+body.site-theme-light .text-slate-400 { color: #64748b !important; }
+body.site-theme-light .text-slate-500 { color: #64748b !important; }
+body.site-theme-light .text-slate-600 { color: #718096 !important; }
+body.site-theme-light .text-slate-700 { color: #475569 !important; }
+body.site-theme-light [class*="border-white/"] { border-color: #e2e8f0 !important; }
+body.site-theme-light .border-white\\/10,
+body.site-theme-light .border-white\\/\\[\\.08\\],
+body.site-theme-light .border-white\\/\\[\\.07\\] { border-color: #e2e8f0 !important; }
+body.site-theme-light .icon-surface {
+  color: #475569;
+  border-color: #e2e8f0;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15,23,42,.025);
+}
+body.site-theme-light .icon-surface:hover { background: #f1f5f9; color: #0f172a; }
+body.site-theme-light input:not([type="checkbox"]):not([type="color"]),
+body.site-theme-light select {
+  color: #1e293b;
+  border-color: #dbe3ee;
+}
+body.site-theme-light .side-url-input,
+body.site-theme-light #video-url {
+  color: #1e293b !important;
+  background-color: transparent !important;
+}
+body.site-theme-light .side-url-input::placeholder,
+body.site-theme-light #video-url::placeholder { color: #94a3b8 !important; }
+body.site-theme-light .action-chip {
+  color: #334155;
+  border-color: #e2e8f0;
+  background: #fff;
+}
+body.site-theme-light .action-chip:hover { background: #f8fafc; border-color: #cbd5e1; }
+body.site-theme-light .custom-setting,
+body.site-theme-light .feature-switch { color: #334155; }
+body.site-theme-light .custom-setting select {
+  border-color: #dce4ee;
+  background: #fff;
+}
+body.site-theme-light .feature-switch { border-color: #e2e8f0; background: #fff; }
+body.site-theme-light .format-chip,
+body.site-theme-light .media-badge,
+body.site-theme-light .provider-pill { border-color: #dbe5ef; }
+body.site-theme-light .format-row,
+body.site-theme-light .recommendation-card { border-color: #e5eaf2; }
+body.site-theme-light .recommendation-card { background: #fff; }
+body.site-theme-light .recommendation-card:hover { background: #f8fafc; }
+body.site-theme-light .accent-period { color: #059669; }
+body.site-theme-light .player-status { background: #f8fafc; border-color: #e5eaf2; }
+body.site-theme-light .toast-message { color: #334155 !important; background: rgba(255,255,255,.96); }
+body.site-theme-light .url-loader {
+  background: #fff;
+  border-color: #dce4ee;
+  box-shadow: 0 6px 24px rgba(15,23,42,.045);
+}
+body.site-theme-light .url-loader:focus-within {
+  border-color: rgba(5,150,105,.45);
+  box-shadow: 0 0 0 4px rgba(5,150,105,.08), 0 6px 24px rgba(15,23,42,.045);
+}
+body.site-theme-light .sidebar-link { color: #64748b; }
+body.site-theme-light .sidebar-link:hover,
+body.site-theme-light .sidebar-link-active { color: #047857; background: rgba(16,185,129,.08); }
+body.site-theme-light .paste-card,
+body.site-theme-light #player-playground,
+body.site-theme-light #supported-formats { box-shadow: 0 10px 36px rgba(15,23,42,.035); }
+body.site-theme-dark [class~="bg-[#111923]"] { background-color: #111827 !important; }
+body.site-theme-dark .text-white { color: #f8fafc !important; }
+body.site-theme-dark .text-slate-400 { color: #94a3b8 !important; }
+body.site-theme-dark .text-slate-500 { color: #64748b !important; }
+body.site-theme-dark .text-slate-600 { color: #475569 !important; }
+body.site-theme-dark [class*="border-white/"] { border-color: rgba(148,163,184,.16) !important; }
+body.site-theme-dark .icon-surface { color: #cbd5e1; border-color: rgba(148,163,184,.18); background: rgba(255,255,255,.045); }
+.theme-toggle { flex: 0 0 auto; cursor: pointer; }
+.theme-toggle .app-icon { width: 18px; height: 18px; }
+body.site-theme-light .theme-toggle { color: #475569; }
+body.site-theme-dark .theme-toggle { color: #cbd5e1; }
+
+/* A Monaco-inspired code workbench for framework-specific integration examples. */
+.monaco-setup-section { box-shadow: 0 18px 60px rgba(15,23,42,.055); }
+.package-name-pill {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px;
+  border: 1px solid rgba(16,185,129,.25); border-radius: 999px;
+  background: rgba(16,185,129,.06); color: #047857;
+  font-size: 11px; font-weight: 750; white-space: nowrap;
+}
+.package-name-pill svg { width: 15px; height: 15px; }
+.package-name-pill code, .npm-publish-note code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.install-command-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  margin-bottom: 18px; padding: 14px 16px; border: 1px solid #dce4ef;
+  border-radius: 13px; background: rgba(255,255,255,.62);
+}
+body.site-theme-dark .install-command-row { background: #0b1220; border-color: rgba(148,163,184,.16); }
+.install-command-row > div { min-width: 0; }
+.install-command-row strong { display: block; margin: 3px 0; color: var(--site-text); font-size: 12px; }
+.install-command-row p { color: var(--site-muted); font-size: 10px; line-height: 1.5; }
+.install-step { color: #059669; font-size: 9px; font-weight: 850; letter-spacing: .16em; }
+.install-command {
+  display: inline-flex; align-items: center; padding: 11px 13px; border: 1px solid #dbe5ef;
+  border-radius: 9px; background: #fff; color: #172033;
+  font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: nowrap;
+}
+body.site-theme-dark .install-command { color: #dbeafe; background: #0c1321; border-color: rgba(148,163,184,.16); }
+.monaco-workbench {
+  overflow: hidden; border: 1px solid #263244; border-radius: 13px;
+  background: #1e1e1e; color: #d4d4d4;
+  box-shadow: 0 16px 40px rgba(2,6,23,.14);
+}
+.monaco-titlebar {
+  display: flex; min-height: 38px; align-items: center; gap: 14px; padding: 0 13px;
+  border-bottom: 1px solid #2b2b2b; background: #181818;
+}
+.monaco-window-dots { display: flex; align-items: center; gap: 6px; }
+.monaco-window-dots span { width: 9px; height: 9px; border-radius: 50%; background: #f87171; }
+.monaco-window-dots span:nth-child(2) { background: #fbbf24; }
+.monaco-window-dots span:nth-child(3) { background: #34d399; }
+.monaco-title { flex: 1; text-align: center; color: #c5c5c5; font-size: 10px; font-weight: 550; letter-spacing: .02em; }
+.monaco-title span { padding: 0 6px; color: #666; }
+.monaco-title-meta { color: #858585; font-size: 9px; }
+.monaco-tabbar {
+  display: flex; min-height: 43px; align-items: stretch; overflow-x: auto;
+  background: #252526; border-bottom: 1px solid #333;
+}
+.monaco-tab {
+  display: inline-flex; flex: 0 0 auto; align-items: center; gap: 8px; padding: 0 16px;
+  color: #969696; background: transparent; border: 0; border-right: 1px solid #303030;
+  border-top: 2px solid transparent; font-size: 11px; cursor: pointer;
+}
+.monaco-tab.is-active { color: #fff; background: #1e1e1e; border-top-color: #36d6b0; }
+.monaco-tab-dot { width: 7px; height: 7px; border-radius: 2px; background: #3794ff; }
+.monaco-tab-dot.react-dot { background: #61dafb; }
+.monaco-tab-dot.vue-dot { background: #42b883; }
+.monaco-tab-actions { display: flex; flex: 1; min-width: max-content; align-items: center; justify-content: flex-end; gap: 13px; padding: 0 12px; color: #777; font-size: 9px; }
+.monaco-copy-button {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px;
+  border: 1px solid #414141; border-radius: 6px; color: #d4d4d4;
+  background: #2d2d2d; font-size: 10px; cursor: pointer;
+}
+.monaco-copy-button:hover { border-color: #5a5a5a; background: #363636; }
+.monaco-copy-button svg { width: 13px; height: 13px; }
+.monaco-editor-shell { display: grid; grid-template-columns: 38px 172px minmax(0,1fr); min-height: 375px; }
+.monaco-activity-rail { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 15px 0; border-right: 1px solid #333; background: #181818; color: #858585; font-size: 15px; }
+.monaco-activity-rail span { display: grid; width: 38px; height: 28px; place-items: center; }
+.monaco-activity-rail .is-selected { border-left: 2px solid #fff; color: #fff; }
+.monaco-file-tree { min-width: 0; padding: 15px 0; border-right: 1px solid #333; background: #181818; color: #aaa; }
+.monaco-tree-heading { padding: 0 12px 13px; color: #bbb; font-size: 9px; font-weight: 800; letter-spacing: .1em; }
+.monaco-tree-root { padding: 5px 12px; font-size: 10px; font-weight: 700; color: #bdbdbd; }
+.monaco-tree-file { padding: 8px 12px 8px 24px; border-left: 2px solid transparent; font: 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: #b7b7b7; }
+.monaco-tree-file.is-selected { color: #fff; background: #37373d; border-left-color: #36d6b0; }
+.monaco-tree-note { display: flex; align-items: flex-start; gap: 7px; margin: 25px 11px 0; padding-top: 12px; border-top: 1px solid #333; color: #777; font-size: 9px; line-height: 1.5; }
+.monaco-tree-note-dot { width: 6px; height: 6px; flex: 0 0 auto; margin-top: 3px; border-radius: 50%; background: #36d6b0; }
+.monaco-code-area { min-width: 0; overflow-x: auto; background: #1e1e1e; }
+.monaco-breadcrumb { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 17px; border-bottom: 1px solid #2b2b2b; color: #858585; font-size: 10px; }
+.monaco-breadcrumb strong { color: #c5c5c5; font-weight: 600; }
+.crumb-chevron { color: #555; }
+.monaco-code-content {
+  min-width: max-content; margin: 0; padding: 13px 24px 20px 0; overflow: visible;
+  color: #d4d4d4; background: #1e1e1e;
+  font: 11px/24px "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  tab-size: 2; white-space: normal;
+}
+.monaco-line { display: block; min-height: 24px; padding-left: 16px; white-space: pre; }
+.monaco-line::before {
+  display: inline-block; width: 33px; margin-right: 22px; color: #6e7681;
+  text-align: right; content: counter(monaco-line); counter-increment: monaco-line;
+  user-select: none;
+}
+.monaco-code-content { counter-reset: monaco-line; }
+.token-comment { color: #6a9955; }
+.token-keyword { color: #c586c0; }
+.token-string { color: #ce9178; }
+.token-function { color: #dcdcaa; }
+.token-boolean { color: #569cd6; }
+.token-type { color: #4ec9b0; }
+.token-attribute { color: #9cdcfe; }
+.monaco-statusbar {
+  display: flex; min-height: 24px; align-items: center; gap: 16px; padding: 0 11px;
+  background: #007acc; color: #fff; font: 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.monaco-status-ready { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; }
+.monaco-status-ready span { width: 6px; height: 6px; border-radius: 50%; background: #8af0c5; }
+.npm-publish-note { text-align: right; }
+@media (max-width: 720px) {
+  .monaco-editor-shell { grid-template-columns: 30px minmax(0,1fr); }
+  .monaco-activity-rail { grid-row: 1; grid-column: 1; }
+  .monaco-file-tree { display: none; }
+  .monaco-code-content { font-size: 10px; }
+  .monaco-line { padding-left: 10px; }
+  .monaco-line::before { width: 24px; margin-right: 13px; }
+  .monaco-title-meta { display: none; }
+}
+@media (max-width: 540px) {
+  .install-command-row { align-items: stretch; flex-direction: column; }
+  .install-command { overflow-x: auto; max-width: 100%; }
+  .package-name-pill { white-space: normal; }
+  .monaco-tab { padding: 0 11px; }
+  .monaco-tab-actions { justify-content: flex-start; }
+  .monaco-tab-actions > span { display: none; }
+  .monaco-activity-rail { display: none; }
+  .monaco-editor-shell { display: block; }
+  .monaco-code-content { padding-right: 16px; }
+  .npm-publish-note { text-align: left; }
+}
+body.site-theme-light #npm-setup { border-color: #dfe7f1 !important; }
+body.site-theme-light #player-playground { border-color: #dfe7f1 !important; }
+body.site-theme-dark .package-name-pill { color: #6ee7b7; }
+body.site-theme-dark .install-command-row { background: #0f1724; }
