@@ -558,6 +558,7 @@
 .up-root.up-glassy .up-controls,
 .up-root.up-glassy .up-context-menu,
 .up-root.up-glassy .up-settings-menu,
+.up-root.up-glassy .up-speed-menu,
 .up-root.up-glassy .up-stats-panel,
 .up-root.up-glassy .up-help-panel {
   background: rgba(10, 16, 28, .62);
@@ -597,7 +598,8 @@
 }
 .up-root[data-theme="light"] .up-icon-button { color: #172033; }
 .up-root[data-theme="light"] .up-context-menu,
-.up-root[data-theme="light"] .up-settings-menu {
+.up-root[data-theme="light"] .up-settings-menu,
+.up-root[data-theme="light"] .up-speed-menu {
   color: #172033; background: rgba(248,250,252,.97); border-color: rgba(15,23,42,.12);
 }
 .up-root[data-theme="light"] .up-context-item,
@@ -607,5 +609,6 @@
 @media (prefers-reduced-transparency: reduce) {
   .up-root.up-glassy .up-controls,
   .up-root.up-glassy .up-context-menu,
-  .up-root.up-glassy .up-settings-menu { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .up-root.up-glassy .up-settings-menu,
+  .up-root.up-glassy .up-speed-menu { -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
