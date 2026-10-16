@@ -855,3 +855,94 @@
   .up-time { font-size:9px; }
 }
 @media (prefers-reduced-motion: reduce) { .up-root .up-icon-button,.up-root .up-seek { transition:none; } }
+
+
+/* Final theme-aware controls. Glass is opt-in; the off state stays transparent. */
+.up-root {
+  --up-control-ink: #f8fafc;
+  --up-control-muted: rgba(248,250,252,.94);
+  --up-control-shadow: rgba(0,0,0,.58);
+  --up-control-hover-bg: rgba(255,255,255,.10);
+  --up-time-ink: rgba(248,250,252,.96);
+  --up-time-muted: rgba(226,232,240,.78);
+  --up-time-shadow: rgba(0,0,0,.78);
+  --up-controls-glass-bg: rgba(10,16,28,.62);
+  --up-controls-glass-border: rgba(255,255,255,.22);
+}
+.up-root[data-theme="light"] {
+  --up-control-ink: #172033;
+  --up-control-muted: #172033;
+  --up-control-shadow: rgba(255,255,255,.5);
+  --up-control-hover-bg: rgba(15,23,42,.07);
+  --up-time-ink: #172033;
+  --up-time-muted: #475569;
+  --up-time-shadow: rgba(255,255,255,.55);
+  --up-controls-glass-bg: rgba(248,250,252,.78);
+  --up-controls-glass-border: rgba(15,23,42,.16);
+}
+.up-root[data-theme="dark"] {
+  --up-control-ink: #f8fafc;
+  --up-control-muted: rgba(248,250,252,.94);
+  --up-control-shadow: rgba(0,0,0,.58);
+  --up-control-hover-bg: rgba(255,255,255,.10);
+  --up-time-ink: rgba(248,250,252,.96);
+  --up-time-muted: rgba(226,232,240,.78);
+  --up-time-shadow: rgba(0,0,0,.78);
+  --up-controls-glass-bg: rgba(10,16,28,.62);
+  --up-controls-glass-border: rgba(255,255,255,.22);
+}
+@media (prefers-color-scheme: light) {
+  .up-root[data-theme="system"] {
+    --up-control-ink: #172033;
+    --up-control-muted: #172033;
+    --up-control-shadow: rgba(255,255,255,.5);
+    --up-control-hover-bg: rgba(15,23,42,.07);
+    --up-time-ink: #172033;
+    --up-time-muted: #475569;
+    --up-time-shadow: rgba(255,255,255,.55);
+    --up-controls-glass-bg: rgba(248,250,252,.78);
+    --up-controls-glass-border: rgba(15,23,42,.16);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .up-root[data-theme="system"] {
+    --up-control-ink: #f8fafc;
+    --up-control-muted: rgba(248,250,252,.94);
+    --up-control-shadow: rgba(0,0,0,.58);
+    --up-control-hover-bg: rgba(255,255,255,.10);
+    --up-time-ink: rgba(248,250,252,.96);
+    --up-time-muted: rgba(226,232,240,.78);
+    --up-time-shadow: rgba(0,0,0,.78);
+    --up-controls-glass-bg: rgba(10,16,28,.62);
+    --up-controls-glass-border: rgba(255,255,255,.22);
+  }
+}
+.up-root .up-icon-button:not(.is-active) {
+  color: var(--up-control-ink);
+  filter: drop-shadow(0 1px 2px var(--up-control-shadow));
+}
+.up-root .up-icon-button:not(.is-active):hover,
+.up-root .up-icon-button:not(.is-active):focus-visible {
+  color: var(--up-control-ink);
+  background: var(--up-control-hover-bg);
+  border-color: var(--up-controls-glass-border);
+}
+.up-root .up-time {
+  color: var(--up-time-ink);
+  text-shadow: 0 1px 3px var(--up-time-shadow);
+}
+.up-root .up-time-separator,
+.up-root .up-time-duration { color: var(--up-time-muted); }
+.up-root.up-glassy .up-controls {
+  background: var(--up-controls-glass-bg) !important;
+  border-top: 1px solid var(--up-controls-glass-border) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.16) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(155%) !important;
+  backdrop-filter: blur(22px) saturate(155%) !important;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .up-root.up-glassy .up-controls {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
