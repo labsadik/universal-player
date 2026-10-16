@@ -4,11 +4,11 @@
   "description": "A framework-neutral, accessible video player built on Video.js with a custom UI.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Labsadik/easy-video-player.git"
+    "url": "https://github.com/WorkRCS/easy-video-player.git"
   },
-  "homepage": "https://github.com/Labsadik/easy-video-player#readme",
+  "homepage": "https://github.com/WorkRCS/easy-video-player#readme",
   "bugs": {
-    "url": "https://github.com/Labsadik/easy-video-player/issues"
+    "url": "https://github.com/WorkRCS/easy-video-player/issues"
   },
   "type": "module",
   "license": "MIT",
@@ -40,11 +40,13 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "build": "vite build && tsc -p tsconfig.build.json && vite build --config vite.demo.config.ts",
+    "build": "npm run build:lib && vite build --config vite.demo.config.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "pack:check": "npm pack --dry-run"
+    "pack:check": "npm pack --dry-run",
+    "build:lib": "vite build && tsc -p tsconfig.build.json",
+    "prepare": "npm run build:lib"
   },
   "dependencies": {
     "@videojs/dash-video": "10.1.0",

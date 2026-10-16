@@ -199,3 +199,37 @@ test('feature playground toggles a feature on the first click and collapses the 
   await page.locator('#studio-sidebar-toggle').click();
   await expect(page.locator('#studio-frame')).not.toHaveClass(/nav-hidden/);
 });
+
+
+test('uses core default controls without overflow at 320px', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.goto('/');
+  const root = page.locator('#player-mount .up-root');
+  const stage = page.locator('#player-mount .up-stage');
+  await expect(stage).toBeVisible();
+  for (const label of ['Play video','Back 10 seconds','Forward 10 seconds','Toggle captions','Playback settings','Picture in Picture','Enter fullscreen']) {
+    await expect(page.locator('#player-mount .up-controls button[aria-label="' + label + '"]')).toBeVisible();
+  }
+  await expect(page.locator('#player-mount .up-controls .up-mini-player-button')).toBeHidden();
+  await expect(page.locator('#player-mount .up-controls .up-theater-button')).toBeHidden();
+  const geometry = await page.evaluate(() => {
+    const stage = document.querySelector<HTMLElement>('#player-mount .up-stage')!.getBoundingClientRect();
+    const buttons = [...document.querySelectorAll<HTMLElement>('#player-mount .up-controls .up-icon-button')]
+      .filter((button) => getComputedStyle(button).display !== 'none' && !button.hidden)
+      .map((button) => ({ label: button.getAttribute('aria-label'), left: button.getBoundingClientRect().left, right: button.getBoundingClientRect().right }));
+    return { stageLeft: stage.left, stageRight: stage.right, buttons };
+  });
+  for (const button of geometry.buttons) {
+    expect(button.left, JSON.stringify({button,geometry})).toBeGreaterThanOrEqual(geometry.stageLeft - 1);
+    expect(button.right, JSON.stringify({button,geometry})).toBeLessThanOrEqual(geometry.stageRight + 1);
+  }
+  const controlCss = await page.locator('#player-mount .up-controls').evaluate((node) => {
+    const s = getComputedStyle(node); return { image:s.backgroundImage,filter:s.backdropFilter };
+  });
+  expect(controlCss.image).toBe('none');
+  expect(controlCss.filter).toBe('none');
+  await page.locator('#demo-theme').selectOption('system');
+  await expect(root).toHaveAttribute('data-theme','system');
+  await page.locator('#demo-accent').selectOption('#a78bfa');
+  await expect(root).toHaveCSS('--up-accent-user','#a78bfa');
+});

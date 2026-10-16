@@ -33,8 +33,8 @@ export interface UniversalPlayerFeatures {
 }
 
 const DEFAULT_FEATURES: UniversalPlayerFeatures = {
-  seek: true, volume: true, playbackSpeed: true, quality: true, captions: true,
-  pictureInPicture: true, miniPlayer: true, theaterMode: true, fullscreen: true,
+  seek: true, volume: true, playbackSpeed: false, quality: true, captions: true,
+  pictureInPicture: true, miniPlayer: false, theaterMode: false, fullscreen: true,
   skip: true, contextMenu: true, loop: true, copyLink: true, stats: true,
   keyboardHelp: true, liveIndicator: true,
 };
@@ -205,6 +205,14 @@ export class UniversalPlayer {
   private seekTooltip!: HTMLDivElement;
   private seekTooltipLabel!: HTMLSpanElement;
   private idleTimer: ReturnType<typeof setTimeout> | undefined;
+  private lastPausedState: boolean | undefined;
+  private lastMutedState: boolean | undefined;
+  private lastFullscreenState: boolean | undefined;
+  private lastVolumeValue: number | undefined;
+  private lastPlaybackRate: number | undefined;
+  private lastCaptionState: boolean | undefined;
+  private lastMiniState: boolean | undefined;
+  private lastTheaterState: boolean | undefined;
 
   constructor(target: HTMLElement, private readonly options: UniversalPlayerOptions = {}) {
     if (!(target instanceof HTMLElement)) {
@@ -383,6 +391,7 @@ export class UniversalPlayer {
       this.mediaElement.setAttribute('src', source.src);
 
       if (provider === 'html5') this.mediaElement.load?.();
+      this.updateOptionalControls();
       this.refreshQualityMenu();
 
       this.titleLabel.textContent = source.title || this.options.title || source.src.split('/').pop() || 'Universal Player';
@@ -491,14 +500,20 @@ export class UniversalPlayer {
     if (!this.miniPlayerButton || !this.theaterButton) return;
     const mini = this.container.classList.contains('up-mini-player');
     const theater = this.container.classList.contains('up-theater');
-    this.miniPlayerButton.replaceChildren(makeIcon('mini'));
-    this.miniPlayerButton.setAttribute('aria-label', mini ? 'Exit mini player' : 'Enter mini player');
-    this.miniPlayerButton.title = mini ? 'Exit mini player (I)' : 'Mini player (I)';
-    this.miniPlayerButton.classList.toggle('is-active', mini);
-    this.theaterButton.replaceChildren(makeIcon('theater'));
-    this.theaterButton.setAttribute('aria-label', theater ? 'Exit theater mode' : 'Enter theater mode');
-    this.theaterButton.title = theater ? 'Exit theater mode (T)' : 'Theater mode (T)';
-    this.theaterButton.classList.toggle('is-active', theater);
+    if (this.lastMiniState !== mini) {
+      this.miniPlayerButton.replaceChildren(makeIcon('mini'));
+      this.miniPlayerButton.setAttribute('aria-label', mini ? 'Exit mini player' : 'Enter mini player');
+      this.miniPlayerButton.title = mini ? 'Exit mini player (I)' : 'Mini player (I)';
+      this.miniPlayerButton.classList.toggle('is-active', mini);
+      this.lastMiniState = mini;
+    }
+    if (this.lastTheaterState !== theater) {
+      this.theaterButton.replaceChildren(makeIcon('theater'));
+      this.theaterButton.setAttribute('aria-label', theater ? 'Exit theater mode' : 'Enter theater mode');
+      this.theaterButton.title = theater ? 'Exit theater mode (T)' : 'Theater mode (T)';
+      this.theaterButton.classList.toggle('is-active', theater);
+      this.lastTheaterState = theater;
+    }
   }
 
   async requestFullscreen(): Promise<void> {
@@ -1188,34 +1203,62 @@ export class UniversalPlayer {
     this.seekInput.style.setProperty('--up-buffered', buffered + '%');
     this.currentLabel.textContent = formatTime(current);
     this.durationLabel.textContent = validDuration ? formatTime(duration) : 'LIVE';
+    const paused = this.mediaElement.paused;
+    const muted = this.mediaElement.muted || this.mediaElement.volume === 0;
+    const displayedVolume = this.mediaElement.muted ? 0 : this.mediaElement.volume;
+    const fullscreen = document.fullscreenElement === this.stage;
+    const playbackRate = this.mediaElement.playbackRate || 1;
+    const captionsShowing = this.hasShowingCaptions();
+
     this.playButton.disabled = this.sourceLoading;
     this.centerPlay.disabled = this.sourceLoading;
-    this.centerPlay.title = this.sourceLoading ? 'Loading video source…' : (this.mediaElement.paused ? 'Play video' : 'Pause video');
-    this.playButton.replaceChildren(makeIcon(this.mediaElement.paused ? 'play' : 'pause'));
-    this.playButton.setAttribute('aria-label', this.mediaElement.paused ? 'Play video' : 'Pause video');
-    this.playButton.title = this.mediaElement.paused ? 'Play' : 'Pause';
-    this.centerPlay.replaceChildren(makeIcon(this.mediaElement.paused ? 'play' : 'pause'));
-    this.centerPlay.setAttribute('aria-label', this.mediaElement.paused ? 'Play video' : 'Pause video');
-    this.centerPlay.hidden = !this.mediaElement.paused;
-    this.muteButton.replaceChildren(makeIcon(this.mediaElement.muted || this.mediaElement.volume === 0 ? 'muted' : 'volume'));
-    this.muteButton.setAttribute('aria-label', this.mediaElement.muted ? 'Unmute' : 'Mute');
-    this.volumeInput.value = this.mediaElement.muted ? '0' : String(this.mediaElement.volume);
-    this.volumeInput.style.setProperty('--up-volume', (this.mediaElement.muted ? 0 : this.mediaElement.volume * 100) + '%');
-    this.speedMenu.querySelectorAll<HTMLButtonElement>('[data-rate]').forEach((button) => {
-      const selected = Number(button.dataset.rate) === this.mediaElement.playbackRate;
-      button.setAttribute('aria-checked', selected ? 'true' : 'false');
-      button.classList.toggle('is-selected', selected);
-    });
-    const fullscreen = document.fullscreenElement === this.stage;
-    this.fullscreenButton.replaceChildren(makeIcon(fullscreen ? 'exitFullscreen' : 'fullscreen'));
-    this.fullscreenButton.setAttribute('aria-label', fullscreen ? 'Exit fullscreen' : 'Enter fullscreen');
-    this.fullscreenButton.title = fullscreen ? 'Exit fullscreen' : 'Fullscreen';
+    this.centerPlay.title = this.sourceLoading ? 'Loading video source…' : (paused ? 'Play video' : 'Pause video');
+    if (this.lastPausedState !== paused) {
+      const icon = paused ? 'play' : 'pause';
+      this.playButton.replaceChildren(makeIcon(icon));
+      this.playButton.setAttribute('aria-label', paused ? 'Play video' : 'Pause video');
+      this.playButton.title = paused ? 'Play' : 'Pause';
+      this.centerPlay.replaceChildren(makeIcon(icon));
+      this.centerPlay.setAttribute('aria-label', paused ? 'Play video' : 'Pause video');
+      this.lastPausedState = paused;
+    }
+    if (this.centerPlay.hidden !== !paused) this.centerPlay.hidden = !paused;
+    if (this.lastMutedState !== muted) {
+      this.muteButton.replaceChildren(makeIcon(muted ? 'muted' : 'volume'));
+      this.muteButton.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+      this.lastMutedState = muted;
+    }
+    if (this.lastVolumeValue !== displayedVolume) {
+      const value = String(displayedVolume);
+      if (this.volumeInput.value !== value) this.volumeInput.value = value;
+      const fill = displayedVolume * 100 + '%';
+      if (this.volumeInput.style.getPropertyValue('--up-volume') !== fill) this.volumeInput.style.setProperty('--up-volume', fill);
+      this.lastVolumeValue = displayedVolume;
+    }
+    if (this.lastPlaybackRate !== playbackRate) {
+      this.speedMenu.querySelectorAll<HTMLButtonElement>('[data-rate]').forEach((button) => {
+        const selected = Number(button.dataset.rate) === playbackRate;
+        button.setAttribute('aria-checked', selected ? 'true' : 'false');
+        button.classList.toggle('is-selected', selected);
+      });
+      this.lastPlaybackRate = playbackRate;
+    }
+    if (this.lastFullscreenState !== fullscreen) {
+      this.fullscreenButton.replaceChildren(makeIcon(fullscreen ? 'exitFullscreen' : 'fullscreen'));
+      this.fullscreenButton.setAttribute('aria-label', fullscreen ? 'Exit fullscreen' : 'Enter fullscreen');
+      this.fullscreenButton.title = fullscreen ? 'Exit fullscreen' : 'Fullscreen';
+      this.lastFullscreenState = fullscreen;
+    }
     this.syncLayoutButtons();
-    this.refreshQualityMenu();
-    this.trackButton.classList.toggle('is-active', this.hasShowingCaptions());
-    this.loopMenuItem?.querySelector('.up-context-label') && (this.loopMenuItem.querySelector('.up-context-label')!.textContent = 'Loop: ' + (this.mediaElement.loop ? 'On' : 'Off'));
+    if (this.lastCaptionState !== captionsShowing) {
+      this.trackButton.classList.toggle('is-active', captionsShowing);
+      this.lastCaptionState = captionsShowing;
+    }
+    const loopLabel = this.loopMenuItem?.querySelector('.up-context-label');
+    const expectedLoopLabel = 'Loop: ' + (this.mediaElement.loop ? 'On' : 'Off');
+    if (loopLabel && loopLabel.textContent !== expectedLoopLabel) loopLabel.textContent = expectedLoopLabel;
+    this.updateLiveUI();
     this.spinner.hidden = !this.stage.classList.contains('is-buffering');
-    this.updateOptionalControls();
   }
 
   private updateLiveUI(): void {
@@ -1272,6 +1315,7 @@ export class UniversalPlayer {
           if (type === 'playing') { this.stage.classList.remove('is-buffering'); this.stage.classList.add('is-playing'); this.queueHideControls(); }
           if (type === 'pause' || type === 'ended' || type === 'error') { this.stage.classList.remove('is-buffering', 'is-playing'); this.stage.classList.add('up-interacting'); }
           if (type === 'canplay' || type === 'canplaythrough') this.stage.classList.remove('is-buffering');
+          if (type === 'loadedmetadata' || type === 'emptied') this.updateOptionalControls();
           this.syncUI();
         }
         this.emit(type, {
