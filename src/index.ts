@@ -191,6 +191,7 @@ export class UniversalPlayer {
   private selectedQualityId = 'auto';
   private qualityStoreCleanup: (() => void) | undefined;
   private settingsButton!: HTMLButtonElement;
+  private settingsEmpty!: HTMLDivElement;
   private pipButton!: HTMLButtonElement;
   private miniPlayerButton!: HTMLButtonElement;
   private theaterButton!: HTMLButtonElement;
@@ -733,6 +734,12 @@ export class UniversalPlayer {
     this.qualityMenuTitle.textContent = 'Quality';
     this.qualityMenuGroup.append(this.qualityMenuTitle);
     this.speedMenu.append(this.qualityMenuGroup);
+    this.settingsEmpty = document.createElement('div');
+    this.settingsEmpty.className = 'up-settings-empty';
+    this.settingsEmpty.setAttribute('role', 'status');
+    this.settingsEmpty.textContent = 'Enable Speed or Quality in the feature switches to show options.';
+    this.settingsEmpty.hidden = true;
+    this.speedMenu.append(this.settingsEmpty);
 
     settingsWrap.append(this.settingsButton, this.speedMenu);
 
@@ -1304,7 +1311,7 @@ export class UniversalPlayer {
       const feature = element.dataset.feature;
       if (!feature) return;
       if (feature === 'settings') {
-        element.hidden = !(this.featureOptions.playbackSpeed || this.featureOptions.quality);
+        element.hidden = false;
         return;
       }
       if (feature === 'quality') {
@@ -1318,6 +1325,7 @@ export class UniversalPlayer {
       const enabled = this.featureOptions[feature as keyof UniversalPlayerFeatures];
       if (typeof enabled === 'boolean') element.hidden = !enabled;
     });
+    this.settingsEmpty.hidden = this.featureOptions.playbackSpeed || this.featureOptions.quality;
     this.updateLiveUI();
   }
 
