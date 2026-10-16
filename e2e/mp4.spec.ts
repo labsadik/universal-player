@@ -14,6 +14,9 @@ test('renders Universal Player controls without the Video.js packaged skin', asy
 
 test('loads a real MP4, reads metadata, and starts playback from the custom UI', async ({ page }) => {
   await page.goto('/');
+  // The landing page starts with a hidden DASH demo; explicitly load the MP4 for this test.
+  await page.locator('#video-url').fill('https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4');
+  await page.locator('#load-video').click();
 
   const video = page.locator('#player-mount video').first();
   await expect(video).toBeAttached();
@@ -90,5 +93,40 @@ test('toggles the in-page mini player and theater mode', async ({ page }) => {
 
 test('keeps quality selection hidden for a fixed-quality MP4', async ({ page }) => {
   await page.goto('/');
+  await page.locator('#video-url').fill('https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4');
+  await page.locator('#load-video').click();
+  await expect(page.locator('#provider-pill')).toHaveText('HTML5 VIDEO');
   await expect(page.locator('#player-mount .up-quality-menu-group')).toBeHidden();
+});
+
+test('keeps the preloaded DASH demo URL out of the visible UI', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#video-url')).toHaveValue('');
+  await expect(page.locator('#source-url-side')).toHaveValue('');
+  await expect(page.locator('#source-title')).toHaveText('Featured demo');
+  await expect(page.locator('#player-mount .up-stage[data-provider="dash"]')).toBeAttached();
+  await expect(page.locator('#player-section')).not.toContainText('stream.mpd');
+  await expect(page.locator('#video-subtitle')).not.toContainText('vidstack.io');
+});
+
+test('feature playground toggles a feature on the first click and collapses the sidebar', async ({ page }) => {
+  await page.setViewportSize({ width: 1360, height: 900 });
+  await page.goto('/playground.html');
+  await expect(page.locator('#studio-player-mount .up-stage[data-provider="dash"]')).toBeAttached();
+  const seekToggle = page.locator('[data-studio-feature="seek"]');
+  const seekTimeline = page.locator('#studio-player-mount .up-timeline-row');
+  await expect(seekToggle).toBeChecked();
+  await page.locator('[data-feature-row="seek"]').click();
+  await expect(seekToggle).not.toBeChecked();
+  await expect(page.locator('[data-feature-status="seek"]')).toContainText('Disabled');
+  await expect(seekTimeline).toBeHidden();
+  await page.locator('[data-feature-row="seek"]').click();
+  await expect(seekToggle).toBeChecked();
+  await expect(seekTimeline).toBeVisible();
+
+  await page.locator('#studio-sidebar-toggle').click();
+  await expect(page.locator('#studio-frame')).toHaveClass(/nav-hidden/);
+  await expect(page.locator('#studio-sidebar-toggle')).toHaveAttribute('aria-label', 'Show sidebar');
+  await page.locator('#studio-sidebar-toggle').click();
+  await expect(page.locator('#studio-frame')).not.toHaveClass(/nav-hidden/);
 });
