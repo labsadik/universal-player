@@ -21,7 +21,7 @@
 Requires Node.js 20.19+ and npm.
 
 ~~~bash
-git clone https://github.com/WorkRCS/easy-video-player.git
+git clone https://github.com/Labsadik/easy-video-player.git
 cd easy-video-player
 npm install
 npm run dev
@@ -48,8 +48,8 @@ npm run test:e2e
 ## API
 
 ~~~ts
-import { createPlayer } from '@workrcs/universal-player';
-import '@workrcs/universal-player/style.css';
+import { createPlayer } from '@labsadik/universal-player';
+import '@labsadik/universal-player/style.css';
 
 const player = createPlayer('#player', {
   source: { src: '/videos/demo.mp4', type: 'video/mp4' },
@@ -110,7 +110,7 @@ The goal is a familiar video-player experience, not an exact copy of YouTube bra
 After a public release is available:
 
 ~~~bash
-npm install @workrcs/universal-player
+npm install @labsadik/universal-player
 ~~~
 
 Create a mount element, import the CSS once, and create the player:
@@ -120,8 +120,8 @@ Create a mount element, import the CSS once, and create the player:
 ~~~
 
 ~~~ts
-import { createPlayer } from '@workrcs/universal-player';
-import '@workrcs/universal-player/style.css';
+import { createPlayer } from '@labsadik/universal-player';
+import '@labsadik/universal-player/style.css';
 
 const player = createPlayer('#player', {
   source: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
@@ -158,8 +158,8 @@ Universal Player is framework-neutral, so you can use it inside React, Vue, Svel
 
 ~~~tsx
 import { useEffect, useRef } from 'react';
-import { createPlayer } from '@workrcs/universal-player';
-import '@workrcs/universal-player/style.css';
+import { createPlayer } from '@labsadik/universal-player';
+import '@labsadik/universal-player/style.css';
 
 export function VideoPlayer({ src }: { src: string }) {
   const mount = useRef<HTMLDivElement>(null);
