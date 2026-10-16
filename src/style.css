@@ -538,3 +538,74 @@
 @media (max-width: 400px) {
   .up-theater-button, .up-mini-player-button { display: none; }
 }
+
+
+/* Universal Player customization, live-state and accessible theme support */
+.up-root {
+  --up-accent: var(--up-accent-user, #36d6b0);
+  --up-accent-blue: #438bff;
+  color-scheme: dark;
+}
+.up-root[data-theme="light"] {
+  color-scheme: light;
+  --up-panel: rgba(248, 250, 252, .96);
+  --up-ink: #172033;
+  --up-muted: #64748b;
+}
+@media (prefers-color-scheme: light) {
+  .up-root[data-theme="system"] { color-scheme: light; }
+}
+.up-root.up-glassy .up-controls,
+.up-root.up-glassy .up-context-menu,
+.up-root.up-glassy .up-settings-menu,
+.up-root.up-glassy .up-stats-panel,
+.up-root.up-glassy .up-help-panel {
+  background: rgba(10, 16, 28, .62);
+  -webkit-backdrop-filter: blur(22px) saturate(155%);
+  backdrop-filter: blur(22px) saturate(155%);
+  border-color: rgba(255,255,255,.22);
+  box-shadow: 0 12px 40px rgba(0,0,0,.26);
+}
+.up-root.up-controls-compact .up-controls { padding: 7px 10px; gap: 6px; }
+.up-root.up-controls-compact .up-icon-button { width: 30px; height: 30px; }
+.up-root.up-controls-minimal .up-volume-group,
+.up-root.up-controls-minimal .up-skip-button,
+.up-root.up-controls-minimal .up-mini-button,
+.up-root.up-controls-minimal .up-theater-button { display: none !important; }
+.up-live-indicator {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 7px;
+  border-radius: 5px; background: rgba(244,63,94,.16); color: #fb7185;
+  font-size: 10px; font-weight: 850; letter-spacing: .09em;
+}
+.up-live-indicator::before,.up-live-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #fb416c;
+  box-shadow: 0 0 0 3px rgba(251,65,108,.13);
+}
+.up-live-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 30px; padding: 0 8px; border: 1px solid rgba(251,65,108,.25);
+  border-radius: 7px; color: #fb7185; background: rgba(251,65,108,.1);
+  font-size: 10px; font-weight: 850; letter-spacing: .04em;
+}
+.up-live-button.is-at-live { color: #fda4af; opacity: .82; }
+.up-live-button:disabled { opacity: .45; cursor: not-allowed; }
+.up-live-button[hidden],.up-live-indicator[hidden] { display: none !important; }
+.up-live-dot { display: inline-block; flex: 0 0 auto; }
+.up-root[data-theme="light"] .up-controls {
+  background: linear-gradient(180deg, transparent, rgba(248,250,252,.92));
+  color: #172033;
+}
+.up-root[data-theme="light"] .up-icon-button { color: #172033; }
+.up-root[data-theme="light"] .up-context-menu,
+.up-root[data-theme="light"] .up-settings-menu {
+  color: #172033; background: rgba(248,250,252,.97); border-color: rgba(15,23,42,.12);
+}
+.up-root[data-theme="light"] .up-context-item,
+.up-root[data-theme="light"] .up-speed-option { color: #172033; }
+.up-root[data-theme="light"] .up-context-item:hover,
+.up-root[data-theme="light"] .up-speed-option:hover { background: rgba(59,130,246,.1); }
+@media (prefers-reduced-transparency: reduce) {
+  .up-root.up-glassy .up-controls,
+  .up-root.up-glassy .up-context-menu,
+  .up-root.up-glassy .up-settings-menu { -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
