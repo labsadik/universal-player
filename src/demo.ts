@@ -1,5 +1,5 @@
 import './demo.css';
-import { createIcons, Menu, Play, Link2, ClipboardPaste, ArrowUpRight, ArrowRight, House, History, Layers, Code2, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film, ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon } from 'lucide';
+import { createIcons, Menu, Play, Link2, ClipboardPaste, ArrowUpRight, ArrowRight, House, History, Layers, Code2, SlidersHorizontal, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film, ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon } from 'lucide';
 import { createPlayer, type UniversalPlayerFeatures } from './index.js';
 import { detectProvider, normalizePastedVideoUrl } from './source.js';
 
@@ -9,7 +9,7 @@ const BIG_BUCK_MP4 = 'https://storage.googleapis.com/gtv-videos-bucket/sample/Fo
 
 const iconSet = {
   Menu, Play, Link2, ClipboardPaste, ArrowUpRight, House, History, Layers, Code2,
-  ArrowRight, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film,
+  ArrowRight, SlidersHorizontal, Sparkles, Clapperboard, ThumbsUp, Share2, Copy, RotateCcw, Flower2, Film,
   ChevronRight, ExternalLink, Waves, AlertCircle, Sun, Moon,
 };
 createIcons({
@@ -404,7 +404,9 @@ async function restoreDefaultSample(): Promise<void> {
     URL.revokeObjectURL(objectUrl);
     objectUrl = undefined;
   }
-  await loadVideo(SAMPLE_MP4, 'Flower · MP4 sample');
+  urlInput!.value = '';
+  sideUrlInput!.value = '';
+  await loadVideo(DEFAULT_DASH_URL, 'Featured demo');
 }
 restoreButton.addEventListener('click', () => { void restoreDefaultSample(); });
 
